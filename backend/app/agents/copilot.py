@@ -6,73 +6,168 @@ class FarmCopilotAgent:
     """
     Conversational Farm Copilot Agent:
     Translates farmer voice/text queries into actionable agricultural guidance,
-    supporting multi-lingual output (Hindi, Telugu, Tamil, Kannada, Marathi, English)
-    and indicating which specialized sub-agents were consulted.
+    supporting multi-lingual output (Telugu, Hindi, English) and structured farmer response format.
     """
     def __init__(self):
         pass
 
     def process_query(self, request: CopilotChatRequest) -> CopilotChatResponse:
         query = request.query.lower()
-        lang = request.language or "English"
+        lang = request.language or "Telugu"
         field = FIELDS_DB.get(request.field_id or "field_01", FIELDS_DB["field_01"])
 
-        crop = field["crop_type"]
-        location = field["location"]
+        # Override profile info if provided from request
+        profile = request.farmer_profile or {}
+        crop = profile.get("main_crop") or field["crop_type"]
+        location = profile.get("district") or field["location"]
 
         agents_consulted = ["WeatherAgent", "SoilIrrigationAgent"]
 
-        if "yellow" in query or "spot" in query or "leaf" in query or "disease" in query or "insect" in query or "pesticide" in query:
+        if "yellow" in query or "spot" in query or "leaf" in query or "disease" in query or "insect" in query or "pesticide" in query or "పసుపు" in query or "మచ్చలు" in query or "తెగులు" in query or "మందు" in query:
             agents_consulted.append("CropVisionAgent")
             agents_consulted.append("DiseaseRiskAgent")
             
-            if lang == "Hindi":
-                answer = f"आपकी {crop} की पत्तियों पर शुरुआती झुलसा (Early Blight) या फफूंद के लक्षण दिख रहे हैं। नासिक में बारिश का पूर्वानुमान है। कृपया 48 घंटे के भीतर 'इंडोफिल M-45 (Mancozeb)' 600 ग्राम प्रति एकड़ का छिड़काव करें और निचले संक्रमित पत्तों को काट दें।"
-                actions = ["Mancozeb 75% WP खरीदें (₹380/एकड़)", "निचले पत्तों की छंटाई करें", "ड्रिप लाइन से स्प्रे करें"]
-            elif lang == "Telugu":
-                answer = f"మీ {crop} ఆకులపై ఎండు తెగులు (Early Blight) లక్షణాలు కనిపిస్తున్నాయి. రాబోయే వర్షాల దృష్ట్యా 48 గంటల్లో 'Mancozeb 75% WP' ఎకరానికి 600 గ్రాములు పిచికారీ చేయండి."
-                actions = ["Mancozeb క్రిమిసంహారకం కొనండి", "తెగులు సోకిన ఆకులను తొలగించండి", "నీటి యాజమాన్యం తీసుకోండి"]
-            elif lang == "Tamil":
-                answer = f"உங்கள் {crop} பயிரில் இலைக்கருகல் நோய் அறிகுறி உள்ளது. மழைக்கு முன் 48 மணி நேரத்திற்குள் Mancozeb 75% WP தெளிக்கவும்."
-                actions = ["Mancozeb மருந்து தெளிக்கவும்", "பாதிக்கப்பட்ட இலைகளை அகற்றவும்"]
-            elif lang == "Kannada":
-                answer = f"ನಿಮ್ಮ {crop} ಬೆಳೆಯಲ್ಲಿ ಎಲೆ ಚುಕ್ಕೆ / ಕರಗು ರೋಗದ ಲಕ್ಷಣಗಳಿವೆ. ಮಳೆಯ ಮುನ್ಸೂಚನೆ ಇರುವುದರಿಂದ 48 ಗಂಟೆಗಳ ಒಳಗೆ 600 ಗ್ರಾಂ Mancozeb ಸ್ಪಷ್ಟವಾಗಿ ಸಿಂಪಡಿಸಿ."
-                actions = ["Mancozeb ಸಿಂಪಡಿಸಿ (₹380/ಎಕರೆ)", "ಹಾಳಾದ ಎಲೆಗಳನ್ನು ತೆಗೆಯಿರಿ"]
+            if lang in ["Telugu", "te"]:
+                answer = (
+                    f"🌾 సమాధానం:\n"
+                    f"మీ {crop} పంట ఆకులపై ఎండు తెగులు (Early Blight) లేదా పసుపు రంగు మచ్చల లక్షణాలు కనిపిస్తున్నాయి.\n\n"
+                    f"✅ ప్రస్తుతం చేయాల్సిన పని:\n"
+                    f"రాబోయే వర్షాల దృష్ట్యా 48 గంటలలోపు 'Mancozeb 75% WP' ఎకరానికి 600 గ్రాములు పిచికారీ చేయండి.\n\n"
+                    f"📌 ముఖ్య గమనిక:\n"
+                    f"1 లీటరు నీటికి 2 స్పూన్ల మందు మాత్రమే కలపండి (అంచనా ఖరీదు ~₹380/ఎకరం).\n\n"
+                    f"⚠️ నివారించాల్సినవి:\n"
+                    f"వర్షం పడటానికి ముందు మందు పిచికారీ చేయవద్దు. అనుమానం ఉంటే KVK హెల్ప్‌లైన్‌ను సంప్రదించండి."
+                )
+                actions = ["Mancozeb 75% WP మందు వివరాలు", "పాడైన ఆకులను తొలగించండి", "డ్రిప్ నీరు తగ్గించండి"]
+            elif lang in ["Hindi", "hi"]:
+                answer = (
+                    f"🌾 उत्तर:\n"
+                    f"आपकी {crop} की पत्तियों पर शुरुआती झुलसा (Early Blight) के लक्षण दिख रहे हैं।\n\n"
+                    f"✅ अभी क्या करें:\n"
+                    f"48 घंटे के भीतर Mancozeb 75% WP (600 ग्राम प्रति एकड़) का छिड़काव करें।\n\n"
+                    f"📌 ध्यान दें:\n"
+                    f"1 लीटर पानी में 2 चम्मच दवा मिलाएं (अनुमानित खर्च ~₹380/एकड़)।\n\n"
+                    f"⚠️ क्या न करें:\n"
+                    f"बारिश से ठीक पहले छिड़काव न करें।"
+                )
+                actions = ["Mancozeb 75% WP खरीदें", "निचले पत्तों की छंटाई करें"]
             else:
-                answer = f"Your {crop} leaves exhibit signs of Early Blight fungal spots. Due to high humidity and rain forecast in {location}, spray Mancozeb 75% WP (600g in 200L water per acre) within 48 hours and prune lower yellowing leaves."
-                actions = ["Purchase Mancozeb 75% WP (₹380/acre)", "Prune lower infected leaves", "Pause overhead irrigation"]
+                answer = (
+                    f"🌾 Answer:\n"
+                    f"Your {crop} leaves exhibit signs of Early Blight fungal spots.\n\n"
+                    f"✅ What to do now:\n"
+                    f"Spray Mancozeb 75% WP (600g in 200L water per acre) within 48 hours.\n\n"
+                    f"📌 Important note:\n"
+                    f"Mix 2 spoons per 1 liter water (~₹380/acre cost).\n\n"
+                    f"⚠️ What to avoid:\n"
+                    f"Do not spray right before heavy rainfall."
+                )
+                actions = ["Purchase Mancozeb 75% WP", "Prune lower infected leaves"]
 
-        elif "harvest" in query or "sell" in query or "price" in query or "mandi" in query or "कटाई" in query or "కోత" in query:
+        elif "harvest" in query or "sell" in query or "price" in query or "mandi" in query or "కోత" in query or "అమ్మకం" in query or "ధర" in query or "మండీ" in query:
             agents_consulted.append("MarketAgent")
             agents_consulted.append("WeatherAgent")
             
-            if lang == "Hindi":
-                answer = f"नासिक मंडी में {crop} का भाव ₹2,450/क्विंटल चल रहा है और अगले 3 दिनों में ₹2,750 तक जाने की उम्मीद है। हालांकि, शुक्रवार को भारी बारिश की संभावना है। हमारी सिफारिश: बारिश से 1 दिन पहले (3 दिन बाद) कटाई करें!"
-                actions = ["3 दिन बाद कटाई का समय तय करें", "मंडी परिवहन की व्यवस्था करें", "ग्रेडिंग शुरू करें"]
-            elif lang == "Telugu":
-                answer = f"మండీలో {crop} ధర రూ. 2,450 ఉంది. రాబోయే వర్షాలకు ముందే 3 రోజుల్లో కోత పూర్తి చేస్తే 12% అదనపు లాభం పొందవచ్చు."
-                actions = ["3 రోజుల్లో కోత పూర్తి చేయండి", "మండీ రవాణా సిద్ధం చేయండి"]
+            if lang in ["Telugu", "te"]:
+                answer = (
+                    f"🌾 సమాధానం:\n"
+                    f"మండీలో {crop} ధర ప్రస్తుతం రూ. 24.50/కిలో ఉంది. రాబోయే 3 రోజుల్లో ధర రూ. 27.50 వరకు పెరుగుతుంది.\n\n"
+                    f"✅ ప్రస్తుతం చేయాల్సిన పని:\n"
+                    f"ఈ రోజు అమ్మవద్దు. 3 రోజుల తర్వాత కోత పూర్తి చేసి మార్కెట్లో అమ్మండి.\n\n"
+                    f"📌 ముఖ్య గమనిక:\n"
+                    f"3 రోజులు వేచి ఉంటే రూ. 3.00/కిలో అదనపు లాభం పొందుతారు.\n\n"
+                    f"⚠️ నివారించాల్సినవి:\n"
+                    f"తక్కువ ధర వద్ద వ్యాపారులకు తొందరపడి అమ్మవద్దు."
+                )
+                actions = ["3 రోజుల తర్వాత కోత పూర్తి చేయండి", "మండీ రవాణా సిద్ధం చేయండి"]
+            elif lang in ["Hindi", "hi"]:
+                answer = (
+                    f"🌾 उत्तर:\n"
+                    f"मंडी में {crop} का भाव ₹24.50/किग्रा है और 3 दिनों में ₹27.50 होने की संभावना है।\n\n"
+                    f"✅ अभी क्या करें:\n"
+                    f"3 दिन बाद कटाई करके मंडी में बेचें।\n\n"
+                    f"📌 ध्यान दें:\n"
+                    f"3 दिन रुकने पर ₹3/किग्रा अधिक लाभ होगा।"
+                )
+                actions = ["3 दिन बाद कटाई करें", "मंडी परिवहन की व्यवस्था करें"]
             else:
-                answer = f"{crop} is trading at ₹2,450/quintal in {location} mandi with a projected rise to ₹2,750 (+12.2%). With heavy rain expected on Friday, our Decision Engine recommends: Harvest in 3 Days to maximize price while avoiding rain damage!"
-                actions = ["Schedule harvest for Day 3", "Arrange mandi transport", "Pre-pack crates"]
+                answer = (
+                    f"🌾 Answer:\n"
+                    f"{crop} is trading at ₹24.50/kg with a projected 3-day rise to ₹27.50/kg.\n\n"
+                    f"✅ What to do now:\n"
+                    f"Hold harvest for 3 days to maximize your profit.\n\n"
+                    f"📌 Important note:\n"
+                    f"Holding 3 days yields +12.2% higher returns.\n\n"
+                    f"⚠️ What to avoid:\n"
+                    f"Avoid selling to local traders at lower prices today."
+                )
+                actions = ["Schedule harvest for Day 3", "Arrange mandi transport"]
 
-        elif "water" in query or "irrigation" in query or "fertilizer" in query or "npk" in query or "खाद" in query or "సిఫార్సు" in query:
+        elif "water" in query or "irrigation" in query or "fertilizer" in query or "npk" in query or "నీరు" in query or "ఎరువు" in query:
             agents_consulted.append("SoilIrrigationAgent")
             
-            if lang == "Hindi":
-                answer = f"मिट्टी में नमी 34% है और बारिश का अनुमान है। आज ड्रिप सिंचाई बंद रखें या केवल 45 मिनट चलाएं। उर्वरक: 15 किग्रा यूरिया प्रति एकड़ ड्रिप से दें।"
-                actions = ["सिंचाई 45 मिनट पर सीमित करें", "यूरिया फर्टिगेशन करें"]
+            if lang in ["Telugu", "te"]:
+                answer = (
+                    f"🌾 సమాధానం:\n"
+                    f"నేలలో 34% తేమ ఉంది మరియు మధ్యాహ్నం 2 గంటలకు వర్షం పడే అవకాశం ఉంది.\n\n"
+                    f"✅ ప్రస్తుతం చేయాల్సిన పని:\n"
+                    f"ఈ రోజు డ్రిప్ నీటి సమయం 45 నిమిషాలకు పరిమితం చేయండి. ఎకరానికి 15 కేజీల Urea ఎరువు అందించండి.\n\n"
+                    f"📌 ముఖ్య గమనిక:\n"
+                    f"డ్రిప్ ఫెర్టిగేషన్ ద్వారా ఎరువును అందించడం శ్రేయస్కరం.\n\n"
+                    f"⚠️ నివారించాల్సినవి:\n"
+                    f"వర్షం కురిసే సమయంలో అధికంగా నీరు పెట్టవద్దు."
+                )
+                actions = ["డ్రిప్ సమయం 45 నిమిషాలకు సెట్ చేయండి", "15 కేజీల Urea వాడండి"]
+            elif lang in ["Hindi", "hi"]:
+                answer = (
+                    f"🌾 उत्तर:\n"
+                    f"मिट्टी में नमी 34% है और बारिश का अनुमान है।\n\n"
+                    f"✅ अभी क्या करें:\n"
+                    f"ड्रिप केवल 45 मिनट चलाएं और 15 किग्रा यूरिया दें।"
+                )
+                actions = ["सिंचाई सीमित करें", "यूरिया दें"]
             else:
-                answer = f"Soil moisture is at 34% with upcoming rain. Limit drip irrigation cycle to 45 minutes ({field['soil_data']['moisture_percent']}% moisture). Apply 15 kg Urea per acre via fertigation."
+                answer = (
+                    f"🌾 Answer:\n"
+                    f"Soil moisture is at 34% with upcoming rain forecast.\n\n"
+                    f"✅ What to do now:\n"
+                    f"Limit drip irrigation cycle to 45 minutes. Apply 15 kg Urea per acre.\n\n"
+                    f"📌 Important note:\n"
+                    f"Apply via drip fertigation for maximum efficiency."
+                )
                 actions = ["Set drip timer to 45 mins", "Fertigate 15kg Urea per acre"]
 
         else:
-            if lang == "Hindi":
-                answer = f"नमस्ते! मैं आपका एआई किसान मित्र हूँ। आपकी {field['name']} खेत की स्थिति अच्छी है। मौसम में नमी 82% है। आप मुझसे बीमारी, खाद, सिंचाई या मंडी भाव के बारे में पूछ सकते हैं।"
-                actions = ["फसल का फोटो स्कैन करें", "कटाई की समयसीमा देखें", "मंडी भाव चेक करें"]
+            if lang in ["Telugu", "te"]:
+                answer = (
+                    f"🌾 సమాధానం:\n"
+                    f"నమస్కారం! నేను మీ AI కిసాన్ మిత్రుడిని. మీ {crop} తోటలో ({location}) ప్రస్తుతం పంట స్థితి బాగుంది.\n\n"
+                    f"✅ ప్రస్తుతం చేయాల్సిన పని:\n"
+                    f"మీ పంట ఫోటో స్కాన్ చేయండి లేదా వాతావరణం, ఎరువులు మరియు మండీ ధరల గురించి తెలుగులో అడగండి.\n\n"
+                    f"📌 ముఖ్య గమనిక:\n"
+                    f"నేల తేమ 34% వద్ద అనుకూలంగా ఉంది.\n\n"
+                    f"⚠️ నివారించాల్సినవి:\n"
+                    f"ధృవీకరించని పురుగుమందులను వాడవద్దు."
+                )
+                actions = ["పంట ఫోటో స్కాన్ చేయండి", "కోత సమయం చూడండి", "మండీ ధర చెక్ చేయండి"]
+            elif lang in ["Hindi", "hi"]:
+                answer = (
+                    f"🌾 उत्तर:\n"
+                    f"नमस्ते! मैं आपका एआई किसान मित्र हूँ। आपकी {crop} की स्थिति अच्छी है।\n\n"
+                    f"✅ अभी क्या करें:\n"
+                    f"बीमारी, खाद या मंडी भाव के बारे में पूछें।"
+                )
+                actions = ["फसल का फोटो स्कैन करें", "मंडी भाव चेक करें"]
             else:
-                answer = f"Hello! I am your AI Farm Copilot for {field['name']}. Current soil moisture is optimal and market prices are trending upwards. You can ask me about crop diseases, fertilizers, watering schedules, or optimal harvest timing."
-                actions = ["Scan crop leaf photo", "Check 'Should I Harvest Now?'", "View soil NPK advice"]
+                answer = (
+                    f"🌾 Answer:\n"
+                    f"Hello! I am your AI Farm Copilot for your {crop} field in {location}.\n\n"
+                    f"✅ What to do now:\n"
+                    f"Ask me about crop diseases, fertilizers, watering schedules, or mandi prices.\n\n"
+                    f"📌 Important note:\n"
+                    f"Soil moisture is currently optimal at 34%."
+                )
+                actions = ["Scan crop leaf photo", "Check mandi prices"]
 
         return CopilotChatResponse(
             answer=answer,

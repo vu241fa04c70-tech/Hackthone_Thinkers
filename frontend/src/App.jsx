@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Bot, Camera, Cpu, Calendar, Layers, TrendingUp, MapPin, Sparkles, Globe, Scroll, Home, Volume2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck } from 'lucide-react';
+import { useLanguage } from './localization/LanguageContext';
 
 import LanguageSelectionScreen from './components/LanguageSelectionScreen';
 import KisanHomeGrid from './components/KisanHomeGrid';
 import FarmCopilot from './components/FarmCopilot';
 import CropDoctor from './components/CropDoctor';
-import IntegratedDecision from './components/IntegratedDecision';
-import DecisionTimeline from './components/DecisionTimeline';
-import SoilIrrigation from './components/SoilIrrigation';
 import MarketIntelligence from './components/MarketIntelligence';
 import GovtSchemesScreen from './components/GovtSchemesScreen';
 import FarmingCalendarScreen from './components/FarmingCalendarScreen';
+import WeatherScreen from './components/WeatherScreen';
+import FarmProfiles from './components/FarmProfiles';
 
 export default function App() {
-  const [selectedLang, setSelectedLang] = useState(() => {
-    return localStorage.getItem('kisan_lang') || 'te'; // Default to Telugu!
+  const { lang, setLanguage, t } = useLanguage();
+
+  // Requirement #1 & #21: Check if language has been selected previously in localStorage
+  const [hasSelectedLang, setHasSelectedLang] = useState(() => {
+    return !!localStorage.getItem('kisanLanguage');
   });
 
   const [showLanguageModal, setShowLanguageModal] = useState(false);
@@ -23,7 +26,7 @@ export default function App() {
   const [profile, setProfile] = useState({
     farmer_name: 'రమేష్ గారూ',
     crop_type: 'Tomato',
-    location: 'Nashik, Maharashtra',
+    location: 'Guntur, Andhra Pradesh',
     language: 'Telugu'
   });
 
@@ -32,29 +35,36 @@ export default function App() {
     name: 'టమాటా తోట (Tomato Block)',
     crop_type: 'Tomato',
     acreage: 2.5,
-    location: 'Nashik, Maharashtra',
+    location: 'Guntur, Andhra Pradesh',
     soil_type: 'Black Loam',
     irrigation_system: 'Drip Irrigation',
     planting_date: '2026-06-15',
     growth_stage: 'Fruiting'
   });
 
-  const handleSelectLanguage = (langCode) => {
-    setSelectedLang(langCode);
-    localStorage.setItem('kisan_lang', langCode);
-    const langStr = langCode === 'te' ? 'Telugu' : (langCode === 'hi' ? 'Hindi' : 'English');
-    setProfile(prev => ({ ...prev, language: langStr }));
+  const handleInitialLanguageSelect = () => {
+    setHasSelectedLang(true);
   };
+
+  // Requirement #1: If first visit, show FULL SCREEN Language Selection Page!
+  if (!hasSelectedLang) {
+    return (
+      <LanguageSelectionScreen
+        onConfirm={handleInitialLanguageSelect}
+      />
+    );
+  }
 
   const getTabLabel = (id) => {
     switch (id) {
-      case 'home': return selectedLang === 'te' ? '🌾 కిసాన్ మిత్ర' : (selectedLang === 'hi' ? '🌾 किसान मित्र' : '🌾 Home');
-      case 'doctor': return selectedLang === 'te' ? '📷 పైరు వ్యాధి' : (selectedLang === 'hi' ? '📷 बीमारी जांच' : '📷 Disease Scan');
-      case 'weather': return selectedLang === 'te' ? '🌤️ వాతావరణం' : (selectedLang === 'hi' ? '🌤️ मौसम' : '🌤️ Weather');
-      case 'market': return selectedLang === 'te' ? '💰 మండీ ధరలు' : (selectedLang === 'hi' ? '💰 मंडी भाव' : '💰 Market Prices');
-      case 'schemes': return selectedLang === 'te' ? '📜 ప్రభుత్వ పథకాలు' : (selectedLang === 'hi' ? '📜 योजनाएं' : '📜 Govt Schemes');
-      case 'calendar': return selectedLang === 'te' ? '📅 క్యాలెండర్' : (selectedLang === 'hi' ? '📅 कैलेंडर' : '📅 Calendar');
-      case 'copilot': return selectedLang === 'te' ? '🎤 అడగండి తెలుసుకోండి' : (selectedLang === 'hi' ? '🎤 कुछ भी पूछें' : '🎤 AI Assistant');
+      case 'home': return t('nav.home');
+      case 'doctor': return t('nav.doctor');
+      case 'weather': return t('nav.weather');
+      case 'market': return t('nav.market');
+      case 'schemes': return t('nav.schemes');
+      case 'calendar': return t('nav.calendar');
+      case 'copilot': return t('nav.copilot');
+      case 'profile': return t('nav.profile');
       default: return id;
     }
   };
@@ -62,25 +72,29 @@ export default function App() {
   const tabs = [
     { id: 'home', icon: Home },
     { id: 'doctor', icon: Camera, badge: 'Vision' },
+    { id: 'weather', icon: Sun },
     { id: 'market', icon: TrendingUp },
     { id: 'schemes', icon: Scroll },
     { id: 'calendar', icon: Calendar },
     { id: 'copilot', icon: Bot, badge: 'Voice AI' },
+    { id: 'profile', icon: UserCheck },
   ];
 
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950">
       
-      {/* Language Selection Modal */}
+      {/* Settings Change Language Modal */}
       {showLanguageModal && (
-        <LanguageSelectionScreen
-          selectedLang={selectedLang}
-          onSelectLanguage={handleSelectLanguage}
-          onClose={() => setShowLanguageModal(false)}
-        />
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="max-w-md w-full">
+            <LanguageSelectionScreen
+              onConfirm={() => setShowLanguageModal(false)}
+            />
+          </div>
+        </div>
       )}
 
-      {/* Top Header */}
+      {/* Top Header (Requirement #19: NO permanent language button in top right) */}
       <header className="border-b border-emerald-500/30 bg-slate-950/90 backdrop-blur-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           
@@ -91,26 +105,15 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-lg sm:text-xl font-black tracking-tight text-emerald-400 flex items-center gap-2">
-                {selectedLang === 'te' ? 'కిసాన్ మిత్ర' : (selectedLang === 'hi' ? 'किसान मित्र' : 'Kisan Mitra')}
+                {t('nav.appName')}
                 <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-extrabold">
-                  {selectedLang === 'te' ? 'వాయిస్ AI' : 'Voice AI'}
+                  {t('nav.tagline')}
                 </span>
               </h1>
               <p className="text-[11px] text-slate-400 font-bold hidden sm:block">
-                {selectedLang === 'te' ? 'నమస్కారం రమేష్ గారూ! 🌅 (టమాటా సాగు)' : 'Namaste Ramesh Bhai! 🌅'}
+                {t('nav.greeting')}
               </p>
             </div>
-          </div>
-
-          {/* Language Selector Pill */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowLanguageModal(true)}
-              className="px-4 py-2 rounded-2xl bg-slate-900 border border-emerald-500/40 text-xs font-black text-emerald-300 hover:bg-slate-800 flex items-center gap-2 cursor-pointer shadow-md shadow-emerald-500/10"
-            >
-              <Globe className="w-4 h-4 text-emerald-400" />
-              <span>{selectedLang === 'te' ? 'తెలుగు (Telugu)' : (selectedLang === 'hi' ? 'हिंदी (Hindi)' : 'English')}</span>
-            </button>
           </div>
 
         </div>
@@ -128,7 +131,7 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black transition-all shrink-0 cursor-pointer ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all shrink-0 cursor-pointer ${
                     isActive
                       ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-lg shadow-emerald-500/20 scale-[1.02]'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
@@ -156,17 +159,19 @@ export default function App() {
           <KisanHomeGrid profile={profile} onSelectAction={(tabId) => setActiveTab(tabId)} />
         )}
         {activeTab === 'doctor' && <CropDoctor activeField={activeField} />}
+        {activeTab === 'weather' && <WeatherScreen />}
         {activeTab === 'market' && <MarketIntelligence activeField={activeField} />}
-        {activeTab === 'schemes' && <GovtSchemesScreen lang={selectedLang} />}
-        {activeTab === 'calendar' && <FarmingCalendarScreen lang={selectedLang} />}
+        {activeTab === 'schemes' && <GovtSchemesScreen />}
+        {activeTab === 'calendar' && <FarmingCalendarScreen />}
         {activeTab === 'copilot' && <FarmCopilot activeField={activeField} />}
+        {activeTab === 'profile' && <FarmProfiles onChangeLanguageClick={() => setShowLanguageModal(true)} />}
       </main>
 
       {/* Footer */}
       <footer className="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>🌾 కిసాన్ మిత్ర (Kisan Mitra) • Smart India Hackathon (SIH) Voice Prototype</span>
-          <span>Telugu Voice AI & Multimodal Decision Engine</span>
+          <span>🌾 {t('nav.appName')} • Voice AI Farmer Application</span>
+          <span>Telugu Speech Recognition (`te-IN`) & Text-to-Speech (`te-IN`)</span>
         </div>
       </footer>
 

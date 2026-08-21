@@ -1,166 +1,119 @@
-import React, { useState, useEffect } from 'react';
-import { TrendingUp, DollarSign, Volume2, ArrowUpRight, CheckCircle2, ShieldAlert } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import React, { useState } from 'react';
+import { TrendingUp, Volume2, Calendar, MapPin, ArrowUpRight, DollarSign, Award, CheckCircle } from 'lucide-react';
+import { useLanguage } from '../localization/LanguageContext';
+import { speakText, stopSpeech } from '../utils/voiceUtils';
 
 export default function MarketIntelligence({ activeField }) {
-  const [report, setReport] = useState(null);
-  const [chartData, setChartData] = useState([]);
+  const { lang, t } = useLanguage();
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
-  useEffect(() => {
-    fetchMarketData();
-  }, [activeField]);
-
-  const fetchMarketData = async () => {
-    try {
-      const res = await fetch('/api/agents/market', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          crop_type: activeField?.crop_type || 'Tomato',
-          growth_stage: activeField?.growth_stage || 'Fruiting',
-          location: activeField?.location || 'Nashik, Maharashtra'
-        })
-      });
-      const data = await res.json();
-      setReport(data);
-
-      setChartData([
-        { date: '10 Aug', price: data.current_price_per_quintal * 0.86 },
-        { date: '12 Aug', price: data.current_price_per_quintal * 0.89 },
-        { date: '14 Aug', price: data.current_price_per_quintal * 0.92 },
-        { date: '16 Aug', price: data.current_price_per_quintal * 0.95 },
-        { date: '18 Aug', price: data.current_price_per_quintal * 0.98 },
-        { date: 'Today', price: data.current_price_per_quintal },
-        { date: 'Day 3 (Est)', price: data.projected_7d_price * 0.98 },
-        { date: 'Day 7 (Est)', price: data.projected_7d_price }
-      ]);
-    } catch (err) {
-      console.error(err);
-    }
+  const marketData = {
+    crop: activeField?.crop_type || 'Tomato',
+    current_price: 24.50,
+    forecast_3days: 27.50,
+    forecast_change_pct: '+12.2%',
+    recommendation: lang === 'te' 
+      ? '3 రోజులు ఆగండి, ధర రూ. 27.50/కిలోకు పెరుగుతుంది' 
+      : 'Hold harvest for 3 days to get ₹27.50/kg',
+    comparison: [
+      { location: t('market.villageTrader'), price: 21.00, net: '₹21.00/kg' },
+      { location: t('market.nearestMandi'), price: 24.50, net: '₹24.50/kg' },
+      { location: t('market.regionalAPMC'), price: 27.50, net: '₹27.50/kg' }
+    ]
   };
 
-  const playAudio = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      if (isPlayingAudio) {
-        setIsPlayingAudio(false);
-        return;
-      }
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'hi-IN';
-      u.onend = () => setIsPlayingAudio(false);
-      u.onerror = () => setIsPlayingAudio(false);
-      setIsPlayingAudio(true);
-      window.speechSynthesis.speak(u);
+  const toggleAudio = () => {
+    if (isPlayingAudio) {
+      stopSpeech();
+      setIsPlayingAudio(false);
+      return;
     }
+
+    const textToSpeak = lang === 'te'
+      ? `మండీలో ప్రస్తుతం టమాటా ధర రూ. 24.50/కిలో ఉంది. రాబోయే 3 రోజుల్లో ధర రూ. 27.50 వరకు పెరుగుతుంది. మా సిఫార్సు: ఈ రోజు అమ్మవద్దు, 3 రోజుల తర్వాత కోత పూర్తి చేసి అమ్మండి!`
+      : `Tomato is trading at ₹24.50/kg. Projected price in 3 days is ₹27.50/kg. We recommend waiting 3 days before harvest to maximize profit!`;
+
+    setIsPlayingAudio(true);
+    speakText(
+      textToSpeak,
+      lang,
+      () => setIsPlayingAudio(true),
+      () => setIsPlayingAudio(false),
+      () => setIsPlayingAudio(false)
+    );
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 p-6 rounded-3xl border border-slate-800">
+      <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-black text-slate-100 flex items-center gap-2">
-            💰 Market Price & Harvest Timing Advisor
+            💰 {t('market.title')}
           </h2>
-          <p className="text-xs text-slate-400">See current mandi prices and know exact day to sell for maximum profit</p>
+          <p className="text-xs text-slate-400 font-bold mt-0.5">
+            {t('market.subtitle')}
+          </p>
         </div>
 
-        {report && (
-          <button
-            onClick={() => playAudio(`Tomato price today is ${report.current_price_per_quintal / 100} rupees per kg in your village mandi. Advice: Wait 3 to 4 days. Price will increase to ${report.projected_7d_price / 100} rupees per kg.`)}
-            className="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-extrabold text-slate-200 hover:text-emerald-400 flex items-center gap-2 cursor-pointer self-start sm:self-center"
-          >
-            <Volume2 className="w-4 h-4 text-emerald-400" /> Listen Market Advice
-          </button>
-        )}
+        <button
+          onClick={toggleAudio}
+          className={`px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 cursor-pointer transition-all ${
+            isPlayingAudio
+              ? 'bg-emerald-500 text-slate-950 animate-pulse'
+              : 'bg-slate-950 text-slate-200 border border-slate-800 hover:text-emerald-400'
+          }`}
+        >
+          <Volume2 className="w-4 h-4 text-emerald-400" />
+          <span>{isPlayingAudio ? 'ఆపండి' : t('market.listenAudio')}</span>
+        </button>
       </div>
 
-      {report ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Main Actionable Advice Box */}
-          <div className="lg:col-span-1 p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/40 border border-amber-500/40 space-y-5 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <span className="text-xs font-black text-amber-400 uppercase tracking-wider">
-                💡 HARVEST ADVICE
-              </span>
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-full border border-amber-500/30 font-extrabold">
-                High Profit Opportunity
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-2xl font-black text-slate-100 leading-snug">
-                {report.harvest_recommendation}
-              </h3>
-              <p className="text-xs text-slate-300 font-medium">
-                Hold harvest for 3 days before Friday rain. Price expected to rise <strong className="text-emerald-400">+{report.price_change_expected_pct}%</strong>!
-              </p>
-            </div>
-
-            {/* Price Comparison Table */}
-            <div className="space-y-2.5 pt-2">
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Price Comparison Today:</div>
-              
-              <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex justify-between items-center text-xs">
-                <span className="text-slate-300 font-bold">Your Village Trader:</span>
-                <span className="font-extrabold text-amber-400">₹{(report.current_price_per_quintal / 100 * 0.8).toFixed(1)} / kg</span>
-              </div>
-
-              <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex justify-between items-center text-xs">
-                <span className="text-slate-300 font-bold">{report.nearest_mandi}:</span>
-                <span className="font-extrabold text-emerald-400">₹{(report.current_price_per_quintal / 100).toFixed(1)} / kg</span>
-              </div>
-
-              <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex justify-between items-center text-xs">
-                <span className="text-slate-300 font-bold">Regional APMC Mandi:</span>
-                <span className="font-extrabold text-teal-300">₹{(report.current_price_per_quintal / 100 * 1.1).toFixed(1)} / kg</span>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Mandi Price Line Chart */}
-          <div className="lg:col-span-2 bg-slate-900/60 p-6 rounded-3xl border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider">
-                  Price Trend & 7-Day Prediction Chart (₹/Quintal)
-                </h3>
-                <p className="text-xs text-slate-400">Green dots show projected price increase in 3 days</p>
-              </div>
-              <span className="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                {report.price_trend} Trend
-              </span>
-            </div>
-
-            <div className="h-64 w-full pt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis dataKey="date" stroke="#64748b" fontSize={11} />
-                  <YAxis stroke="#64748b" fontSize={11} domain={['auto', 'auto']} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#090d16', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
-                    itemStyle={{ color: '#10b981' }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="price"
-                    stroke="#10b981"
-                    strokeWidth={3}
-                    dot={{ fill: '#10b981', r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
+      {/* Harvest Recommendation Banner */}
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-emerald-950/90 to-slate-900 border-2 border-emerald-500/40 space-y-3 shadow-xl">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">
+            {t('market.harvestAdviceTitle')}
+          </span>
+          <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            {marketData.forecast_change_pct}
+          </span>
         </div>
-      ) : null}
+        <h3 className="text-xl sm:text-2xl font-black text-slate-100">
+          {marketData.recommendation}
+        </h3>
+        <p className="text-xs text-slate-300 font-bold leading-relaxed">
+          {t('market.waitAdvice')}
+        </p>
+      </div>
+
+      {/* Mandi Price Comparison List */}
+      <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4">
+        <h3 className="text-sm font-black text-slate-200 uppercase tracking-wider">
+          {t('market.priceComparisonTitle')}
+        </h3>
+
+        <div className="space-y-3">
+          {marketData.comparison.map((c, idx) => (
+            <div
+              key={idx}
+              className={`p-4 rounded-2xl border flex items-center justify-between transition-all ${
+                idx === 2
+                  ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300 font-black'
+                  : 'bg-slate-950 border-slate-800 text-slate-200 font-bold'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-emerald-400" />
+                <span>{c.location}</span>
+              </div>
+              <div className="text-lg font-black">
+                {c.net}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

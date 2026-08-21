@@ -127,6 +127,7 @@ class CopilotChatRequest(BaseModel):
     language: str = "English"
     field_id: Optional[str] = "field_01"
     audio_base64: Optional[str] = None
+    farmer_profile: Optional[Dict[str, Any]] = None
 
 class CopilotChatResponse(BaseModel):
     answer: str

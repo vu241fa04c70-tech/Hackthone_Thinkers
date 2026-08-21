@@ -1,89 +1,99 @@
 import React from 'react';
-import { Globe, Check, Sparkles, Volume2 } from 'lucide-react';
+import { Check, Sparkles, Volume2, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../localization/LanguageContext';
+import { speakText } from '../utils/voiceUtils';
 
-export default function LanguageSelectionScreen({ selectedLang, onSelectLanguage, onClose }) {
+export default function LanguageSelectionScreen({ onConfirm }) {
+  const { lang, setLanguage, t } = useLanguage();
+
   const languages = [
-    { id: 'te', label: 'తెలుగు (Telugu)', subLabel: 'ముఖ్య భాష (Default)', flag: '🇮🇳' },
-    { id: 'hi', label: 'हिंदी (Hindi)', subLabel: 'उत्तर भारत', flag: '🇮🇳' },
-    { id: 'en', label: 'English', subLabel: 'Global', flag: '🌐' }
+    { id: 'te', mainLabel: 'తెలుగు', subLabel: 'Telugu', flag: '🌾' },
+    { id: 'hi', mainLabel: 'हिन्दी', subLabel: 'Hindi', flag: '🇮🇳' },
+    { id: 'en', mainLabel: 'English', subLabel: 'English', flag: '🌐' }
   ];
 
-  const speakText = (text, lang) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      if (lang === 'te') u.lang = 'te-IN';
-      else if (lang === 'hi') u.lang = 'hi-IN';
-      else u.lang = 'en-US';
-      window.speechSynthesis.speak(u);
-    }
+  const handleSelect = (lId) => {
+    setLanguage(lId);
+    speakText(
+      lId === 'te' 
+        ? 'తెలుగు భాష ఎంచుకున్నారు. నమస్కారం!' 
+        : (lId === 'hi' ? 'हिंदी भाषा चुनी गई।' : 'English language selected.'),
+      lId
+    );
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
-      <div className="bg-slate-900 border-2 border-emerald-500 p-6 sm:p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-6">
+    <div className="min-h-screen bg-[#070a12] text-slate-100 flex items-center justify-center p-4 sm:p-6 selection:bg-emerald-500 selection:text-slate-950 font-['Plus_Jakarta_Sans',sans-serif]">
+      <div className="bg-slate-900/90 border-2 border-emerald-500/50 p-6 sm:p-10 rounded-3xl max-w-lg w-full shadow-2xl space-y-8 backdrop-blur-xl">
         
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-3xl mx-auto">
+        {/* Title & Subtitle */}
+        <div className="text-center space-y-3">
+          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 border border-emerald-400/40 flex items-center justify-center text-4xl mx-auto shadow-xl shadow-emerald-500/20">
             🌾
           </div>
-          <h2 className="text-2xl font-black text-slate-100">కిసాన్ మిత్ర (Kisan Mitra)</h2>
-          <p className="text-sm font-bold text-emerald-400">
-            దయచేసి మీ భాషను ఎంచుకోండి / Select Language
+          <h1 className="text-3xl font-black text-slate-100 tracking-tight">
+            🌾 Kisan Mitra
+          </h1>
+          <p className="text-base font-bold text-emerald-400">
+            Your AI farming companion
+          </p>
+          <div className="h-0.5 w-16 bg-emerald-500/40 mx-auto rounded-full my-2"></div>
+          <p className="text-lg font-black text-slate-200">
+            Choose your language
           </p>
         </div>
 
-        {/* Language Options List */}
-        <div className="space-y-3">
+        {/* 3 Large Language Cards */}
+        <div className="space-y-4">
           {languages.map((l) => {
-            const isSelected = selectedLang === l.id;
+            const isSelected = lang === l.id;
             return (
               <button
                 key={l.id}
-                onClick={() => {
-                  onSelectLanguage(l.id);
-                  speakText(l.id === 'te' ? 'తెలుగు భాష ఎంచుకున్నారు. నమస్కారం!' : 'Language selected.', l.id);
-                }}
-                className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${
+                onClick={() => handleSelect(l.id)}
+                className={`w-full p-5 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${
                   isSelected
-                    ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-lg shadow-emerald-500/20 scale-[1.02]'
-                    : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                    ? 'bg-gradient-to-r from-emerald-950/90 to-teal-950/90 border-emerald-500 text-emerald-300 shadow-xl shadow-emerald-500/20 scale-[1.02]'
+                    : 'bg-slate-950/90 border-slate-800 text-slate-300 hover:border-slate-700'
                 }`}
               >
-                <div className="flex items-center gap-3 text-left">
-                  <span className="text-2xl">{l.flag}</span>
+                <div className="flex items-center gap-4 text-left">
+                  <span className="text-3xl">{l.flag}</span>
                   <div>
-                    <div className="text-base font-black">{l.label}</div>
-                    <div className="text-xs font-semibold text-slate-400">{l.subLabel}</div>
+                    <div className="text-xl font-black">{l.mainLabel}</div>
+                    <div className="text-xs font-bold text-slate-400">{l.subLabel}</div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      speakText(l.label, l.id);
+                      speakText(l.mainLabel, l.id);
                     }}
-                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400"
+                    className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800"
+                    title="Listen voice preview"
                   >
-                    <Volume2 className="w-4 h-4" />
+                    <Volume2 className="w-5 h-5" />
                   </button>
-                  {isSelected && <Check className="w-5 h-5 text-emerald-400 font-extrabold" />}
+                  {isSelected && (
+                    <div className="w-7 h-7 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-black shrink-0">
+                      <Check className="w-5 h-5" />
+                    </div>
+                  )}
                 </div>
               </button>
             );
           })}
         </div>
 
-        {/* Action Button */}
+        {/* Continue -> Button */}
         <button
-          onClick={onClose}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-black text-lg shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2 cursor-pointer"
+          onClick={onConfirm}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-black text-xl shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2 cursor-pointer transition-transform hover:scale-[1.02]"
         >
-          <Sparkles className="w-5 h-5 fill-slate-950" />
-          {selectedLang === 'te' ? 'యాప్‌లోకి వెళ్లండి ➔' : (selectedLang === 'hi' ? 'ऐप शुरू करें ➔' : 'Continue to App ➔')}
+          <span>Continue →</span>
         </button>
 
       </div>

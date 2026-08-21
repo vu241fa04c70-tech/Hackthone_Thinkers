@@ -1,88 +1,112 @@
 import React, { useState, useEffect } from 'react';
-import { Mic, MicOff, Send, Volume2, Bot, User, Sparkles, CheckCircle2, Globe, Cpu, ArrowRight } from 'lucide-react';
+import { Mic, MicOff, Send, Volume2, Bot, User, Sparkles, CheckCircle2, Cpu, Square } from 'lucide-react';
+import { useLanguage } from '../localization/LanguageContext';
+import { speakText, stopSpeech, startSpeechRecognition } from '../utils/voiceUtils';
 
 export default function FarmCopilot({ activeField }) {
-  const [messages, setMessages] = useState([
-    {
-      sender: 'bot',
-      text: `Namaste! I am your AI Farm Copilot for ${activeField?.name || 'your farm'}. I synthesize weather, crop vision, soil NPK, and mandi market prices. Speak or type your query in your local language!`,
-      agents: ['WeatherAgent', 'MarketAgent', 'SoilIrrigationAgent'],
-      actions: ['Scan crop leaf photo', 'Check "Should I Harvest Now?"', 'View soil NPK advice']
-    }
-  ]);
+  const { lang, t } = useLanguage();
 
-  const [inputQuery, setInputQuery] = useState('');
-  const [language, setLanguage] = useState('English');
-  const [isRecording, setIsRecording] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [speakingIdx, setSpeakingIdx] = useState(null);
-
-  const languages = ['English', 'Hindi', 'Telugu', 'Tamil', 'Kannada', 'Marathi'];
-
-  const quickPrompts = [
-    "My tomato leaves are turning yellow with brown spots",
-    "Should I harvest my crop now or wait 3 days?",
-    "How much urea fertilizer should I apply for drip fertigation?",
-    "टमाटर की फसल में सड़न से कैसे बचाएं?",
-    "మండీలో ధరలు ఎప్పుడు పెరుగుతాయి?"
-  ];
-
-  // Speech synthesis handle
-  const speakText = (text, idx) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      if (speakingIdx === idx) {
-        setSpeakingIdx(null);
-        return;
-      }
-      const utterance = new SpeechSynthesisUtterance(text);
-      if (language === 'Hindi') utterance.lang = 'hi-IN';
-      else if (language === 'Telugu') utterance.lang = 'te-IN';
-      else if (language === 'Tamil') utterance.lang = 'ta-IN';
-      else if (language === 'Kannada') utterance.lang = 'kn-IN';
-      else utterance.lang = 'en-US';
-      
-      utterance.onend = () => setSpeakingIdx(null);
-      utterance.onerror = () => setSpeakingIdx(null);
-      setSpeakingIdx(idx);
-      window.speechSynthesis.speak(utterance);
+  const getQuickPrompts = () => {
+    if (lang === 'te') {
+      return [
+        "నా టమాటా ఆకులు పసుపు రంగులోకి మారుతున్నాయి. ఏం చేయాలి?",
+        "ఈరోజు వర్షం పడుతుందా?",
+        "పంట కోయవచ్చా లేక 3 రోజులు ఆగాలా?",
+        "ఎకరానికి ఎంత Urea ఎరువు వేయాలి?",
+        "ప్రభుత్వ ఫసల్ బీమా యోజన అర్హతలు ఏంటి?"
+      ];
+    } else if (lang === 'hi') {
+      return [
+        "मेरी टमाटर की पत्तियां पीली हो रही हैं",
+        "क्या आज बारिश होगी?",
+        "क्या अभी फसल काटें या 3 दिन रुकें?",
+        "यूरिया खाद कितनी मात्रा में डालें?"
+      ];
+    } else {
+      return [
+        "My tomato leaves are turning yellow with brown spots",
+        "Should I harvest my crop now or wait 3 days?",
+        "How much urea fertilizer should I apply for drip fertigation?",
+        "What are PM Fasal Bima Yojana crop insurance details?"
+      ];
     }
   };
 
-  // Browser Web Speech API for Mic
+  const [messages, setMessages] = useState([]);
+  const [inputQuery, setInputQuery] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [voiceState, setVoiceState] = useState('idle'); // idle, listening, processing, speaking, error
+  const [speakingIdx, setSpeakingIdx] = useState(null);
+
+  useEffect(() => {
+    const welcome = lang === 'te'
+      ? `నమస్కారం రమేష్ గారూ! నేను మీ డిజిటల్ కిసాన్ మిత్రుడిని. మీ పంట గురించి ఏదైనా అడగండి — వాతావరణం, ఆకుల మచ్చలు, ఎరువులు లేదా మండీ ధరల గురించి మైక్ నొక్కి మాట్లాడండి!`
+      : (lang === 'hi'
+        ? `नमस्ते रमेश भाई! मैं आपका डिजिटल किसान मित्र हूँ। अपने खेत के बारे में कुछ भी पूछें — मौसम, खाद या मंडी भाव के बारे में बोलें!`
+        : `Namaste Ramesh Bhai! I am your AI Farm Copilot. Press the mic and ask anything about crop diseases, fertilizers, weather, or mandi prices!`);
+
+    setMessages([
+      {
+        sender: 'bot',
+        text: welcome,
+        agents: ['WeatherAgent', 'MarketAgent', 'SoilIrrigationAgent'],
+        actions: lang === 'te' 
+          ? ['ఆకు ఫోటో స్కాన్ చేయండి', 'మండీ ధరలు చూడండి', 'ఎరువుల సలహా వినండి']
+          : ['Scan crop leaf photo', 'Check market prices', 'View soil NPK advice']
+      }
+    ]);
+  }, [lang, activeField]);
+
+  const handleSpeak = (text, idx) => {
+    if (speakingIdx === idx) {
+      stopSpeech();
+      setSpeakingIdx(null);
+      setVoiceState('idle');
+      return;
+    }
+
+    setVoiceState('speaking');
+    setSpeakingIdx(idx);
+    speakText(
+      text,
+      lang,
+      () => setVoiceState('speaking'),
+      () => {
+        setSpeakingIdx(null);
+        setVoiceState('idle');
+      },
+      () => {
+        setSpeakingIdx(null);
+        setVoiceState('error');
+      }
+    );
+  };
+
   const toggleRecording = () => {
     if (isRecording) {
       setIsRecording(false);
+      setVoiceState('idle');
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert('Speech recognition is not supported in this browser. You can type your query below!');
-      return;
-    }
+    setVoiceState('listening');
+    setIsRecording(true);
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    if (language === 'Hindi') recognition.lang = 'hi-IN';
-    else if (language === 'Telugu') recognition.lang = 'te-IN';
-    else if (language === 'Tamil') recognition.lang = 'ta-IN';
-    else if (language === 'Kannada') recognition.lang = 'kn-IN';
-    else recognition.lang = 'en-US';
-
-    recognition.onstart = () => setIsRecording(true);
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setInputQuery(transcript);
-      setIsRecording(false);
-      handleSend(transcript);
-    };
-    recognition.onerror = () => setIsRecording(false);
-    recognition.onend = () => setIsRecording(false);
-
-    recognition.start();
+    startSpeechRecognition(
+      lang,
+      (transcript) => {
+        setInputQuery(transcript);
+        setIsRecording(false);
+        setVoiceState('processing');
+        handleSend(transcript);
+      },
+      (err) => {
+        setIsRecording(false);
+        setVoiceState('error');
+      },
+      () => setIsRecording(false)
+    );
   };
 
   const handleSend = async (queryText) => {
@@ -93,6 +117,13 @@ export default function FarmCopilot({ activeField }) {
     setMessages(prev => [...prev, userMsg]);
     setInputQuery('');
     setIsLoading(true);
+    setVoiceState('processing');
+
+    const savedProfile = localStorage.getItem('kisan_farmer_profile');
+    let profileObj = null;
+    if (savedProfile) {
+      try { profileObj = JSON.parse(savedProfile); } catch (e) {}
+    }
 
     try {
       const res = await fetch('/api/copilot/chat', {
@@ -100,66 +131,87 @@ export default function FarmCopilot({ activeField }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query: textToSubmit,
-          language: language,
-          field_id: activeField?.field_id || 'field_01'
+          language: lang === 'te' ? 'Telugu' : (lang === 'hi' ? 'Hindi' : 'English'),
+          field_id: activeField?.field_id || 'field_01',
+          farmer_profile: profileObj
         })
       });
       const data = await res.json();
       
+      const newIdx = messages.length + 1;
       const botMsg = {
         sender: 'bot',
         text: data.answer,
         agents: data.source_agents_consulted || ['OrchestratorAgent'],
         actions: data.suggested_actions || []
       };
+      
       setMessages(prev => [...prev, botMsg]);
+
+      // AUTO-SPEAK RESPONSE (Requirement #3 & #7 & #8)
+      setTimeout(() => {
+        handleSpeak(data.answer, newIdx);
+      }, 300);
+
     } catch (err) {
-      setMessages(prev => [...prev, {
+      const fallbackText = lang === 'te'
+        ? `🌾 సమాధానం:\nటమాటా ఆకులపై పసుపు మచ్చలు లేదా ఎండు తెగులు లక్షణాలు ఉన్నాయి.\n\n✅ ప్రస్తుతం చేయాల్సిన పని:\n48 గంటలలోపు Mancozeb 75% WP మందు పిచికారీ చేయండి.\n\n📌 ముఖ్య గమనిక:\n1 లీటరు నీటికి 2 స్పూన్లు (ఎకరానికి 600 గ్రాములు) వాడండి.\n\n⚠️ నివారించాల్సినవి:\nవర్షం పడే ముందు మందు కొట్టవద్దు.`
+        : `🌾 Answer:\nTomato leaves show early blight spots.\n\n✅ Action Now:\nSpray Mancozeb 75% WP within 48 hours.\n\n📌 Note:\nDosage: 2 spoons per 1 liter water.\n\n⚠️ Avoid:\nDo not spray right before rain.`;
+      
+      const botMsg = {
         sender: 'bot',
-        text: `Consulting Multi-Agent Brain: For ${activeField?.crop_type || 'Tomato'}, apply Mancozeb 75% WP spray due to high rain humidity forecast. Mandi prices projected to rise +12% in 3 days.`,
-        agents: ['WeatherAgent', 'CropVisionAgent', 'MarketAgent'],
-        actions: ['Spray Mancozeb 75% WP', 'Harvest in 3 days']
-      }]);
+        text: fallbackText,
+        agents: ['SoilIrrigationAgent', 'CropVisionAgent'],
+        actions: lang === 'te' ? ['మందు వివరాలు', 'మండీ ధరలు'] : ['Spray info', 'Check prices']
+      };
+      
+      setMessages(prev => [...prev, botMsg]);
+      setTimeout(() => {
+        handleSpeak(fallbackText, messages.length + 1);
+      }, 300);
+
     } finally {
       setIsLoading(false);
     }
   };
 
+  const getVoiceStateLabel = () => {
+    switch (voiceState) {
+      case 'listening': return t('voiceAssistant.listening');
+      case 'processing': return t('voiceAssistant.processing');
+      case 'speaking': return t('voiceAssistant.speaking');
+      case 'error': return t('voiceAssistant.error');
+      default: return t('voiceAssistant.idle');
+    }
+  };
+
+  const quickPrompts = getQuickPrompts();
+
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)] bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
-      {/* Copilot Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/80">
+    <div className="flex flex-col h-[calc(100vh-12rem)] bg-slate-900/90 backdrop-blur-xl border-2 border-emerald-500/40 rounded-3xl overflow-hidden shadow-2xl">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-emerald-500/20">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
             <Bot className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="font-bold text-slate-100 flex items-center gap-2">
-              Conversational Farm Copilot
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
-                Multi-Lingual Voice AI
+            <h2 className="font-black text-slate-100 flex items-center gap-2 text-base">
+              {t('voiceAssistant.title')}
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-extrabold">
+                {lang === 'te' ? 'తెలుగు వాయిస్' : lang.toUpperCase()}
               </span>
             </h2>
-            <p className="text-xs text-slate-400">
-              Active Field: <span className="text-emerald-400 font-medium">{activeField?.name || 'Green Acres - Tomato'}</span> ({activeField?.location || 'Nashik'})
+            <p className="text-xs text-slate-400 font-bold">
+              {t('voiceAssistant.instruct')}
             </p>
           </div>
         </div>
 
-        {/* Language selector */}
-        <div className="flex items-center gap-2 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800">
-          <Globe className="w-4 h-4 text-emerald-400 ml-1" />
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="bg-transparent text-xs font-semibold text-slate-200 outline-none cursor-pointer pr-2"
-          >
-            {languages.map(lang => (
-              <option key={lang} value={lang} className="bg-slate-900 text-slate-200">
-                {lang}
-              </option>
-            ))}
-          </select>
+        {/* Voice State Badge (Requirement #7 & #10) */}
+        <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-emerald-400 flex items-center gap-2">
+          <span className={`w-2.5 h-2.5 rounded-full ${voiceState === 'listening' ? 'bg-rose-500 animate-ping' : (voiceState === 'speaking' ? 'bg-emerald-400 animate-pulse' : 'bg-teal-400')}`}></span>
+          <span>{getVoiceStateLabel()}</span>
         </div>
       </div>
 
@@ -171,26 +223,26 @@ export default function FarmCopilot({ activeField }) {
             className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             {msg.sender === 'bot' && (
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-1">
-                <Bot className="w-4 h-4" />
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-1">
+                <Bot className="w-5 h-5" />
               </div>
             )}
 
-            <div className={`max-w-2xl rounded-2xl p-4 shadow-lg ${
+            <div className={`max-w-2xl rounded-3xl p-5 shadow-xl ${
               msg.sender === 'user'
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-tr-none'
-                : 'bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-tl-none'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-tr-none font-bold text-base'
+                : 'bg-slate-950 border-2 border-slate-800 text-slate-100 rounded-tl-none'
             }`}>
-              <p className="text-sm leading-relaxed whitespace-pre-line font-medium">{msg.text}</p>
+              <p className="text-base sm:text-lg leading-relaxed whitespace-pre-line font-black">{msg.text}</p>
 
               {/* Bot Source Agents consult tags */}
               {msg.sender === 'bot' && msg.agents && msg.agents.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-slate-700/50 flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold flex items-center gap-1">
+                <div className="mt-3 pt-3 border-t border-slate-800 flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] text-slate-400 uppercase font-black flex items-center gap-1">
                     <Cpu className="w-3 h-3 text-emerald-400" /> Consulted Agents:
                   </span>
                   {msg.agents.map((agent, aIdx) => (
-                    <span key={aIdx} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-900/90 text-teal-300 border border-teal-500/30">
+                    <span key={aIdx} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-900 text-teal-300 border border-teal-500/30 font-bold">
                       {agent}
                     </span>
                   ))}
@@ -204,7 +256,7 @@ export default function FarmCopilot({ activeField }) {
                     <button
                       key={actIdx}
                       onClick={() => handleSend(act)}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 transition-all cursor-pointer"
+                      className="text-xs px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 transition-all cursor-pointer font-bold"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       {act}
@@ -213,23 +265,25 @@ export default function FarmCopilot({ activeField }) {
                 </div>
               )}
 
-              {/* Text-to-speech button */}
+              {/* Text-to-speech button (Requirement #7 & #8) */}
               {msg.sender === 'bot' && (
                 <button
-                  onClick={() => speakText(msg.text, idx)}
-                  className={`mt-2 text-xs flex items-center gap-1.5 px-2 py-1 rounded hover:bg-slate-700/50 transition-colors ${
-                    speakingIdx === idx ? 'text-emerald-400 font-semibold' : 'text-slate-400'
+                  onClick={() => handleSpeak(msg.text, idx)}
+                  className={`mt-3 text-xs flex items-center gap-1.5 px-4 py-2 rounded-xl border transition-colors cursor-pointer ${
+                    speakingIdx === idx 
+                      ? 'bg-emerald-500 text-slate-950 font-black border-emerald-400 animate-pulse' 
+                      : 'bg-slate-900 text-slate-200 border-slate-800 hover:text-emerald-400 font-black'
                   }`}
                 >
-                  <Volume2 className={`w-3.5 h-3.5 ${speakingIdx === idx ? 'animate-pulse' : ''}`} />
-                  {speakingIdx === idx ? 'Speaking...' : 'Listen in Audio'}
+                  {speakingIdx === idx ? <Square className="w-3.5 h-3.5 fill-current" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-400" />}
+                  {speakingIdx === idx ? (lang === 'te' ? 'వాయిస్ ప్లే అవుతోంది...' : 'Speaking...') : t('voiceAssistant.listenAudio')}
                 </button>
               )}
             </div>
 
             {msg.sender === 'user' && (
-              <div className="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400 shrink-0 mt-1">
-                <User className="w-4 h-4" />
+              <div className="w-10 h-10 rounded-2xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400 shrink-0 mt-1">
+                <User className="w-5 h-5" />
               </div>
             )}
           </div>
@@ -237,45 +291,46 @@ export default function FarmCopilot({ activeField }) {
 
         {isLoading && (
           <div className="flex gap-3 justify-start">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 animate-pulse">
-              <Bot className="w-4 h-4" />
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 animate-pulse">
+              <Bot className="w-5 h-5" />
             </div>
-            <div className="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 text-xs text-slate-300 flex items-center gap-2">
+            <div className="bg-slate-950 border border-slate-800 rounded-3xl p-5 text-sm text-slate-300 flex items-center gap-2 font-bold">
               <Sparkles className="w-4 h-4 text-emerald-400 animate-spin" />
-              Synthesizing domain agents (Vision + Weather + Market + Soil)...
+              {t('voiceAssistant.processing')}
             </div>
           </div>
         )}
       </div>
 
       {/* Quick Prompts Bar */}
-      <div className="px-6 py-2 bg-slate-950/40 border-t border-slate-800/50 overflow-x-auto flex gap-2 no-scrollbar">
-        <span className="text-xs text-slate-400 flex items-center shrink-0 gap-1">
-          <Sparkles className="w-3 h-3 text-amber-400" /> Quick Prompts:
+      <div className="px-6 py-2.5 bg-slate-950 border-t border-slate-800 overflow-x-auto flex gap-2 no-scrollbar">
+        <span className="text-xs text-slate-400 flex items-center shrink-0 gap-1 font-bold">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          {lang === 'te' ? 'ఉదాహరణలు:' : 'Quick Prompts:'}
         </span>
         {quickPrompts.map((qp, idx) => (
           <button
             key={idx}
             onClick={() => handleSend(qp)}
-            className="text-xs shrink-0 px-3 py-1 rounded-full bg-slate-800/60 hover:bg-slate-800 text-slate-300 border border-slate-700/50 transition-all cursor-pointer hover:border-emerald-500/40"
+            className="text-xs shrink-0 px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 font-extrabold transition-all cursor-pointer hover:border-emerald-500/40"
           >
             {qp}
           </button>
         ))}
       </div>
 
-      {/* Input Box */}
-      <div className="p-4 bg-slate-900 border-t border-slate-800 flex items-center gap-3">
+      {/* Input Box with Push-to-Talk Mic */}
+      <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center gap-3">
         <button
           onClick={toggleRecording}
-          className={`p-3 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+          className={`p-4 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
             isRecording
-              ? 'bg-rose-500 text-white animate-bounce shadow-lg shadow-rose-500/30'
-              : 'bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700'
+              ? 'bg-rose-500 text-white animate-bounce shadow-xl shadow-rose-500/30'
+              : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black shadow-lg shadow-emerald-500/20'
           }`}
-          title="Click to speak (Voice Input)"
+          title={t('voiceAssistant.idle')}
         >
-          {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
         </button>
 
         <input
@@ -283,16 +338,16 @@ export default function FarmCopilot({ activeField }) {
           value={inputQuery}
           onChange={(e) => setInputQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          placeholder={`Ask anything about ${activeField?.crop_type || 'crop'} health, weather, fertilizers, or market prices in ${language}...`}
-          className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+          placeholder={lang === 'te' ? 'తెలుగులో మాట్లాడండి లేదా టైప్ చేయండి...' : 'Speak or type here...'}
+          className="flex-1 bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3.5 text-base font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
         />
 
         <button
           onClick={() => handleSend()}
           disabled={!inputQuery.trim() || isLoading}
-          className="px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+          className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black flex items-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50 cursor-pointer text-base"
         >
-          <span>Send</span>
+          <span>{lang === 'te' ? 'పంపండి' : 'Send'}</span>
           <Send className="w-4 h-4" />
         </button>
       </div>

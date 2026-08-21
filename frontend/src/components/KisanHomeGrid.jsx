@@ -1,215 +1,163 @@
-import React, { useState, useEffect } from 'react';
-import { Camera, CloudRain, DollarSign, Mic, Volume2, Sparkles, AlertCircle, ArrowRight, Play, Square, PhoneCall } from 'lucide-react';
+import React, { useState } from 'react';
+import { Camera, Sun, TrendingUp, Mic, Volume2, Scroll, Calendar, Sparkles } from 'lucide-react';
+import { useLanguage } from '../localization/LanguageContext';
+import { speakText, stopSpeech } from '../utils/voiceUtils';
 
 export default function KisanHomeGrid({ profile, onSelectAction }) {
-  const [briefing, setBriefing] = useState(null);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const { lang, t } = useLanguage();
+  const [isPlayingBriefing, setIsPlayingBriefing] = useState(false);
 
-  useEffect(() => {
-    fetchBriefing();
-  }, [profile]);
-
-  const fetchBriefing = async () => {
-    try {
-      const farmerName = profile?.farmer_name || 'Ramesh Bhai';
-      const lang = profile?.language || 'Hindi';
-      const res = await fetch(`/api/agents/morning-briefing?farmer_name=${encodeURIComponent(farmerName)}&language=${lang}`);
-      const data = await res.json();
-      setBriefing(data);
-    } catch (err) {
-      console.error(err);
+  const toggleBriefing = () => {
+    if (isPlayingBriefing) {
+      stopSpeech();
+      setIsPlayingBriefing(false);
+      return;
     }
+
+    const briefingText = lang === 'te'
+      ? `నమస్కారం రమేష్ గారూ! ఈ రోజు మీ టమాటా తోట గురించిన ఉదయం సమాచారం: ఈ రోజు మధ్యాహ్నం 2 గంటలకు వర్షం పడే అవకాశం ఉంది, కాబట్టి మందు కొట్టడం మరియు నీటి పారుదల ఆపండి. మండీలో టమాటా ధర రూ. 24.50/కిలో ఉంది, 3 రోజులు ఆగితే ధర పెరుగుతుంది.`
+      : (lang === 'hi'
+        ? `नमस्ते रमेश भाई! आज दोपहर 2 बजे बारिश का अनुमान है। आज छिड़काव और सिंचाई रोक दें। टमाटर का भाव ₹24.50 है, 3 दिन बाद बेचें।`
+        : `Good Morning Ramesh Bhai! Today rain is expected at 2 PM. Avoid spraying pesticides and pause drip irrigation. Tomato price is ₹24.50/kg, hold 3 days for higher price.`);
+
+    setIsPlayingBriefing(true);
+    speakText(
+      briefingText,
+      lang,
+      () => setIsPlayingBriefing(true),
+      () => setIsPlayingBriefing(false),
+      () => setIsPlayingBriefing(false)
+    );
   };
 
-  const playAudioScript = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      if (isPlayingAudio) {
-        setIsPlayingAudio(false);
-        return;
-      }
-      const u = new SpeechSynthesisUtterance(text);
-      const lang = profile?.language || 'Hindi';
-      if (lang === 'Hindi') u.lang = 'hi-IN';
-      else if (lang === 'Telugu') u.lang = 'te-IN';
-      else if (lang === 'Marathi') u.lang = 'mr-IN';
-      else u.lang = 'en-US';
-
-      u.onend = () => setIsPlayingAudio(false);
-      u.onerror = () => setIsPlayingAudio(false);
-
-      setIsPlayingAudio(true);
-      window.speechSynthesis.speak(u);
+  const cards = [
+    {
+      id: 'doctor',
+      title: t('home.card1Title'),
+      subtitle: t('home.card1Sub'),
+      btnText: t('home.card1Btn'),
+      icon: Camera,
+      badge: lang === 'te' ? 'వ్యాధి స్కాన్' : 'Vision AI',
+      color: 'from-amber-500/20 to-orange-500/10 border-amber-500/40 text-amber-400'
+    },
+    {
+      id: 'weather',
+      title: t('home.card2Title'),
+      subtitle: t('home.card2Sub'),
+      btnText: t('home.card2Btn'),
+      icon: Sun,
+      badge: lang === 'te' ? 'మధ్యాహ్నం వర్షం' : 'Rain Alert',
+      color: 'from-sky-500/20 to-blue-500/10 border-sky-500/40 text-sky-400'
+    },
+    {
+      id: 'market',
+      title: t('home.card3Title'),
+      subtitle: t('home.card3Sub'),
+      btnText: t('home.card3Btn'),
+      icon: TrendingUp,
+      badge: lang === 'te' ? '₹24.50/కిలో' : '₹24.50/kg',
+      color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/40 text-emerald-400'
+    },
+    {
+      id: 'copilot',
+      title: t('home.card4Title'),
+      subtitle: t('home.card4Sub'),
+      btnText: t('home.card4Btn'),
+      icon: Mic,
+      badge: lang === 'te' ? 'తెలుగు వాయిస్' : 'Voice AI',
+      color: 'from-purple-500/20 to-indigo-500/10 border-purple-500/40 text-purple-400'
+    },
+    {
+      id: 'schemes',
+      title: t('home.card5Title'),
+      subtitle: t('home.card5Sub'),
+      btnText: t('home.card5Btn'),
+      icon: Scroll,
+      badge: lang === 'te' ? 'PM-Kisan' : 'Govt Schemes',
+      color: 'from-pink-500/20 to-rose-500/10 border-pink-500/40 text-pink-400'
+    },
+    {
+      id: 'calendar',
+      title: t('home.card6Title'),
+      subtitle: t('home.card6Sub'),
+      btnText: t('home.card6Btn'),
+      icon: Calendar,
+      badge: lang === 'te' ? 'పనుల జాబితా' : 'Calendar',
+      color: 'from-teal-500/20 to-cyan-500/10 border-teal-500/40 text-teal-400'
     }
-  };
+  ];
 
   return (
     <div className="space-y-6">
-      
-      {/* 🌅 7 AM Daily WhatsApp Voice Audio Briefing Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-teal-950/60 border border-emerald-500/40 shadow-2xl relative overflow-hidden space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 text-2xl">
-              🌅
-            </div>
-            <div>
-              <div className="text-xs text-emerald-400 font-extrabold uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" /> Daily WhatsApp Audio Briefing (7 AM)
-              </div>
-              <h2 className="text-xl font-black text-slate-100 mt-0.5">
-                {briefing?.greeting || `Namaste ${profile?.farmer_name || 'Ramesh'}!`}
-              </h2>
-            </div>
+      {/* 7 AM WhatsApp Audio Briefing Bar (Requirement #9) */}
+      <div className="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-teal-950/80 border-2 border-emerald-500/40 p-6 rounded-3xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-4 text-center sm:text-left">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 text-2xl">
+            🌅
           </div>
-
-          <button
-            onClick={() => playAudioScript(briefing?.voice_script || 'Good morning! Rain expected at 2 PM today. Hold irrigation and market harvest for 3 days.')}
-            className={`px-5 py-3 rounded-2xl font-extrabold text-sm flex items-center gap-2 transition-all cursor-pointer shadow-lg ${
-              isPlayingAudio
-                ? 'bg-rose-500 text-white animate-pulse shadow-rose-500/30'
-                : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20'
-            }`}
-          >
-            {isPlayingAudio ? <Square className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current" />}
-            <span>{isPlayingAudio ? 'Pause Audio' : '🔊 Listen Daily Audio Briefing'}</span>
-          </button>
+          <div>
+            <span className="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-black border border-emerald-500/30">
+              {t('home.briefingTitle')}
+            </span>
+            <h2 className="text-xl font-black text-slate-100 mt-1">
+              {lang === 'te' ? 'నమస్కారం రమేష్ గారూ! 🌅 (టమాటా సాగు)' : (lang === 'hi' ? 'नमस्ते रमेश भाई! 🌅' : 'Good Morning Ramesh Bhai! 🌅')}
+            </h2>
+            <p className="text-xs text-slate-300 font-bold mt-0.5">
+              {lang === 'te' 
+                ? '⚠️ ఈ రోజు మధ్యాహ్నం 2 గంటలకు వర్షం • 3 రోజుల తర్వాత మండీ అమ్మకం చేయండి' 
+                : '⚠️ Rain expected at 2 PM today • Hold 3 days to harvest for max profit'}
+            </p>
+          </div>
         </div>
 
-        {/* Action Bullet Points */}
-        {briefing && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-800/80">
-            {briefing.key_action_points.map((act, idx) => (
-              <div key={idx} className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/80 flex items-start gap-2">
-                <span className="text-emerald-400 font-bold shrink-0">✅</span>
-                <span className="text-xs font-bold text-slate-200 leading-relaxed">{act}</span>
+        <button
+          onClick={toggleBriefing}
+          className={`w-full sm:w-auto px-6 py-4 rounded-2xl text-sm font-black flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xl ${
+            isPlayingBriefing
+              ? 'bg-rose-500 text-white animate-pulse shadow-rose-500/30'
+              : 'bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-emerald-500/30 hover:scale-[1.03]'
+          }`}
+        >
+          <Volume2 className="w-5 h-5" />
+          <span>{isPlayingBriefing ? t('home.pauseBriefing') : t('home.listenBriefing')}</span>
+        </button>
+      </div>
+
+      {/* 6 Major Farmer Cards Grid (Requirement #6) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {cards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <button
+              key={card.id}
+              onClick={() => onSelectAction(card.id)}
+              className={`p-6 rounded-3xl border-2 bg-gradient-to-br ${card.color} text-left transition-all hover:scale-[1.02] cursor-pointer shadow-xl flex flex-col justify-between space-y-4 group`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-14 h-14 rounded-2xl bg-slate-950/60 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Icon className="w-8 h-8" />
+                </div>
+                <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-950/80 border border-white/10 text-slate-200">
+                  {card.badge}
+                </span>
               </div>
-            ))}
-          </div>
-        )}
+
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-slate-100 tracking-tight">
+                  {card.title}
+                </h3>
+                <p className="text-xs sm:text-sm font-bold text-slate-300 mt-1 leading-relaxed">
+                  {card.subtitle}
+                </p>
+              </div>
+
+              <div className="pt-2 flex items-center text-xs font-black text-emerald-400 group-hover:translate-x-1 transition-transform">
+                <span>{card.btnText}</span>
+              </div>
+            </button>
+          );
+        })}
       </div>
-
-      {/* 4 Big Picture Action Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        
-        {/* Card 1: 📷 My Crop Photo */}
-        <button
-          onClick={() => onSelectAction('doctor')}
-          className="group relative p-8 rounded-3xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/60 shadow-xl transition-all duration-300 text-left flex flex-col justify-between h-64 overflow-hidden cursor-pointer"
-        >
-          <div className="flex items-start justify-between w-full">
-            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-              📷
-            </div>
-            <span className="text-xs font-bold text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
-              Disease Scan
-            </span>
-          </div>
-
-          <div>
-            <h3 className="text-2xl font-black text-slate-100 group-hover:text-emerald-300 transition-colors">
-              My Crop Photo
-            </h3>
-            <p className="text-xs text-slate-400 mt-1 font-medium">
-              Point camera at sick leaf → Get instant remedy & price in ₹
-            </p>
-          </div>
-
-          <div className="flex items-center text-xs font-extrabold text-emerald-400 gap-1.5 group-hover:translate-x-1 transition-transform">
-            <span>Scan Crop Leaf Now</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </button>
-
-        {/* Card 2: 🌤️ Weather Today */}
-        <button
-          onClick={() => onSelectAction('weather_simple')}
-          className="group relative p-8 rounded-3xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-sky-500/60 shadow-xl transition-all duration-300 text-left flex flex-col justify-between h-64 overflow-hidden cursor-pointer"
-        >
-          <div className="flex items-start justify-between w-full">
-            <div className="w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-              🌤️
-            </div>
-            <span className="text-xs font-bold text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20">
-              Village Weather
-            </span>
-          </div>
-
-          <div>
-            <h3 className="text-2xl font-black text-slate-100 group-hover:text-sky-300 transition-colors">
-              Weather Today
-            </h3>
-            <p className="text-xs text-slate-400 mt-1 font-medium">
-              {briefing?.weather_simple_advice || "⚠️ Rain at 2 PM: Don't spray pesticides today."}
-            </p>
-          </div>
-
-          <div className="flex items-center text-xs font-extrabold text-sky-400 gap-1.5 group-hover:translate-x-1 transition-transform">
-            <span>View Today's Rain Advisory</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </button>
-
-        {/* Card 3: 💰 Market Price */}
-        <button
-          onClick={() => onSelectAction('market')}
-          className="group relative p-8 rounded-3xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/60 shadow-xl transition-all duration-300 text-left flex flex-col justify-between h-64 overflow-hidden cursor-pointer"
-        >
-          <div className="flex items-start justify-between w-full">
-            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-              💰
-            </div>
-            <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
-              Mandi Prices
-            </span>
-          </div>
-
-          <div>
-            <h3 className="text-2xl font-black text-slate-100 group-hover:text-amber-300 transition-colors">
-              Market Price
-            </h3>
-            <p className="text-xs text-slate-400 mt-1 font-medium">
-              {briefing?.market_simple_advice || "💡 Hold 3 days: Price expected to rise to ₹27/kg!"}
-            </p>
-          </div>
-
-          <div className="flex items-center text-xs font-extrabold text-amber-400 gap-1.5 group-hover:translate-x-1 transition-transform">
-            <span>Check Mandi Price & Sell Timing</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </button>
-
-        {/* Card 4: 🎤 Ask Me Anything */}
-        <button
-          onClick={() => onSelectAction('copilot')}
-          className="group relative p-8 rounded-3xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-teal-500/60 shadow-xl transition-all duration-300 text-left flex flex-col justify-between h-64 overflow-hidden cursor-pointer"
-        >
-          <div className="flex items-start justify-between w-full">
-            <div className="w-16 h-16 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-              🎤
-            </div>
-            <span className="text-xs font-bold text-teal-400 bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">
-              Voice Assistant
-            </span>
-          </div>
-
-          <div>
-            <h3 className="text-2xl font-black text-slate-100 group-hover:text-teal-300 transition-colors">
-              Ask Me Anything
-            </h3>
-            <p className="text-xs text-slate-400 mt-1 font-medium">
-              Speak in Hindi, Telugu, Marathi, Tamil: "मेरी फसल पीली हो रही है"
-            </p>
-          </div>
-
-          <div className="flex items-center text-xs font-extrabold text-teal-400 gap-1.5 group-hover:translate-x-1 transition-transform">
-            <span>Press Mic & Talk</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </button>
-
-      </div>
-
     </div>
   );
 }
