@@ -1,0 +1,30 @@
+# Python virtualenv & cache
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+
+# Node modules & build outputs
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+.vite/
+.vite-temp/
+
+# Flutter build & tool caches
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+kisan_mitra/build/
+kisan_mitra/.dart_tool/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
