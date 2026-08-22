@@ -13,46 +13,13 @@ FARMERS_DB: Dict[str, Dict[str, Any]] = {
         "acreage": 2.5,
         "phone": "+91 98480 12345",
         "registered_at": "2026-08-20T10:00:00"
-    },
-    "farmer_02": {
-        "farmer_id": "farmer_02",
-        "farmer_name": "సురేష్ రెడ్డి (Suresh Reddy)",
-        "main_crop": "Paddy",
-        "district": "Karimnagar",
-        "village": "Huzurabad",
-        "state": "Telangana",
-        "acreage": 4.0,
-        "phone": "+91 94401 67890",
-        "registered_at": "2026-08-21T11:30:00"
-    },
-    "farmer_03": {
-        "farmer_id": "farmer_03",
-        "farmer_name": "రాజేష్ పటేల్ (Rajesh Patel)",
-        "main_crop": "Chilli",
-        "district": "Nashik",
-        "village": "Pimpalgaon",
-        "state": "Maharashtra",
-        "acreage": 3.0,
-        "phone": "+91 98140 54321",
-        "registered_at": "2026-08-21T14:15:00"
-    },
-    "farmer_04": {
-        "farmer_id": "farmer_04",
-        "farmer_name": "నవీన్ కుమార్ (Naveen Kumar)",
-        "main_crop": "Maize",
-        "district": "Mandya",
-        "village": "Pandavapura",
-        "state": "Karnataka",
-        "acreage": 5.0,
-        "phone": "+91 97000 88990",
-        "registered_at": "2026-08-22T09:00:00"
     }
 }
 
 FIELDS_DB: Dict[str, Dict[str, Any]] = {
     "field_01": {
         "field_id": "field_01",
-        "name": "Green Acres - Block A",
+        "name": "వరి పొలం",
         "crop_type": "Tomato",
         "acreage": 2.5,
         "location": "Guntur, Andhra Pradesh",
@@ -103,38 +70,6 @@ MANDI_PRICES_DB: Dict[str, Dict[str, Any]] = {
         "projected_7d": 2650.0,
         "trend": "Rising",
         "optimal_window": "Hold harvest 3 days (+Rs 300/qtl gain)"
-    },
-    "Chilli": {
-        "nearest_mandi": "Guntur Mirchi Yard",
-        "current_price": 18500.0,
-        "historical_prices": [
-            {"date": "10 Aug", "price": 17000},
-            {"date": "12 Aug", "price": 17500},
-            {"date": "14 Aug", "price": 17800},
-            {"date": "16 Aug", "price": 18000},
-            {"date": "18 Aug", "price": 18200},
-            {"date": "20 Aug", "price": 18500},
-            {"date": "21 Aug", "price": 18900}
-        ],
-        "projected_7d": 19800.0,
-        "trend": "Rising",
-        "optimal_window": "Dry Pods for 2 Days Before Sale"
-    },
-    "Maize": {
-        "nearest_mandi": "Mandya Grain Market",
-        "current_price": 2150.0,
-        "historical_prices": [
-            {"date": "10 Aug", "price": 2000},
-            {"date": "12 Aug", "price": 2050},
-            {"date": "14 Aug", "price": 2080},
-            {"date": "16 Aug", "price": 2100},
-            {"date": "18 Aug", "price": 2120},
-            {"date": "20 Aug", "price": 2150},
-            {"date": "21 Aug", "price": 2180}
-        ],
-        "projected_7d": 2280.0,
-        "trend": "Rising",
-        "optimal_window": "Sell in 4 Days"
     }
 }
 
@@ -143,7 +78,7 @@ SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
         "id": "sample_paddy_rice_blast",
         "name": "Paddy Leaf - Rice Blast & Sheath Blight",
         "crop": "Paddy",
-        "disease_name": "Rice Blast & Sheath Blight (Pyricularia oryzae)",
+        "disease_name": "వరి అగ్గి తెగులు మరియు పండు తెగులు",
         "confidence": 0.95,
         "affected_area_pct": 32.5,
         "severity_level": "High",
@@ -165,7 +100,7 @@ SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
         "id": "sample_tomato_early_blight",
         "name": "Tomato Leaf - Early Blight Spotted",
         "crop": "Tomato",
-        "disease_name": "Early Blight (Alternaria solani)",
+        "disease_name": "టమాటా ఆకుపై ఎండు తెగులు",
         "confidence": 0.94,
         "affected_area_pct": 28.5,
         "severity_level": "Medium",
@@ -186,6 +121,26 @@ SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
 }
 
 FARMER_FEEDBACK_DB: List[Dict[str, Any]] = []
+SCANS_HISTORY_DB: List[Dict[str, Any]] = [
+    {
+        "scan_id": "scan_101",
+        "scan_date": "2026-08-22 10:30",
+        "crop_name": "Tomato",
+        "disease_name": "టమోటా ఎర్లీ బ్లైట్ (Early Blight)",
+        "confidence_pct": 94.0,
+        "health_status": "Diseased",
+        "immediate_treatment": ["ప్రభావిత ఆకులను తొలగించండి", "Mancozeb 75% WP పిచికారీ చేయండి"]
+    },
+    {
+        "scan_id": "scan_102",
+        "scan_date": "2026-08-21 15:45",
+        "crop_name": "Paddy",
+        "disease_name": "వరి అగ్గి తెగులు (Rice Blast)",
+        "confidence_pct": 95.0,
+        "health_status": "Diseased",
+        "immediate_treatment": ["Tricyclazole 75% WP పిచికారీ చేయండి", "పొలంలో నీరు తీసివేయండి"]
+    }
+]
 
 def save_feedback(decision_id: str, rating: int, feedback_text: str):
     entry = {
@@ -195,4 +150,8 @@ def save_feedback(decision_id: str, rating: int, feedback_text: str):
         "timestamp": datetime.now().isoformat()
     }
     FARMER_FEEDBACK_DB.append(entry)
+    return entry
+
+def save_scan_history(entry: Dict[str, Any]):
+    SCANS_HISTORY_DB.insert(0, entry)
     return entry
