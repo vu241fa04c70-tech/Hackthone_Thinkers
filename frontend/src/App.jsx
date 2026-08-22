@@ -63,7 +63,7 @@ export default function App() {
     setHasSelectedLang(true);
   };
 
-  // If first visit, show Language Selection Screen
+  // If first visit or language reset, show Language Selection Screen
   if (!hasSelectedLang) {
     return (
       <LanguageSelectionScreen
@@ -122,21 +122,37 @@ export default function App() {
             </div>
           </div>
 
-          {/* Multilingual Dropdown Selector (Requirements 1 & 4) */}
+          {/* Multilingual Selector & Account Switcher */}
           <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
-            <select
-              value={lang}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-black text-emerald-400 focus:outline-none focus:border-emerald-500 cursor-pointer shadow-lg shadow-emerald-500/10"
-              title="Choose Language"
+            {/* 🌐 Multilingual Language Dropdown */}
+            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-lg shadow-emerald-500/10">
+              <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+              <select
+                value={lang}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer"
+                title="Choose Language"
+              >
+                {Object.values(SUPPORTED_LANGUAGES).map((l) => (
+                  <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100 font-bold">
+                    {l.flag} {l.name} ({l.subName})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 👨‍🌾 Farmer Profiles & Account Reset Button */}
+            <button
+              onClick={() => {
+                localStorage.removeItem('kisanLanguage');
+                setHasSelectedLang(false);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all"
+              title="Switch Account / Reset Session"
             >
-              {Object.values(SUPPORTED_LANGUAGES).map((l) => (
-                <option key={l.code} value={l.code}>
-                  {l.flag} {l.name} ({l.subName})
-                </option>
-              ))}
-            </select>
+              <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden sm:inline">{lang === 'te' ? 'ఖాతాలు' : 'Accounts'}</span>
+            </button>
           </div>
 
         </div>
