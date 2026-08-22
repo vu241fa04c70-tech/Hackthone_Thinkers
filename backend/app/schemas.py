@@ -51,8 +51,9 @@ class PredictionProbability(BaseModel):
     status: str # Healthy or Diseased
 
 class CropVisionReport(BaseModel):
+    is_crop_detected: bool = True
     crop_detected: str
-    plant_part_detected: str # Leaf, Fruit, Stem, Flower, Whole Plant
+    plant_part_detected: str # Leaf, Fruit, Stem, Flower, Whole Plant, Multiple Parts
     health_status: str # Healthy or Diseased
     disease_name: str
     confidence: float

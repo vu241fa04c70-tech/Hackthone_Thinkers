@@ -139,6 +139,9 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
 
   const getAudioScript = () => {
     if (!report) return '';
+    if (!report.is_crop_detected) {
+      return report.quality_warning || report.user_message || 'Crop or plant not detected.';
+    }
     if (report.is_low_confidence || report.is_below_threshold) {
       return report.quality_warning || report.user_message || 'Please upload a clear crop photo.';
     }
@@ -192,7 +195,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
           <h2 className="text-xl font-black text-slate-100 flex items-center gap-2">
             📷 {t('cropDoctor.title')}
             <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-extrabold">
-              Stage 1 & 2 AI Engine
+              Agricultural Vision Pipeline
             </span>
           </h2>
           <p className="text-xs text-slate-400 font-bold mt-0.5">
@@ -339,7 +342,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
           </div>
         </div>
 
-        {/* Right Column: Diagnostic Result Card (Two-Stage Engine Output) */}
+        {/* Right Column: Diagnostic Result Card */}
         <div className="lg:col-span-2">
           {isAnalyzing ? (
             <div className="bg-slate-900/60 p-12 rounded-3xl border border-slate-800 text-center space-y-4 shadow-xl">
@@ -349,15 +352,44 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
                   {t('cropDoctor.analyzing')}
                 </p>
                 <p className="text-xs text-slate-400 font-bold">
-                  Stage 1: Crop & Plant Part Identification ➔ Stage 2: Disease Diagnosis...
+                  Image Analysis ➔ Crop & Plant Part Identification ➔ Disease Diagnosis...
                 </p>
               </div>
             </div>
           ) : report ? (
             <div className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 shadow-2xl">
               
+              {/* STEP 2: Non-Crop Safeguard Alert */}
+              {report.is_crop_detected === false && (
+                <div className="p-5 rounded-2xl bg-rose-950/90 border-2 border-rose-500/80 space-y-3 text-rose-200">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="w-6 h-6 text-rose-400 shrink-0" />
+                    <div>
+                      <h4 className="text-sm font-black text-rose-300">
+                        {lang === 'te' ? '⚠️ పంట లేదా మొక్క గుర్తించబడలేదు' : '⚠️ Crop or Plant Not Detected'}
+                      </h4>
+                      <p className="text-xs font-bold mt-0.5 text-rose-200">
+                        {report.quality_warning || report.user_message}
+                      </p>
+                    </div>
+                  </div>
+
+                  <label className="w-full py-3 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg">
+                    <RotateCcw className="w-4 h-4" />
+                    <span>{t('cropDoctor.retakeBtn')}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      capture="environment" 
+                      onChange={handleFileUpload} 
+                      className="hidden" 
+                    />
+                  </label>
+                </div>
+              )}
+
               {/* Quality Alert or <75% Confidence Safety Threshold Warning */}
-              {report.is_below_threshold && (
+              {report.is_crop_detected !== false && report.is_below_threshold && (
                 <div className="p-5 rounded-2xl bg-amber-950/80 border-2 border-amber-500/60 space-y-3 text-amber-200">
                   <div className="flex items-center gap-3">
                     <AlertTriangle className="w-6 h-6 text-amber-400 shrink-0" />
@@ -385,61 +417,65 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
                 </div>
               )}
 
-              {/* Stage 1 Identified Badges (Crop Name & Plant Part Visible) */}
-              <div className="flex flex-wrap items-center gap-2.5 p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
-                <span className="text-xs font-black px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
-                  <Sprout className="w-4 h-4 text-emerald-400" />
-                  <span>{t('cropDoctor.cropDetected')}: <strong>{report.crop_detected}</strong></span>
-                </span>
+              {/* Identified Crop & Plant-Part Badges */}
+              {report.is_crop_detected !== false && (
+                <div className="flex flex-wrap items-center gap-2.5 p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                  <span className="text-xs font-black px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                    <Sprout className="w-4 h-4 text-emerald-400" />
+                    <span>{t('cropDoctor.cropDetected')}: <strong>{report.crop_detected}</strong></span>
+                  </span>
 
-                <span className="text-xs font-black px-3 py-1.5 rounded-xl bg-teal-500/20 text-teal-300 border border-teal-500/30 flex items-center gap-1.5">
-                  <Tag className="w-4 h-4 text-teal-400" />
-                  <span>{t('cropDoctor.plantPartDetected')}: <strong>{report.plant_part_detected}</strong></span>
-                </span>
-              </div>
+                  <span className="text-xs font-black px-3 py-1.5 rounded-xl bg-teal-500/20 text-teal-300 border border-teal-500/30 flex items-center gap-1.5">
+                    <Tag className="w-4 h-4 text-teal-400" />
+                    <span>{t('cropDoctor.plantPartDetected')}: <strong>{report.plant_part_detected}</strong></span>
+                  </span>
+                </div>
+              )}
 
               {/* Main Diagnostic Header */}
-              <div className={`p-5 rounded-2xl border flex items-center justify-between gap-3 ${
-                report.is_below_threshold
-                  ? 'bg-amber-950/40 border-amber-500/40 text-amber-300'
-                  : (report.health_status === 'Healthy'
-                      ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
-                      : 'bg-rose-950/40 border-rose-500/40 text-rose-300')
-              }`}>
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl">{report.health_status === 'Healthy' ? '🟢' : '🔴'}</span>
-                  <div>
-                    <div className="text-xs font-black text-slate-300 flex items-center gap-2">
-                      <span>{t('cropDoctor.statusTitle')}</span>
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${
-                        report.health_status === 'Healthy' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
-                      }`}>
-                        {report.health_status}
-                      </span>
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-black">{report.disease_name}</h3>
-                    <div className="text-xs font-extrabold mt-0.5 text-slate-400">
-                      Confidence: <span className="text-emerald-400">{(report.confidence * 100).toFixed(0)}%</span>
+              {report.is_crop_detected !== false && (
+                <div className={`p-5 rounded-2xl border flex items-center justify-between gap-3 ${
+                  report.is_below_threshold
+                    ? 'bg-amber-950/40 border-amber-500/40 text-amber-300'
+                    : (report.health_status === 'Healthy'
+                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                        : 'bg-rose-950/40 border-rose-500/40 text-rose-300')
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{report.health_status === 'Healthy' ? '🟢' : '🔴'}</span>
+                    <div>
+                      <div className="text-xs font-black text-slate-300 flex items-center gap-2">
+                        <span>{t('cropDoctor.statusTitle')}</span>
+                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${
+                          report.health_status === 'Healthy' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
+                        }`}>
+                          {report.health_status}
+                        </span>
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-black">{report.disease_name}</h3>
+                      <div className="text-xs font-extrabold mt-0.5 text-slate-400">
+                        Confidence: <span className="text-emerald-400">{(report.confidence * 100).toFixed(0)}%</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* 🔊 Listen Voice Diagnosis Button */}
-                <button
-                  onClick={() => toggleAudio(getAudioScript())}
-                  className={`px-4 py-2.5 rounded-xl border text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0 ${
-                    isPlayingAudio
-                      ? 'bg-emerald-500 text-slate-950 border-emerald-400 animate-pulse'
-                      : 'bg-slate-950 border-slate-800 text-slate-200 hover:text-emerald-400'
-                  }`}
-                >
-                  <Volume2 className="w-4 h-4 text-emerald-400" />
-                  <span>{isPlayingAudio ? t('cropDoctor.pauseAudio') : t('cropDoctor.listenAudio')}</span>
-                </button>
-              </div>
+                  {/* 🔊 Listen Voice Diagnosis Button */}
+                  <button
+                    onClick={() => toggleAudio(getAudioScript())}
+                    className={`px-4 py-2.5 rounded-xl border text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0 ${
+                      isPlayingAudio
+                        ? 'bg-emerald-500 text-slate-950 border-emerald-400 animate-pulse'
+                        : 'bg-slate-950 border-slate-800 text-slate-200 hover:text-emerald-400'
+                    }`}
+                  >
+                    <Volume2 className="w-4 h-4 text-emerald-400" />
+                    <span>{isPlayingAudio ? t('cropDoctor.pauseAudio') : t('cropDoctor.listenAudio')}</span>
+                  </button>
+                </div>
+              )}
 
               {/* 📊 Top 3 Predictions Breakdown */}
-              {report.top_3_predictions && report.top_3_predictions.length > 0 && (
+              {report.is_crop_detected !== false && report.top_3_predictions && report.top_3_predictions.length > 0 && (
                 <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
                   <h4 className="text-xs font-black text-teal-400 uppercase tracking-wider">
                     {t('cropDoctor.top3Predictions')}
@@ -523,29 +559,31 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
               )}
 
               {/* Price & Expert Call */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30">
-                <div>
-                  <div className="text-xs text-slate-400 font-bold">
-                    {t('cropDoctor.cost')}
+              {report.is_crop_detected !== false && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30">
+                  <div>
+                    <div className="text-xs text-slate-400 font-bold">
+                      {t('cropDoctor.cost')}
+                    </div>
+                    <div className="text-2xl font-black text-emerald-400">
+                      {report.pesticide ? `~₹${report.pesticide.estimated_cost_inr}` : '—'}
+                    </div>
+                    <div className="text-[10px] text-teal-300 font-extrabold mt-0.5">
+                      {report.dosage_note}
+                    </div>
                   </div>
-                  <div className="text-2xl font-black text-emerald-400">
-                    {report.pesticide ? `~₹${report.pesticide.estimated_cost_inr}` : '—'}
-                  </div>
-                  <div className="text-[10px] text-teal-300 font-extrabold mt-0.5">
-                    {report.dosage_note}
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => alert("KVK Helpline: 1800-180-1551")}
-                    className="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-xs font-black flex items-center gap-2 cursor-pointer"
-                  >
-                    <PhoneCall className="w-4 h-4" /> 
-                    {t('cropDoctor.contactExpert')}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => alert("KVK Helpline: 1800-180-1551")}
+                      className="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-xs font-black flex items-center gap-2 cursor-pointer"
+                    >
+                      <PhoneCall className="w-4 h-4" /> 
+                      {t('cropDoctor.contactExpert')}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
             </div>
           ) : null}
