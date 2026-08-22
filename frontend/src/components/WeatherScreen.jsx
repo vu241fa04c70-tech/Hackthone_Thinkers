@@ -12,9 +12,7 @@ export default function WeatherScreen() {
     humidity: '68%',
     wind: '14 km/h',
     rainProb: '75%',
-    alert: lang === 'te' 
-      ? '⚠️ ఈ రోజు మధ్యాహ్నం 2 గంటలకు వర్షం పడే అవకాశం ఉంది. ఈ రోజు మందు పిచికారీ చేయడం మరియు డ్రిప్ నీటి పారుదల నిలిపివేయండి.' 
-      : '⚠️ Heavy rainfall expected at 2 PM today. Pause chemical spraying and drip irrigation cycle.'
+    alert: t('weather.alertMsg')
   };
 
   const toggleAudio = () => {
@@ -56,7 +54,7 @@ export default function WeatherScreen() {
           }`}
         >
           <Volume2 className="w-4 h-4 text-emerald-400" />
-          <span>{isPlayingAudio ? 'ఆపండి' : t('weather.listenAudio')}</span>
+          <span>{isPlayingAudio ? (lang === 'te' ? 'ఆపండి' : 'Stop') : t('weather.listenAudio')}</span>
         </button>
       </div>
 

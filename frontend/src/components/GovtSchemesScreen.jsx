@@ -13,21 +13,21 @@ export default function GovtSchemesScreen() {
       title: t('schemes.pmKisan'),
       tag: t('schemes.pmKisanTag'),
       desc: t('schemes.pmKisanDesc'),
-      eligibility: lang === 'te' ? '✅ 5 ఎకరాలలోపు సాగు భూమి ఉన్న రైతులు' : '✅ Farmers owning up to 5 acres land'
+      eligibility: t('schemes.pmKisanElig')
     },
     {
       id: 'rythu_bharosa',
       title: t('schemes.rythuBharosa'),
       tag: t('schemes.rythuBharosaTag'),
       desc: t('schemes.rythuBharosaDesc'),
-      eligibility: lang === 'te' ? '✅ సొంత భూమి ఉన్న రైతులు మరియు కౌలు రైతులు' : '✅ Land owners and tenant farmers'
+      eligibility: t('schemes.rythuBharosaElig')
     },
     {
-      id: ' crop_insurance',
+      id: 'crop_insurance',
       title: t('schemes.cropInsurance'),
       tag: t('schemes.cropInsuranceTag'),
       desc: t('schemes.cropInsuranceDesc'),
-      eligibility: lang === 'te' ? '✅ టమాటా, వరి, మిరప, పత్తి సాగు చేసే రైతులు' : '✅ Tomato, Paddy, Chilli & Cotton farmers'
+      eligibility: t('schemes.cropInsuranceElig')
     }
   ];
 
@@ -83,7 +83,7 @@ export default function GovtSchemesScreen() {
                 }`}
               >
                 <Volume2 className="w-4 h-4 text-emerald-400" />
-                <span>{isPlayingId === s.id ? 'ఆపండి' : t('schemes.listenAudio')}</span>
+                <span>{isPlayingId === s.id ? (lang === 'te' ? 'ఆపండి' : 'Stop') : t('schemes.listenAudio')}</span>
               </button>
             </div>
 

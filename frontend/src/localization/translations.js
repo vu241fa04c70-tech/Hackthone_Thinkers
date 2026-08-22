@@ -72,22 +72,64 @@ export const translations = {
     weather: {
       title: '🌦️ ఈనాటి వాతావరణం & సలహా',
       subtitle: 'ఈ రోజు వర్షం పడే అవకాశం ఉంది. మందు కొట్టడం నిలిపివేయండి.',
-      listenAudio: '🔊 వాయిస్ వినండి'
+      listenAudio: '🔊 వాయిస్ వినండి',
+      recommendation: 'వాతావరణ హెచ్చరిక & సలహా',
+      alertMsg: '⚠️ ఈ రోజు మధ్యాహ్నం 2 గంటలకు వర్షం పడే అవకాశం ఉంది. ఈ రోజు మందు పిచికారీ చేయడం మరియు డ్రిప్ నీటి పారుదల నిలిపివేయండి.',
+      temp: 'ఉష్ణోగ్రత',
+      rainProbability: 'వర్షం అవకాశం',
+      humidity: 'తేమ శాతం',
+      wind: 'గాలి వేగం'
     },
     market: {
       title: '💰 మండీ ధరలు & పంట అమ్మకం సలహా',
       subtitle: 'మార్కెట్ ధర పెరుగుతున్నందున మరో 3 రోజులు వేచి ఉండటం ప్రయోజనకరంగా ఉండవచ్చు.',
-      listenAudio: '🔊 వాయిస్ వినండి'
+      listenAudio: '🔊 వాయిస్ వినండి',
+      harvestAdviceTitle: 'పంట కోత & అమ్మకం సలహా',
+      recommendation: '3 రోజులు ఆగండి, ధర రూ. 27.50/కిలోకు పెరుగుతుంది',
+      waitAdvice: 'మార్కెట్ డిమాండ్ ఆధారంగా రాబోయే 3 రోజుల్లో మండీ ధర కిలోకు రూ. 3.00 చొప్పున పెరుగుతుందని అంచనా.',
+      priceComparisonTitle: 'సమీప మార్కెట్ల ధరల పోలిక',
+      villageTrader: 'గ్రామ వ్యాపారి (మధ్యవర్తి)',
+      nearestMandi: 'సమీప గుంటూరు మండీ',
+      regionalAPMC: 'రీజినల్ APMC మార్కెట్',
+      audioText: 'మండీలో ప్రస్తుతం టమాటా ధర రూ. 24.50/కిలో ఉంది. రాబోయే 3 రోజుల్లో ధర రూ. 27.50 వరకు పెరుగుతుంది. మా సిఫార్సు: ఈ రోజు అమ్మవద్దు, 3 రోజుల తర్వాత కోత పూర్తి చేసి అమ్మండి!'
     },
     schemes: {
       title: '🏛️ ప్రభుత్వ పథకాల సహాయకుడు',
       subtitle: 'PM-Kisan, రైతు భరోసా, ఫసల్ బీమా అర్హతలు మరియు అప్లై చేసే విధానం',
-      listenAudio: '🔊 వాయిస్ వినండి'
+      listenAudio: '🔊 వాయిస్ వినండి',
+      pmKisan: 'PM-KISAN (కేంద్ర ప్రభుత్వం)',
+      pmKisanTag: 'రూ. 6,000/ఏడాదికి',
+      pmKisanDesc: 'చిన్న మరియు చిన్నకారు రైతులకు ప్రతి సంవత్సరం ₹6,000 ఆర్థిక సహాయం (3 విడతలలో).',
+      pmKisanElig: '✅ 5 ఎకరాలలోపు సాగు భూమి ఉన్న రైతులు',
+      rythuBharosa: 'రైతు భరోసా / కిసాన్ సమ్మాన్',
+      rythuBharosaTag: 'రూ. 13,500/ఏడాదికి',
+      rythuBharosaDesc: 'పంట పెట్టుబడి సహాయం కోసం ప్రతి సంవత్సరం విత్తనాల కొనుగోలు సమయానికి ఖాతాలో జమ.',
+      rythuBharosaElig: '✅ సొంత భూమి ఉన్న రైతులు మరియు కౌలు రైతులు',
+      cropInsurance: 'ప్రధాన మంత్రి ఫసల్ బీమా యోజన',
+      cropInsuranceTag: 'పంట నష్టపరిహారం',
+      cropInsuranceDesc: 'వర్షాలు, కరువు లేదా తెగుళ్ల వల్ల పంట నష్టం వాటిల్లితే 100% భీమా పరిహారం.',
+      cropInsuranceElig: '✅ టమాటా, వరి, మిరప, పత్తి సాగు చేసే రైతులు'
     },
     calendar: {
       title: '📅 వ్యవసాయ క్యాలెండర్ & రిమైండర్లు',
       subtitle: 'ఈ వారంలో చేయాల్సిన ఎరువులు మరియు కోత పనుల జాబితా',
-      listenAudio: '🔊 వాయిస్ వినండి'
+      listenAudio: '🔊 వాయిస్ వినండి',
+      task1Week: 'ఈ వారం (ప్రస్తుతం)',
+      task1Title: 'ఆకు పిచికారీ: Mancozeb 75% WP',
+      task1Desc: 'వర్షానికి ముందే ఎకరానికి 600 గ్రాములు పిచికారీ చేయండి.',
+      task1Cat: 'మందు పిచికారీ',
+      task2Week: 'ఈ వారం (ప్రస్తుతం)',
+      task2Title: 'డ్రిప్ నీటి సమయం తగ్గించండి',
+      task2Desc: 'నేలలో 34% తేమ ఉంది. నీటిని 45 నిమిషాలకు పరిమితం చేయండి.',
+      task2Cat: 'నీటి పారుదల',
+      task3Week: 'వచ్చే వారం (Week 2)',
+      task3Title: 'పంట కోత సమయం (మండీ అమ్మకం)',
+      task3Desc: 'మండీ ధర రూ. 27/కిలోకు పెరుగుతుంది. 3 రోజుల్లో కోత పూర్తి చేయండి.',
+      task3Cat: 'పంట కోత',
+      task4Week: '3వ వారం (Week 3)',
+      task4Title: 'ఎరువుల యాజమాన్యం (Urea)',
+      task4Desc: 'ఎకరానికి 15 కేజీల Urea డ్రిప్ ద్వారా అందించండి.',
+      task4Cat: 'ఎరువులు'
     },
     profile: {
       title: '⚙️ రైతు ప్రొఫైల్ & అమరికలు',
@@ -175,22 +217,64 @@ export const translations = {
     weather: {
       title: '🌦️ आज का मौसम एवं सलाह',
       subtitle: 'आज बारिश का अनुमान है। छिड़काव रोक दें।',
-      listenAudio: '🔊 सुनें'
+      listenAudio: '🔊 सुनें',
+      recommendation: 'मौसम चेतावनी एवं सलाह',
+      alertMsg: '⚠️ आज दोपहर 2 बजे भारी बारिश का अनुमान है। कीटनाशक छिड़काव एवं सिंचाई रोक दें।',
+      temp: 'तापमान',
+      rainProbability: 'बारिश की संभावना',
+      humidity: 'नमी का स्तर',
+      wind: 'हवा की गति'
     },
     market: {
       title: '💰 मंडी भाव एवं बिक्री सलाह',
       subtitle: 'भाव बढ़ रहा है, 3 दिन रुकना फायदेमंद हो सकता है।',
-      listenAudio: '🔊 सुनें'
+      listenAudio: '🔊 सुनें',
+      harvestAdviceTitle: 'फसल कटाई एवं बिक्री सलाह',
+      recommendation: '3 दिन रुकें, भाव ₹27.50/किग्रा तक बढ़ेगा',
+      waitAdvice: 'मंडी मांग के अनुसार अगले 3 दिनों में भाव ₹3.00/किग्रा बढ़ने का अनुमान है।',
+      priceComparisonTitle: 'निकटतम मंडियों के भाव की तुलना',
+      villageTrader: 'गांव का व्यापारी (बिचौलिया)',
+      nearestMandi: 'निकटतम मंडी',
+      regionalAPMC: 'क्षेत्रीय APMC मंडी',
+      audioText: 'मंडी में वर्तमान टमाटर भाव ₹24.50/किग्रा है। अगले 3 दिनों में भाव ₹27.50 होने का अनुमान है। हमारी सलाह: 3 दिन रुककर बिक्री करें!'
     },
     schemes: {
       title: '🏛️ सरकारी योजनाएं',
       subtitle: 'पीएम-किसान और फसल बीमा योजना की जानकारी',
-      listenAudio: '🔊 सुनें'
+      listenAudio: '🔊 सुनें',
+      pmKisan: 'पीएम-किसान सम्मान निधि',
+      pmKisanTag: '₹6,000/वर्ष',
+      pmKisanDesc: 'छोटे एवं सीमांत किसानों को प्रतिवर्ष ₹6,000 की आर्थिक सहायता।',
+      pmKisanElig: '✅ 5 एकड़ तक की कृषि भूमि वाले किसान',
+      rythuBharosa: 'किसान सहायता योजना',
+      rythuBharosaTag: '₹13,500/वर्ष',
+      rythuBharosaDesc: 'बीज एवं खाद खरीद हेतु बुवाई समय पर खाते में राशि जमा।',
+      rythuBharosaElig: '✅ भू-स्वामी एवं बटाईदार किसान',
+      cropInsurance: 'प्रधानमंत्री फसल बीमा योजना',
+      cropInsuranceTag: 'फसल क्षतिपूर्ति',
+      cropInsuranceDesc: 'प्राकृतिक आपदा या बीमारी से नुकसान होने पर 100% बीमा क्लेम।',
+      cropInsuranceElig: '✅ टमाटर, धान, मिर्च एवं कपास किसान'
     },
     calendar: {
       title: '📅 कृषि कैलेंडर',
       subtitle: 'इस सप्ताह के आवश्यक कार्य',
-      listenAudio: '🔊 सुनें'
+      listenAudio: '🔊 सुनें',
+      task1Week: 'इस सप्ताह (वर्तमान)',
+      task1Title: 'पत्ती छिड़काव: Mancozeb 75% WP',
+      task1Desc: 'बारिश से पहले प्रति एकड़ 600 ग्राम दवा का छिड़काव करें।',
+      task1Cat: 'छिड़काव',
+      task2Week: 'इस सप्ताह (वर्तमान)',
+      task2Title: 'ड्रिप सिंचाई समय घटाएं',
+      task2Desc: 'मृदा नमी 34% है। सिंचाई 45 मिनट तक सीमित रखें।',
+      task2Cat: 'सिंचाई',
+      task3Week: 'अगला सप्ताह (सप्ताह 2)',
+      task3Title: 'उपयुक्त कटाई समय',
+      task3Desc: 'मंडी भाव ₹27/किग्रा बढ़ेगा। 3 दिन में कटाई पूरी करें।',
+      task3Cat: 'कटाई',
+      task4Week: 'तीसरा सप्ताह (सप्ताह 3)',
+      task4Title: 'उर्वरक प्रबंधन (यूरिया)',
+      task4Desc: 'प्रति एकड़ 15 किग्रा यूरिया ड्रिप द्वारा दें।',
+      task4Cat: 'खाद एवं उर्वरक'
     },
     profile: {
       title: '⚙️ किसान प्रोफाइल और सेटिंग्स',
@@ -278,22 +362,64 @@ export const translations = {
     weather: {
       title: '🌦️ இன்றைய வானிலை மற்றும் ஆலோசனை',
       subtitle: 'இன்று மழைக்கு வாய்ப்புள்ளது.',
-      listenAudio: '🔊 கேட்கவும்'
+      listenAudio: '🔊 கேட்கவும்',
+      recommendation: 'வானிலை எச்சரிக்கை மற்றும் ஆலோசனை',
+      alertMsg: '⚠️ இன்று பிற்பகல் 2 மணிக்கு பலத்த மழைக்கு வாய்ப்புள்ளது. தெளிப்பு மற்றும் நீர் பாய்ச்சலை நிறுத்தவும்.',
+      temp: 'வெப்பநிலை',
+      rainProbability: 'மழை வாய்ப்பு',
+      humidity: 'ஈரப்பதம்',
+      wind: 'காற்றின் வேகம்'
     },
     market: {
       title: '💰 சந்தை விலை மற்றும் விற்பனை ஆலோசனை',
       subtitle: 'விலை உயர்கிறது. 3 நாட்கள் காத்திருக்கவும்.',
-      listenAudio: '🔊 கேட்கவும்'
+      listenAudio: '🔊 கேட்கவும்',
+      harvestAdviceTitle: 'அறுவடை மற்றும் விற்பனை ஆலோசனை',
+      recommendation: '3 நாட்கள் காத்திருக்கவும், விலை ₹27.50/கிலோ வரை உயரும்',
+      waitAdvice: 'அடுத்த 3 நாட்களில் சந்தை விலை கிலோவுக்கு ₹3.00 உயரும் என எதிர்பார்க்கப்படுகிறது.',
+      priceComparisonTitle: 'சந்தை விலைகள் ஒப்பீடு',
+      villageTrader: 'கிராம வியாபாரி',
+      nearestMandi: 'அருகிலுள்ள சந்தை',
+      regionalAPMC: 'மண்டல APMC சந்தை',
+      audioText: 'சந்தையில் தக்காளி விலை ₹24.50/கிலோ. 3 நாட்களில் ₹27.50 ஆக உயரும். 3 நாட்கள் கழித்து விற்கவும்!'
     },
     schemes: {
       title: '🏛️ அரசு திட்டங்கள்',
       subtitle: 'பிஎம் கிசான் மற்றும் பயிர் காப்பீட்டுத் திட்டங்கள்',
-      listenAudio: '🔊 கேட்கவும்'
+      listenAudio: '🔊 கேட்கவும்',
+      pmKisan: 'பிஎம்-கிசான் திட்டம்',
+      pmKisanTag: '₹6,000/ஆண்டு',
+      pmKisanDesc: 'சிறு விவசாயிகளுக்கு ஆண்டுக்கு ₹6,000 நிதி உதவி.',
+      pmKisanElig: '✅ 5 ஏக்கர் வரை நிலம் உள்ள விவசாயிகள்',
+      rythuBharosa: 'விவசாயி உதவித் திட்டம்',
+      rythuBharosaTag: '₹13,500/ஆண்டு',
+      rythuBharosaDesc: 'விதை மற்றும் உரம் வாங்க நிதி உதவி.',
+      rythuBharosaElig: '✅ நில உரிமையாளர்கள் மற்றும் குத்தகை விவசாயிகள்',
+      cropInsurance: 'பயிர் காப்பீட்டுத் திட்டம்',
+      cropInsuranceTag: 'பயிர் இழப்பீடு',
+      cropInsuranceDesc: 'இயற்கை சீற்றங்களால் பயிர் சேதமடைந்தால் 100% காப்பீடு.',
+      cropInsuranceElig: '✅ தக்காளி, நெல், மிளகாய் விவசாயிகள்'
     },
     calendar: {
       title: '📅 விவசாய நாட்காட்டி',
       subtitle: 'இந்த வாரப் பணிகள்',
-      listenAudio: '🔊 கேட்கவும்'
+      listenAudio: '🔊 கேட்கவும்',
+      task1Week: 'இந்த வாரம்',
+      task1Title: 'மருந்து தெளித்தல்: Mancozeb 75% WP',
+      task1Desc: 'மழைக்கு முன் 600 கிராம் தெளிக்கவும்.',
+      task1Cat: 'தெளித்தல்',
+      task2Week: 'இந்த வாரம்',
+      task2Title: 'நீர் பாய்ச்சல் நேரத்தைக் குறைக்கவும்',
+      task2Desc: 'மண் ஈரப்பதம் 34%. 45 நிமிடங்களாகக் குறைக்கவும்.',
+      task2Cat: 'நீர்ப்பாசனம்',
+      task3Week: 'அடுத்த வாரம்',
+      task3Title: 'அறுவடை காலம்',
+      task3Desc: 'விலை ₹27 உயரும். 3 நாட்களில் அறுவடை செய்யவும்.',
+      task3Cat: 'அறுவடை',
+      task4Week: '3வது வாரம்',
+      task4Title: 'உர மேலாண்மை (யுரியா)',
+      task4Desc: 'ஏக்கருக்கு 15 கிலோ யுரியா இடவும்.',
+      task4Cat: 'உரமிடுதல்'
     },
     profile: {
       title: '⚙️ விவசாயி சுயவிவரம்',
@@ -381,22 +507,64 @@ export const translations = {
     weather: {
       title: '🌦️ ಇಂದಿನ ಹವಾಮಾನ ಮತ್ತು ಸಲಹೆ',
       subtitle: 'ಇಂದು ಮಳೆಯ ಮುನ್ಸೂಚನೆಯಿದೆ.',
-      listenAudio: '🔊 ಆಲಿಸಿ'
+      listenAudio: '🔊 ಆಲಿಸಿ',
+      recommendation: 'ಹವಾಮಾನ ಮುನ್ನೆಚ್ಚರಿಕೆ',
+      alertMsg: '⚠️ ಇಂದು ಮಧ್ಯಾಹ್ನ 2 ಗಂಟೆಗೆ ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ. ಸಿಂಪಡಣೆ ಮತ್ತು ನೀರಾವರಿ ನಿಲ್ಲಿಸಿ.',
+      temp: 'ತಾಪಮಾನ',
+      rainProbability: 'ಮಳೆ ಸಾಧ್ಯತೆ',
+      humidity: 'ಆರ್ದ್ರತೆ',
+      wind: 'ಗಾಳಿಯ ವೇಗ'
     },
     market: {
       title: '💰 ಮಾರುಕಟ್ಟೆ ದರ ಮತ್ತು ಮಾರಾಟ ಸಲಹೆ',
       subtitle: 'ದರ ಏರಿಕೆಯಾಗುತ್ತಿದೆ.',
-      listenAudio: '🔊 ಆಲಿಸಿ'
+      listenAudio: '🔊 ಆಲಿಸಿ',
+      harvestAdviceTitle: 'ಸುಗ್ಗಿ ಮತ್ತು ಮಾರಾಟ ಸಲಹೆ',
+      recommendation: '3 ದಿನ ಕಾಯಿರಿ, ದರ ₹27.50/ಕೆಜಿಗೆ ಏರಿಕೆಯಾಗಲಿದೆ',
+      waitAdvice: 'ಮುಂದಿನ 3 ದಿನಗಳಲ್ಲಿ ಮಾರುಕಟ್ಟೆ ದರ ಕೆಜಿಗೆ ₹3.00 ಹೆಚ್ಚಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ.',
+      priceComparisonTitle: 'ಮಾರುಕಟ್ಟೆ ದರಗಳ ಹೋಲಿಕೆ',
+      villageTrader: 'ಗ್ರಾಮದ ವ್ಯಾಪಾರಿ',
+      nearestMandi: 'ಹತ್ತಿರದ ಮಾರುಕಟ್ಟೆ',
+      regionalAPMC: 'ಪ್ರಾದೇಶಿಕ APMC ಮಾರುಕಟ್ಟೆ',
+      audioText: 'ಟೊಮೆಟೊ ಪ್ರಸ್ತುತ ದರ ₹24.50/ಕೆಜಿ. 3 ದಿನಗಳಲ್ಲಿ ₹27.50 ಏರಿಕೆಯಾಗಲಿದೆ. 3 ದಿನಗಳ ನಂತರ ಮಾರಿ!'
     },
     schemes: {
       title: '🏛️ ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು',
       subtitle: 'ಪಿಎಂ ಕಿಸಾನ್ ಮತ್ತು ಬೆಳೆ ವಿಮೆ ಯೋಜನೆಗಳು',
-      listenAudio: '🔊 ಆಲಿಸಿ'
+      listenAudio: '🔊 ಆಲಿಸಿ',
+      pmKisan: 'ಪಿಎಂ-ಕಿಸಾನ್ ಯೋಜನೆ',
+      pmKisanTag: '₹6,000/ವರ್ಷ',
+      pmKisanDesc: 'ಸಣ್ಣ ರೈತರಿಗೆ ವರ್ಷಕ್ಕೆ ₹6,000 ನೆರವು.',
+      pmKisanElig: '✅ 5 ಎಕರೆವರೆಗೆ ಜಮೀನಿರುವ ರೈತರು',
+      rythuBharosa: 'ರೈತ ಬೆಳಕು ಯೋಜನೆ',
+      rythuBharosaTag: '₹13,500/ವರ್ಷ',
+      rythuBharosaDesc: 'ಬೀಜ ಗೊಬ್ಬರ ಖರೀದಿಗೆ ಆರ್ಥಿಕ ಸಹಾಯ.',
+      rythuBharosaElig: '✅ ಭೂಮಾಲೀಕರು ಮತ್ತು ಗೇಣಿ ರೈತರು',
+      cropInsurance: 'ಬೆಳೆ ವಿಮೆ ಯೋಜನೆ',
+      cropInsuranceTag: 'ಬೆಳೆ ನಷ್ಟ ಪರಿಹಾರ',
+      cropInsuranceDesc: 'ಬೆಳೆ ನಷ್ಟವಾದರೆ 100% ಪರಿಹಾರ.',
+      cropInsuranceElig: '✅ ಟೊಮೆಟೊ, ಬತ್ತ, ಮೆಣಸಿನಕಾಯಿ ರೈತರು'
     },
     calendar: {
       title: '📅 ಕೃಷಿ ಕ್ಯಾಲೆಂಡರ್',
       subtitle: 'ಈ ವಾರದ ಕಾರ್ಯಗಳು',
-      listenAudio: '🔊 ಆಲಿಸಿ'
+      listenAudio: '🔊 ಆಲಿಸಿ',
+      task1Week: 'ಈ ವಾರ',
+      task1Title: 'ಔಷಧಿ ಸಿಂಪಡಣೆ: Mancozeb 75% WP',
+      task1Desc: 'ಮಳೆಗೆ ಮುನ್ನ 600 ಗ್ರಾಂ ಸಿಂಪಡಿಸಿ.',
+      task1Cat: 'ಸಿಂಪಡಣೆ',
+      task2Week: 'ಈ ವಾರ',
+      task2Title: 'ನೀರಾವರಿ ಸಮಯ ಕಡಿಮೆ ಮಾಡಿ',
+      task2Desc: 'ಮಣ್ಣಿನ ತೇವಾಂಶ 34%. 45 ನಿಮಿಷಕ್ಕೆ ಮಿತಿ ಮಾಡಿ.',
+      task2Cat: 'ನೀರಾವರಿ',
+      task3Week: 'ಮುಂದಿನ ವಾರ',
+      task3Title: 'ಸುಗ್ಗಿ ಸಮಯ',
+      task3Desc: 'ದರ ₹27 ಕ್ಕೆ ಏರಲಿದೆ. 3 ದಿನದಲ್ಲಿ ಸುಗ್ಗಿ ಮಾಡಿ.',
+      task3Cat: 'ಸುಗ್ಗಿ',
+      task4Week: '3ನೇ ವಾರ',
+      task4Title: 'ಗೊಬ್ಬರ ನಿರ್ವಹಣೆ (ಯುರಿಯಾ)',
+      task4Desc: 'ಎಕರೆಗೆ 15 ಕೆಜಿ ಯುರಿಯಾ ಕೊಡಿ.',
+      task4Cat: 'ಗೊಬ್ಬರ'
     },
     profile: {
       title: '⚙️ ರೈತ ಪ್ರೊಫೈಲ್',
@@ -484,22 +652,64 @@ export const translations = {
     weather: {
       title: '🌦️ आजचे हवामान व सल्ला',
       subtitle: 'आज पावसाची शक्यता आहे.',
-      listenAudio: '🔊 ऐका'
+      listenAudio: '🔊 ऐका',
+      recommendation: 'हवामान अंदाज व सल्ला',
+      alertMsg: '⚠️ आज दुपारी २ वाजता मुसळधार पावसाची शक्यता आहे. फवारणी व सिंचन थांबवा.',
+      temp: 'तापमान',
+      rainProbability: 'पावसाची शक्यता',
+      humidity: 'आर्द्रता',
+      wind: 'वाऱ्याचा वेग'
     },
     market: {
       title: '💰 बाजार भाव व विक्री सल्ला',
       subtitle: 'भाव वाढत आहे.',
-      listenAudio: '🔊 ऐका'
+      listenAudio: '🔊 ऐका',
+      harvestAdviceTitle: 'काढणी व विक्री सल्ला',
+      recommendation: '३ दिवस थांबा, भाव ₹२७.५०/किग्रो पर्यंत वाढेल',
+      waitAdvice: 'पुढील ३ दिवसांत बाजार भाव ₹३.००/किग्रो वाढण्याचा अंदाज आहे.',
+      priceComparisonTitle: 'बाजार भावाची तुलना',
+      villageTrader: 'गावातील व्यापारी',
+      nearestMandi: 'जवळची बाजार समिती',
+      regionalAPMC: 'प्रादेशिक APMC मार्केट',
+      audioText: 'सध्या टोमॅटो भाव ₹२४.५०/किग्रो आहे. ३ दिवसांत ₹२७.५० होण्याची शक्यता आहे. ३ दिवसांनंतर विक्री करा!'
     },
     schemes: {
       title: '🏛️ शासकीय योजना',
       subtitle: 'पीएम-किसान योजना माहिती',
-      listenAudio: '🔊 ऐका'
+      listenAudio: '🔊 ऐका',
+      pmKisan: 'पीएम-किसान सन्मान निधी',
+      pmKisanTag: '₹६,०००/वर्ष',
+      pmKisanDesc: 'अल्पभूधारक शेतकऱ्यांना दरवर्षी ₹६,००० आर्थिक मदत.',
+      pmKisanElig: '✅ ५ एकरांपर्यंत जमीन असलेले शेतकरी',
+      rythuBharosa: 'शेतकरी मदत योजना',
+      rythuBharosaTag: '₹१३,५००/वर्ष',
+      rythuBharosaDesc: 'बियाणे व खत खरेदीसाठी आर्थिक सहाय्य.',
+      rythuBharosaElig: '✅ जमीन मालक व कुळ शेतकरी',
+      cropInsurance: 'पिक विमा योजना',
+      cropInsuranceTag: 'पिक नुकसान भरपाई',
+      cropInsuranceDesc: 'नैसर्गिक आपत्तीमुळे नुकसान झाल्यास १००% भरपाई.',
+      cropInsuranceElig: '✅ टोमॅटो, भात, मिरची शेतकरी'
     },
     calendar: {
       title: '📅 कृषी कॅलेंडर',
       subtitle: 'या आठवड्यातील कामे',
-      listenAudio: '🔊 ऐका'
+      listenAudio: '🔊 ऐका',
+      task1Week: 'हा आठवडा',
+      task1Title: 'औषध फवारणी: Mancozeb 75% WP',
+      task1Desc: 'पावसापूर्वी ६०० ग्रॅम फवारा.',
+      task1Cat: 'फवारणी',
+      task2Week: 'हा आठवडा',
+      task2Title: 'सिंचन वेळ कमी करा',
+      task2Desc: 'मातीत ३४% ओलावा आहे. ४५ मिनिटांपर्यंत मर्यादा ठेवा.',
+      task2Cat: 'सिंचन',
+      task3Week: 'पुढील आठवडा',
+      task3Title: 'काढणीची वेळ',
+      task3Desc: 'भाव ₹२७ पर्यंत वाढेल. ३ दिवसांत काढणी करा.',
+      task3Cat: 'काढणी',
+      task4Week: '३रा आठवडा',
+      task4Title: 'खत व्यवस्थापन (युरिया)',
+      task4Desc: 'एकाकी १५ किग्रो युरिया द्या.',
+      task4Cat: 'खत व्यवस्थापन'
     },
     profile: {
       title: '⚙️ शेतकरी प्रोफाइल',
@@ -587,22 +797,64 @@ export const translations = {
     weather: {
       title: '🌦️ আজকের আবহাওয়া ও পরামর্শ',
       subtitle: 'আজ বৃষ্টির সম্ভাবনা রয়েছে।',
-      listenAudio: '🔊 শুনুন'
+      listenAudio: '🔊 শুনুন',
+      recommendation: 'আবহাওয়া সতর্কতা ও পরামর্শ',
+      alertMsg: '⚠️ আজ দুপুর ২টোয় ভারী বৃষ্টির সম্ভাবনা। স্প্রে ও সেচ বন্ধ রাখুন।',
+      temp: 'তাপমাত্রা',
+      rainProbability: 'বৃষ্টির সম্ভাবনা',
+      humidity: 'আর্দ্রতা',
+      wind: 'বাতাসের গতি'
     },
     market: {
       title: '💰 মান্ডি দর ও বিক্রি পরামর্শ',
       subtitle: 'দর বাড়ছে।',
-      listenAudio: '🔊 শুনুন'
+      listenAudio: '🔊 শুনুন',
+      harvestAdviceTitle: 'ফসল কাটা ও বিক্রি পরামর্শ',
+      recommendation: '৩ দিন অপেক্ষা করুন, দর ₹২৭.৫০/কেজি হবে',
+      waitAdvice: 'আগামী ৩ দিনে মান্ডি দর কেজি প্রতি ₹৩.০০ বৃদ্ধি পেতে পারে।',
+      priceComparisonTitle: 'মান্ডি দরের তুলনা',
+      villageTrader: 'গ্রামের ব্যবসায়ী',
+      nearestMandi: 'নিকটস্থ মান্ডি',
+      regionalAPMC: 'আঞ্চলিক APMC মান্ডি',
+      audioText: 'টমেটোর দর বর্তমানে ₹২৪.৫০/কেজি। ৩ দিনে ₹২৭.৫০ হবে। ৩ দিন পর বিক্রি করুন!'
     },
     schemes: {
       title: '🏛️ সরকারি প্রকল্প',
       subtitle: 'পিএম-কিষাণ প্রকল্প তথ্য',
-      listenAudio: '🔊 শুনুন'
+      listenAudio: '🔊 শুনুন',
+      pmKisan: 'পিএম-কিষাণ সম্মান নিধি',
+      pmKisanTag: '₹৬,০০০/বছর',
+      pmKisanDesc: 'ক্ষুদ্র কৃষকদের বছরে ₹৬,০০০ আর্থিক সহায়তা।',
+      pmKisanElig: '✅ ৫ একর পর্যন্ত কৃষিজমি থাকা কৃষক',
+      rythuBharosa: 'কৃষক সহায়তা প্রকল্প',
+      rythuBharosaTag: '₹১৩,৫০০/বছর',
+      rythuBharosaDesc: 'বীজ ও সার ক্রয়ের জন্য আর্থিক সহায়তা।',
+      rythuBharosaElig: '✅ জমির মালিক ও বর্গাচাষী',
+      cropInsurance: 'ফসল বিমা যোজনা',
+      cropInsuranceTag: 'ফসল ক্ষতিপূরণ',
+      cropInsuranceDesc: 'প্রাকৃতিক দুর্যোগে ক্ষতির ১০০% বিমা কভারেজ।',
+      cropInsuranceElig: '✅ টমেটো, ধান ও লঙ্কা চাষী'
     },
     calendar: {
       title: '📅 কৃষি ক্যালেন্ডার',
       subtitle: 'এই সপ্তাহের কাজ',
-      listenAudio: '🔊 শুনুন'
+      listenAudio: '🔊 শুনুন',
+      task1Week: 'এই সপ্তাহ',
+      task1Title: 'ওষুধ স্প্রে: Mancozeb 75% WP',
+      task1Desc: 'বৃষ্টির আগে ৬০০ গ্রাম স্প্রে করুন।',
+      task1Cat: 'স্প্রে',
+      task2Week: 'এই সপ্তাহ',
+      task2Title: 'সেচের সময় কমান',
+      task2Desc: 'মাটিতে ৩৪% আর্দ্রতা রয়েছে। ৪৫ মিনিটে সীমাবদ্ধ রাখুন।',
+      task2Cat: 'সেচ',
+      task3Week: 'পরের সপ্তাহ',
+      task3Title: 'ফসল কাটার সময়',
+      task3Desc: 'দর ₹২৭ হবে। ৩ দিনে ফসল কাটুন।',
+      task3Cat: 'ফসল কাটা',
+      task4Week: '৩য় সপ্তাহ',
+      task4Title: 'সার প্রয়োগ (ইউরিয়া)',
+      task4Desc: 'একর প্রতি ১৫ কেজি ইউরিয়া দিন।',
+      task4Cat: 'সার প্রয়োগ'
     },
     profile: {
       title: '⚙️ কৃষক প্রোফাইল',
@@ -690,22 +942,64 @@ export const translations = {
     weather: {
       title: '🌦️ આજનું હવામાન અને સલાહ',
       subtitle: 'આજે વરસાદની શક્યતા છે.',
-      listenAudio: '🔊 સાંભળો'
+      listenAudio: '🔊 સાંભળો',
+      recommendation: 'હવામાન આગાહી અને સલાહ',
+      alertMsg: '⚠️ આજે બપોરે ૨ વાગ્યે ભારે વરસાદની શક્યતા છે. છંટકાવ અને પિયત બંધ રાખો.',
+      temp: 'તાપમાન',
+      rainProbability: 'વરસાદની શક્યતા',
+      humidity: 'ભેજનું પ્રમાણ',
+      wind: 'પવનની ઝડપ'
     },
     market: {
       title: '💰 મંડી ભાવ અને વેચાણ સલાહ',
       subtitle: 'ભાવ વધી રહ્યો છે.',
-      listenAudio: '🔊 સાંભળો'
+      listenAudio: '🔊 સાંભળો',
+      harvestAdviceTitle: 'લણણી અને વેચાણ સલાહ',
+      recommendation: '૩ દિવસ રોકાઓ, ભાવ ₹૨૭.૫૦/કિલો સુધી વધશે',
+      waitAdvice: 'આગામી ૩ દિવસમાં મંડી ભાવ કિલો દીઠ ₹૩.૦૦ વધવાની શક્યતા.',
+      priceComparisonTitle: 'મંડી ભાવ સરખામણી',
+      villageTrader: 'ગામના વેપારી',
+      nearestMandi: 'નજીકની મંડી',
+      regionalAPMC: 'પ્રાદેશિક APMC મંડી',
+      audioText: 'ટામેટાનો ભાવ હાલ ₹૨૪.૫૦/કિલો છે. ૩ દિવસમાં ₹૨૭.૫૦ થશે. ૩ દિવસ પછી વેચો!'
     },
     schemes: {
       title: '🏛️ સરકારી યોજનાઓ',
       subtitle: 'પીએમ-કિસાન યોજના માહિતી',
-      listenAudio: '🔊 સાંભળો'
+      listenAudio: '🔊 સાંભળો',
+      pmKisan: 'પીએમ-કિસાન સન્માન નિધિ',
+      pmKisanTag: '₹૬,૦૦૦/વર્ષ',
+      pmKisanDesc: 'નાના ખેડૂતોને વાર્ષિક ₹૬,૦૦૦ આર્થિક સહાય.',
+      pmKisanElig: '✅ ૫ એકર સુધી જમીન ધરાવતા ખેડૂતો',
+      rythuBharosa: 'ખેડૂત સહાય યોજના',
+      rythuBharosaTag: '₹૧૩,૫૦૦/વર્ષ',
+      rythuBharosaDesc: 'બિયારણ અને ખાતર ખરીદી માટે આર્થિક સહાય.',
+      rythuBharosaElig: '✅ જમીન માલિકો અને ગણોતિયા ખેડૂતો',
+      cropInsurance: 'પાક વીમા યોજના',
+      cropInsuranceTag: 'પાક નુકસાન વળતર',
+      cropInsuranceDesc: 'કુદરતી આફતથી નુકસાન થવા પર ૧૦૦% વીમા કવરેજ.',
+      cropInsuranceElig: '✅ ટામેટા, ડાંગર અને મરચાંના ખેડૂતો'
     },
     calendar: {
       title: '📅 કૃષિ કેલેન્ડર',
       subtitle: 'આ અઠવાડિયાના કાર્યો',
-      listenAudio: '🔊 સાંભળો'
+      listenAudio: '🔊 સાંભળો',
+      task1Week: 'આ અઠવાડિયું',
+      task1Title: 'દવા છંટકાવ: Mancozeb 75% WP',
+      task1Desc: 'વરસાદ પહેલાં ૬૦૦ ગ્રામ છંટકાવ કરો.',
+      task1Cat: 'છંટકાવ',
+      task2Week: 'આ અઠવાડિયું',
+      task2Title: 'પિયત સમય ઘટાડો',
+      task2Desc: 'જમીનમાં ૩૪% ભેજ છે. ૪૫ મિનિટ સુધી મર્યાદિત રાખો.',
+      task2Cat: 'પિયત',
+      task3Week: 'આવતું અઠવાડિયું',
+      task3Title: 'લણણીનો સમય',
+      task3Desc: 'ભાવ ₹૨૭ થશે. ૩ દિવસમાં લણણી કરો.',
+      task3Cat: 'લણણી',
+      task4Week: '૩જું અઠવાડિયું',
+      task4Title: 'ખાતર વ્યવસ્થાપન (યુરિયા)',
+      task4Desc: 'એકર દીઠ ૧૫ કિલો યુરિયા આપો.',
+      task4Cat: 'ખાતર'
     },
     profile: {
       title: '⚙️ ખેડૂત પ્રોફાઇલ',
@@ -793,22 +1087,64 @@ export const translations = {
     weather: {
       title: '🌦️ Weather Today & Advisory',
       subtitle: 'Rain expected today. Avoid spraying pesticides.',
-      listenAudio: '🔊 Listen'
+      listenAudio: '🔊 Listen',
+      recommendation: 'Weather Warning & Advisory',
+      alertMsg: '⚠️ Heavy rainfall expected at 2 PM today. Pause chemical spraying and drip irrigation cycle.',
+      temp: 'Temperature',
+      rainProbability: 'Rain Probability',
+      humidity: 'Humidity',
+      wind: 'Wind Speed'
     },
     market: {
       title: '💰 Market Price & Selling Advisory',
       subtitle: 'Price is increasing. Consider waiting 3 days to sell.',
-      listenAudio: '🔊 Listen'
+      listenAudio: '🔊 Listen',
+      harvestAdviceTitle: 'Harvest & Selling Advisory',
+      recommendation: 'Hold harvest for 3 days to get ₹27.50/kg',
+      waitAdvice: 'Based on market demand, mandi price is expected to rise by ₹3.00/kg over the next 3 days.',
+      priceComparisonTitle: 'Mandi Price Comparison',
+      villageTrader: 'Village Trader (Middleman)',
+      nearestMandi: 'Nearest Mandi',
+      regionalAPMC: 'Regional APMC Market',
+      audioText: 'Tomato is trading at ₹24.50/kg. Projected price in 3 days is ₹27.50/kg. We recommend waiting 3 days before harvest to maximize profit!'
     },
     schemes: {
       title: '🏛️ Government Scheme Agent',
       subtitle: 'Check eligibility & application steps for PM-KISAN & Crop Insurance',
-      listenAudio: '🔊 Listen'
+      listenAudio: '🔊 Listen',
+      pmKisan: 'PM-KISAN (Central Govt)',
+      pmKisanTag: '₹6,000/year',
+      pmKisanDesc: 'Financial support of ₹6,000 per year for small and marginal farmers (in 3 installments).',
+      pmKisanElig: '✅ Farmers owning up to 5 acres agricultural land',
+      rythuBharosa: 'Rythu Bharosa / Kisan Samman',
+      rythuBharosaTag: '₹13,500/year',
+      rythuBharosaDesc: 'Financial assistance deposited directly into bank accounts for seed and fertilizer purchase.',
+      rythuBharosaElig: '✅ Land owners and tenant farmers',
+      cropInsurance: 'Pradhan Mantri Fasal Bima Yojana',
+      cropInsuranceTag: 'Crop Loss Compensation',
+      cropInsuranceDesc: '100% insurance coverage if crops are damaged due to rains, drought, or pests.',
+      cropInsuranceElig: '✅ Tomato, Paddy, Chilli & Cotton farmers'
     },
     calendar: {
       title: '📅 Farming Calendar',
       subtitle: 'Weekly action items for sowing, fertilizer, and harvest',
-      listenAudio: '🔊 Listen'
+      listenAudio: '🔊 Listen',
+      task1Week: 'Week 1 (Current)',
+      task1Title: 'Foliar Spray: Mancozeb 75% WP',
+      task1Desc: 'Spray 600g per acre before rainfall.',
+      task1Cat: 'Spray',
+      task2Week: 'Week 1 (Current)',
+      task2Title: 'Adjust Drip Schedule',
+      task2Desc: 'Soil moisture is 34%. Limit drip cycle to 45 mins.',
+      task2Cat: 'Irrigation',
+      task3Week: 'Week 2',
+      task3Title: 'Optimal Harvest Window',
+      task3Desc: 'Mandi price expected to rise to ₹27/kg in 3 days.',
+      task3Cat: 'Harvest',
+      task4Week: 'Week 3',
+      task4Title: 'Fertilizer Application (Urea)',
+      task4Desc: 'Apply 15 kg Urea per acre via fertigation.',
+      task4Cat: 'Fertilizer'
     },
     profile: {
       title: '⚙️ Farmer Profile & Settings',
