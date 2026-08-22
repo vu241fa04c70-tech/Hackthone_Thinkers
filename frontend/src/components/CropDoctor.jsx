@@ -179,7 +179,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
           
           {/* Active Upload Preview Card */}
           {imagePreview && (
-            <div className="bg-slate-900/90 p-4 rounded-3xl border-2 border-emerald-500/60 space-y-3 shadow-xl">
+            <div className="bg-slate-900/90 p-4 rounded-3xl border-2 border-emerald-500/60 space-y-4 shadow-xl">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
                   <CheckCircle className="w-3.5 h-3.5" />
@@ -197,6 +197,26 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
               <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center">
                 <img src={imagePreview} alt="Uploaded leaf" className="w-full h-full object-cover" />
               </div>
+
+              {/* 🔍 Check Disease Action Button requested by User */}
+              <button
+                type="button"
+                onClick={() => runAnalysis(null, uploadedFile)}
+                disabled={isAnalyzing}
+                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xl shadow-emerald-500/30 transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+              >
+                {isAnalyzing ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>{t('cropDoctor.analyzing')}</span>
+                  </>
+                ) : (
+                  <>
+                    <Camera className="w-4 h-4" />
+                    <span>{t('cropDoctor.checkDiseaseBtn')}</span>
+                  </>
+                )}
+              </button>
             </div>
           )}
 
