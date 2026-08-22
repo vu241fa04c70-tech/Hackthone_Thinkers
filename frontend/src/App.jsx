@@ -14,7 +14,7 @@ import WeatherScreen from './components/WeatherScreen';
 import FarmProfiles from './components/FarmProfiles';
 
 export default function App() {
-  const { lang, setLanguage, t } = useLanguage();
+  const { lang, setLanguage, t, isRTL } = useLanguage();
 
   const [farmerProfile, setFarmerProfile] = useState(() => {
     const saved = localStorage.getItem('kisan_farmer_profile');
@@ -58,7 +58,7 @@ export default function App() {
     setHasSelectedLang(true);
   };
 
-  // If no account created or first visit, show Language & Account Creation Screen
+  // If no account created or first visit, show 23-Language & Account Creation Screen
   if (!hasSelectedLang || !farmerProfile) {
     return (
       <LanguageSelectionScreen
@@ -93,7 +93,7 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950">
+    <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950 transition-all ${isRTL ? 'text-right' : 'text-left'}`}>
       
       {/* Top Header Bar */}
       <header className="border-b border-emerald-500/30 bg-slate-950/90 backdrop-blur-xl sticky top-0 z-40">
@@ -117,20 +117,20 @@ export default function App() {
             </div>
           </div>
 
-          {/* Multilingual Selector & Account Creation / Switch Button */}
+          {/* Multilingual Selector (23 Languages) & Account Creation Button */}
           <div className="flex items-center gap-2">
-            {/* 🌐 Multilingual Language Dropdown */}
+            {/* 🌐 23 Languages Selector Dropdown */}
             <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-lg shadow-emerald-500/10">
               <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
               <select
                 value={lang}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer"
-                title="Choose Language"
+                className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[190px]"
+                title="Choose Language (22 Scheduled Languages of India)"
               >
                 {Object.values(SUPPORTED_LANGUAGES).map((l) => (
                   <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100 font-bold">
-                    {l.flag} {l.name} ({l.subName})
+                    {l.flag} {l.name} ({l.subName}) {l.isRTL ? '• RTL' : ''}
                   </option>
                 ))}
               </select>
@@ -144,12 +144,12 @@ export default function App() {
                 setFarmerProfile(null);
                 setHasSelectedLang(false);
               }}
-              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all"
+              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0"
               title="Create New Account / Switch User"
             >
               <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
               <span className="hidden sm:inline">
-                {lang === 'te' ? '➕ కొత్త ఖాతా' : (lang === 'hi' ? '➕ नया खाता' : '➕ New Account')}
+                {lang === 'te' ? '➕ కొత్త ఖాతా' : (lang === 'hi' ? '➕ नया खाता' : '➕ Account')}
               </span>
             </button>
           </div>
@@ -217,8 +217,8 @@ export default function App() {
       {/* Footer */}
       <footer className="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>🌾 {t('nav.appName')} • Voice AI Farmer Application</span>
-          <span>Multilingual Speech Recognition & Text-to-Speech Enabled</span>
+          <span>🌾 {t('nav.appName')} • 22 Official Scheduled Languages of India Supported</span>
+          <span>Multilingual Speech Recognition & Text-to-Speech (STT & TTS)</span>
         </div>
       </footer>
 

@@ -1,9 +1,10 @@
-// Centralized Reusable Voice & Speech Recognition Utility (Hackathon Optimized)
+// Centralized Reusable Voice & Speech Recognition Utility
+// Supports all 23 Official Scheduled Languages of India + English
+
+import { getLocaleForLang } from '../localization/languageMap';
 
 export const getLanguageLocale = (langCode) => {
-  if (langCode === 'te') return 'te-IN';
-  if (langCode === 'hi') return 'hi-IN';
-  return 'en-US';
+  return getLocaleForLang(langCode);
 };
 
 export const speakText = (text, langCode = 'te', onStart, onEnd, onError) => {
@@ -23,7 +24,7 @@ export const speakText = (text, langCode = 'te', onStart, onEnd, onError) => {
 
   const doSpeak = () => {
     const voices = window.speechSynthesis.getVoices();
-    // Prioritize exact locale matching (te-IN) or lang match
+    // Prioritize exact locale matching (e.g. te-IN, hi-IN, ur-IN) or lang match
     const matchingVoice = voices.find(v => 
       v.lang.toLowerCase() === locale.toLowerCase() || 
       v.lang.toLowerCase().startsWith(langCode.toLowerCase())
@@ -34,7 +35,6 @@ export const speakText = (text, langCode = 'te', onStart, onEnd, onError) => {
     window.speechSynthesis.speak(utterance);
   };
 
-  // FIX #2: Handle empty voices array on initial page load (Chrome/Android fix)
   if (window.speechSynthesis.getVoices().length === 0) {
     window.speechSynthesis.onvoiceschanged = () => {
       doSpeak();
