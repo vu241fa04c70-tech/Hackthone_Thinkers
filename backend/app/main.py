@@ -26,8 +26,8 @@ from app.agents.morning_briefing import MorningBriefingAgent
 
 app = FastAPI(
     title="Kisan Mitra - AI Smart Agriculture Decision Agent API",
-    description="Voice-First & Picture-First Multi-Agent Farm Management System",
-    version="2.0.0"
+    description="Voice-First & Picture-First Multi-Agent Farm Management System (Google Lens for Agriculture)",
+    version="2.1.0"
 )
 
 app.add_middleware(
@@ -52,14 +52,14 @@ briefing_agent = MorningBriefingAgent()
 def read_root():
     return {
         "status": "online",
-        "service": "Kisan Mitra - AI Smart Agriculture Decision Agent",
-        "version": "2.0.0"
+        "service": "Kisan Mitra - Two-Stage Agricultural AI Vision Engine",
+        "version": "2.1.0"
     }
 
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "healthy", "agent_engine": "Multi-Agent Orchestrator & PlantVillage Vision Pipeline Ready"}
+    return {"status": "healthy", "agent_engine": "Two-Stage Agricultural AI Vision Pipeline Ready (Google Lens for Agriculture)"}
 
 
 @app.get("/api/farmers")
@@ -130,6 +130,7 @@ async def analyze_crop_vision(
             "scan_id": f"scan_{uuid.uuid4().hex[:6]}",
             "scan_date": report.scan_date or datetime.now().strftime("%Y-%m-%d %H:%M"),
             "crop_name": report.crop_detected,
+            "plant_part_detected": report.plant_part_detected,
             "disease_name": report.disease_name,
             "confidence_pct": round(report.confidence * 100, 1),
             "health_status": report.health_status,

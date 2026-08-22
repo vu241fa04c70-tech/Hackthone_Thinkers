@@ -52,6 +52,7 @@ class PredictionProbability(BaseModel):
 
 class CropVisionReport(BaseModel):
     crop_detected: str
+    plant_part_detected: str # Leaf, Fruit, Stem, Flower, Whole Plant
     health_status: str # Healthy or Diseased
     disease_name: str
     confidence: float
@@ -75,6 +76,7 @@ class ScanHistoryEntry(BaseModel):
     scan_id: str
     scan_date: str
     crop_name: str
+    plant_part_detected: Optional[str] = "Leaf"
     disease_name: str
     confidence_pct: float
     health_status: str
