@@ -203,8 +203,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
           {/* Demo Sample Cards */}
           <div className="bg-slate-900/60 p-5 rounded-3xl border border-slate-800 space-y-3">
             <h3 className="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-              <span>💡</span>
-              Demo Samples
+              {t('cropDoctor.demoSamples')}
             </h3>
             <div className="grid grid-cols-1 gap-2.5">
               {samples.map((s) => (
@@ -252,7 +251,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
                   <span className="text-3xl">{report.is_low_confidence ? '⚠️' : (report.severity_level === 'Low' ? '🟢' : '🔴')}</span>
                   <div>
                     <div className="text-xs font-black text-slate-300">
-                      {t('cropDoctor.statusTitle')} ({report.crop_detected})
+                      {t('cropDoctor.statusTitle')}
                     </div>
                     <h3 className="text-lg font-black">{report.disease_name}</h3>
                     <div className="text-xs font-extrabold mt-0.5 text-slate-400">
