@@ -15,7 +15,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
   
-  // Optional Crop Selector (Auto-Detect by default!)
+  // Crop Selector (AUTO / Chilli / Rice / Tomato / Cotton / Potato / Maize)
   const [selectedCropHint, setSelectedCropHint] = useState('AUTO');
 
   const fetchHistory = () => {
@@ -25,29 +25,14 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
       .catch(() => {});
   };
 
-  useEffect(() => {
-    fetch(`/api/samples?language=${lang}`)
-      .then(res => res.json())
-      .then(data => setSamples(data))
-      .catch(() => {});
-
-    fetchHistory();
-    
-    // Initial load demo
-    runAnalysis('sample_tomato_early_blight', null);
-  }, [lang]);
-
   const runAnalysis = async (sampleKey, file) => {
     setIsAnalyzing(true);
     setErrorMsg(null);
     const formData = new FormData();
     formData.append('language', lang);
 
-    // If AUTO or file uploaded, do NOT force Tomato; let vision engine auto-detect!
     if (selectedCropHint !== 'AUTO') {
       formData.append('crop_hint', selectedCropHint);
-    } else if (file) {
-      formData.append('crop_hint', ''); // Pure vision auto-detection!
     } else {
       formData.append('crop_hint', '');
     }
@@ -81,6 +66,24 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
       setIsAnalyzing(false);
     }
   };
+
+  useEffect(() => {
+    fetch(`/api/samples?language=${lang}`)
+      .then(res => res.json())
+      .then(data => setSamples(data))
+      .catch(() => {});
+
+    fetchHistory();
+    
+    // Automatically re-trigger analysis when language changes so entire diagnosis updates dynamically!
+    if (uploadedFile) {
+      runAnalysis(null, uploadedFile);
+    } else if (selectedSample) {
+      runAnalysis(selectedSample, null);
+    } else {
+      runAnalysis('sample_tomato_early_blight', null);
+    }
+  }, [lang]);
 
   const handleSampleClick = (sampleKey) => {
     setSelectedSample(sampleKey);
@@ -163,12 +166,15 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
 
         {/* Action Bar: Crop Select + Camera / Gallery */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Optional Crop Selection Dropdown */}
+          {/* Crop Selection Dropdown */}
           <select
             value={selectedCropHint}
             onChange={(e) => {
-              setSelectedCropHint(e.target.value);
-              if (uploadedFile) runAnalysis(null, uploadedFile);
+              const val = e.target.value;
+              setSelectedCropHint(val);
+              if (uploadedFile) {
+                runAnalysis(null, uploadedFile);
+              }
             }}
             className="bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2.5 text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500 cursor-pointer"
             title="Crop Auto Detection / Specific Override"
