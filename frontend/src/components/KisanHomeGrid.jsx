@@ -7,6 +7,9 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
   const { lang, t } = useLanguage();
   const [isPlayingBriefing, setIsPlayingBriefing] = useState(false);
 
+  const farmerName = profile?.farmer_name || 'Ramesh';
+  const cropName = profile?.main_crop || 'Tomato';
+
   const toggleBriefing = () => {
     if (isPlayingBriefing) {
       stopSpeech();
@@ -15,10 +18,10 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
     }
 
     const briefingText = lang === 'te'
-      ? `నమస్కారం రమేష్ గారూ! ఈ రోజు మీ టమాటా తోట గురించిన ఉదయం సమాచారం: ఈ రోజు మధ్యాహ్నం 2 గంటలకు వర్షం పడే అవకాశం ఉంది, కాబట్టి మందు కొట్టడం మరియు నీటి పారుదల ఆపండి. మండీలో టమాటా ధర రూ. 24.50/కిలో ఉంది, 3 రోజులు ఆగితే ధర పెరుగుతుంది.`
+      ? `నమస్కారం ${farmerName} గారూ! ఈ రోజు మీ ${cropName} తోట గురించిన ఉదయం సమాచారం: ఈ రోజు మధ్యాహ్నం 2 గంటలకు వర్షం పడే అవకాశం ఉంది, కాబట్టి మందు కొట్టడం మరియు నీటి పారుదల ఆపండి. మండీలో టమాటా ధర రూ. 24.50/కిలో ఉంది, 3 రోజులు ఆగితే ధర పెరుగుతుంది.`
       : (lang === 'hi'
-        ? `नमस्ते रमेश भाई! आज दोपहर 2 बजे बारिश का अनुमान है। आज छिड़काव और सिंचाई रोक दें। टमाटर का भाव ₹24.50 है, 3 दिन बाद बेचें।`
-        : `Good Morning Ramesh Bhai! Today rain is expected at 2 PM. Avoid spraying pesticides and pause drip irrigation. Tomato price is ₹24.50/kg, hold 3 days for higher price.`);
+        ? `नमस्ते ${farmerName} जी! आज दोपहर 2 बजे बारिश का अनुमान है। आज छिड़काव और सिंचाई रोक दें। मंडी में टमाटर का भाव ₹24.50 है, 3 दिन बाद बेचें।`
+        : `Good Morning ${farmerName}! Today rain is expected at 2 PM. Avoid spraying pesticides and pause drip irrigation. Mandi price is ₹24.50/kg, hold 3 days for higher price.`);
 
     setIsPlayingBriefing(true);
     speakText(
@@ -37,7 +40,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
       subtitle: t('home.card1Sub'),
       btnText: t('home.card1Btn'),
       icon: Camera,
-      badge: lang === 'te' ? 'వ్యాధి స్కాన్' : 'Vision AI',
+      badge: lang === 'te' ? 'వ్యాధి స్కాన్' : (lang === 'hi' ? 'फसल जांच' : 'Vision AI'),
       color: 'from-amber-500/20 to-orange-500/10 border-amber-500/40 text-amber-400'
     },
     {
@@ -46,7 +49,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
       subtitle: t('home.card2Sub'),
       btnText: t('home.card2Btn'),
       icon: Sun,
-      badge: lang === 'te' ? 'మధ్యాహ్నం వర్షం' : 'Rain Alert',
+      badge: lang === 'te' ? 'మధ్యాహ్నం వర్షం' : (lang === 'hi' ? 'बारिश का अनुमान' : 'Rain Alert'),
       color: 'from-sky-500/20 to-blue-500/10 border-sky-500/40 text-sky-400'
     },
     {
@@ -55,7 +58,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
       subtitle: t('home.card3Sub'),
       btnText: t('home.card3Btn'),
       icon: TrendingUp,
-      badge: lang === 'te' ? '₹24.50/కిలో' : '₹24.50/kg',
+      badge: lang === 'te' ? '₹24.50/కిలో' : (lang === 'hi' ? '₹24.50/किग्रा' : '₹24.50/kg'),
       color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/40 text-emerald-400'
     },
     {
@@ -64,7 +67,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
       subtitle: t('home.card4Sub'),
       btnText: t('home.card4Btn'),
       icon: Mic,
-      badge: lang === 'te' ? 'తెలుగు వాయిస్' : 'Voice AI',
+      badge: lang === 'te' ? 'తెలుగు వాయిస్' : (lang === 'hi' ? 'वॉयस AI' : 'Voice AI'),
       color: 'from-purple-500/20 to-indigo-500/10 border-purple-500/40 text-purple-400'
     },
     {
@@ -73,7 +76,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
       subtitle: t('home.card5Sub'),
       btnText: t('home.card5Btn'),
       icon: Scroll,
-      badge: lang === 'te' ? 'PM-Kisan' : 'Govt Schemes',
+      badge: lang === 'te' ? 'PM-Kisan' : (lang === 'hi' ? 'सरकारी योजनाएं' : 'Govt Schemes'),
       color: 'from-pink-500/20 to-rose-500/10 border-pink-500/40 text-pink-400'
     },
     {
@@ -82,14 +85,14 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
       subtitle: t('home.card6Sub'),
       btnText: t('home.card6Btn'),
       icon: Calendar,
-      badge: lang === 'te' ? 'పనుల జాబితా' : 'Calendar',
+      badge: lang === 'te' ? 'పనుల జాబితా' : (lang === 'hi' ? 'कृषि कैलेंडर' : 'Calendar'),
       color: 'from-teal-500/20 to-cyan-500/10 border-teal-500/40 text-teal-400'
     }
   ];
 
   return (
-    <div className="space-y-6">
-      {/* 7 AM WhatsApp Audio Briefing Bar (Requirement #9) */}
+    <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
+      {/* 7 AM WhatsApp Audio Briefing Bar */}
       <div className="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-teal-950/80 border-2 border-emerald-500/40 p-6 rounded-3xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4 text-center sm:text-left">
           <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 text-2xl">
@@ -100,12 +103,12 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
               {t('home.briefingTitle')}
             </span>
             <h2 className="text-xl font-black text-slate-100 mt-1">
-              {lang === 'te' ? 'నమస్కారం రమేష్ గారూ! 🌅 (టమాటా సాగు)' : (lang === 'hi' ? 'नमस्ते रमेश भाई! 🌅' : 'Good Morning Ramesh Bhai! 🌅')}
+              {lang === 'te' ? `నమస్కారం ${farmerName} గారూ! 🌅 (${cropName} సాగు)` : (lang === 'hi' ? `नमस्ते ${farmerName} जी! 🌅 (${cropName} खेती)` : `Good Morning ${farmerName}! 🌅 (${cropName})`)}
             </h2>
             <p className="text-xs text-slate-300 font-bold mt-0.5">
               {lang === 'te' 
                 ? '⚠️ ఈ రోజు మధ్యాహ్నం 2 గంటలకు వర్షం • 3 రోజుల తర్వాత మండీ అమ్మకం చేయండి' 
-                : '⚠️ Rain expected at 2 PM today • Hold 3 days to harvest for max profit'}
+                : (lang === 'hi' ? '⚠️ आज दोपहर 2 बजे बारिश • 3 दिन बाद मंडी में बेचें' : '⚠️ Rain expected at 2 PM today • Hold 3 days to harvest for max profit')}
             </p>
           </div>
         </div>
@@ -123,7 +126,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
         </button>
       </div>
 
-      {/* 6 Major Farmer Cards Grid (Requirement #6) */}
+      {/* 6 Major Farmer Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {cards.map((card) => {
           const Icon = card.icon;
