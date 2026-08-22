@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus } from 'lucide-react';
+import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus, ShieldCheck } from 'lucide-react';
 import { useLanguage } from './localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from './localization/languageMap';
 
@@ -12,6 +12,7 @@ import GovtSchemesScreen from './components/GovtSchemesScreen';
 import FarmingCalendarScreen from './components/FarmingCalendarScreen';
 import WeatherScreen from './components/WeatherScreen';
 import FarmProfiles from './components/FarmProfiles';
+import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   const { lang, setLanguage, t, isRTL } = useLanguage();
@@ -66,11 +67,8 @@ export default function App() {
     const location = `${farmerProfile.district || 'Guntur'}, ${farmerProfile.state || 'Andhra Pradesh'}`;
 
     if (lang === 'en') {
-      // Strip any Telugu script in parentheses if present
       const cleanName = rawName.replace(/[\u0C00-\u0C7F]/g, '').replace(/[()]/g, '').trim() || 'Ramesh';
       return `👨‍🌾 ${cleanName} (${crop}) • 📍 ${location}`;
-    } else if (lang === 'hi') {
-      return `👨‍🌾 ${rawName} (${crop}) • 📍 ${location}`;
     } else {
       return `👨‍🌾 ${rawName} (${crop}) • 📍 ${location}`;
     }
@@ -94,6 +92,7 @@ export default function App() {
       case 'calendar': return t('nav.calendar');
       case 'copilot': return t('nav.copilot');
       case 'profile': return t('nav.profile');
+      case 'admin': return lang === 'te' ? '🏛️ అడ్మిన్' : (lang === 'hi' ? '🏛️ एडमिन' : '🏛️ Admin Portal');
       default: return id;
     }
   };
@@ -107,6 +106,7 @@ export default function App() {
     { id: 'calendar', icon: Calendar },
     { id: 'copilot', icon: Bot },
     { id: 'profile', icon: UserCheck },
+    { id: 'admin', icon: ShieldCheck },
   ];
 
   return (
@@ -189,7 +189,9 @@ export default function App() {
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all shrink-0 cursor-pointer ${
                     isActive
                       ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-lg shadow-emerald-500/20 scale-[1.02]'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                      : (tab.id === 'admin'
+                          ? 'text-cyan-400 hover:text-cyan-200 bg-cyan-950/30 border border-cyan-500/30'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60')
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-emerald-400'}`} />
@@ -229,12 +231,13 @@ export default function App() {
             }}
           />
         )}
+        {activeTab === 'admin' && <AdminDashboard />}
       </main>
 
       {/* Footer */}
       <footer className="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>🌾 {t('nav.appName')} • 22 Official Scheduled Languages of India Supported</span>
+          <span>🌾 {t('nav.appName')} • Government & Admin Management Control Active</span>
           <span>Multilingual Speech Recognition & Text-to-Speech (STT & TTS)</span>
         </div>
       </footer>

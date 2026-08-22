@@ -13,7 +13,8 @@ from app.schemas import (
 from app.database import (
     FIELDS_DB, MANDI_PRICES_DB, SAMPLE_CROP_IMAGES,
     FARMER_FEEDBACK_DB, FARMERS_DB, SCANS_HISTORY_DB,
-    save_feedback, save_scan_history
+    GOVT_SCHEMES_DB, EMERGENCY_ALERTS_DB,
+    save_feedback, save_scan_history, save_scheme, delete_scheme, update_mandi_price
 )
 from app.agents.crop_vision import CropVisionAgent
 from app.agents.weather import WeatherAgent
@@ -27,7 +28,7 @@ from app.agents.morning_briefing import MorningBriefingAgent
 app = FastAPI(
     title="Kisan Mitra - AI Smart Agriculture Decision Agent API",
     description="Voice-First & Picture-First Multi-Agent Farm Management System (Google Lens for Agriculture)",
-    version="2.1.0"
+    version="2.2.0"
 )
 
 app.add_middleware(
@@ -52,14 +53,14 @@ briefing_agent = MorningBriefingAgent()
 def read_root():
     return {
         "status": "online",
-        "service": "Kisan Mitra - Two-Stage Agricultural AI Vision Engine",
-        "version": "2.1.0"
+        "service": "Kisan Mitra - Two-Stage Agricultural AI Vision & Admin Management Engine",
+        "version": "2.2.0"
     }
 
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "healthy", "agent_engine": "Two-Stage Agricultural AI Vision Pipeline Ready (Google Lens for Agriculture)"}
+    return {"status": "healthy", "agent_engine": "Agricultural Vision Pipeline & Admin Portal Active"}
 
 
 @app.get("/api/farmers")
@@ -88,6 +89,65 @@ def record_scan_history(entry: Dict[str, Any] = Body(...)):
         entry["scan_date"] = datetime.now().strftime("%Y-%m-%d %H:%M")
     saved = save_scan_history(entry)
     return {"message": "Scan recorded to history", "entry": saved}
+
+
+# GOVERNMENT SCHEMES ADMIN & FARMER ENDPOINTS
+@app.get("/api/schemes")
+def get_all_schemes():
+    return list(GOVT_SCHEMES_DB.values())
+
+
+@app.post("/api/schemes")
+def create_scheme(scheme: Dict[str, Any] = Body(...)):
+    saved = save_scheme(scheme)
+    return {"message": "New Government Scheme created successfully", "scheme": saved}
+
+
+@app.put("/api/schemes/{scheme_id}")
+def update_scheme(scheme_id: str, scheme: Dict[str, Any] = Body(...)):
+    scheme["scheme_id"] = scheme_id
+    saved = save_scheme(scheme)
+    return {"message": "Government Scheme updated successfully", "scheme": saved}
+
+
+@app.delete("/api/schemes/{scheme_id}")
+def remove_scheme(scheme_id: str):
+    success = delete_scheme(scheme_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Scheme not found")
+    return {"message": f"Scheme {scheme_id} deleted successfully"}
+
+
+# MANDI MARKET PRICES ADMIN & FARMER ENDPOINTS
+@app.get("/api/mandi")
+def get_mandi_prices():
+    return MANDI_PRICES_DB
+
+
+@app.post("/api/mandi")
+def update_mandi(
+    crop: str = Body(...),
+    current_price: float = Body(...),
+    nearest_mandi: Optional[str] = Body(None)
+):
+    res = update_mandi_price(crop, current_price, nearest_mandi)
+    return {"message": f"Mandi price for {crop} updated to ₹{current_price}", "data": res}
+
+
+# EMERGENCY WEATHER ALERTS ADMIN & FARMER ENDPOINTS
+@app.get("/api/alerts")
+def get_alerts():
+    return EMERGENCY_ALERTS_DB
+
+
+@app.post("/api/alerts")
+def publish_alert(alert: Dict[str, Any] = Body(...)):
+    if "alert_id" not in alert:
+        alert["alert_id"] = f"alert_{uuid.uuid4().hex[:6]}"
+    if "timestamp" not in alert:
+        alert["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+    EMERGENCY_ALERTS_DB.insert(0, alert)
+    return {"message": "Emergency Alert broadcasted successfully", "alert": alert}
 
 
 @app.get("/api/samples")
