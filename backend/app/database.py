@@ -1,16 +1,64 @@
 from typing import Dict, List, Any
 from datetime import datetime
 
-# In-Memory Database Store
+# Persistent Farmer Database Store
+FARMERS_DB: Dict[str, Dict[str, Any]] = {
+    "farmer_01": {
+        "farmer_id": "farmer_01",
+        "farmer_name": "రమేష్ గారూ",
+        "main_crop": "Paddy",
+        "district": "Guntur",
+        "village": "Mangalagiri",
+        "state": "Andhra Pradesh",
+        "acreage": 3.5,
+        "phone": "+91 98480 12345",
+        "registered_at": "2026-08-20T10:00:00"
+    },
+    "farmer_02": {
+        "farmer_id": "farmer_02",
+        "farmer_name": "వెంకటేశ్వర్లు గారూ",
+        "main_crop": "Chilli",
+        "district": "Guntur",
+        "village": "Tadikonda",
+        "state": "Andhra Pradesh",
+        "acreage": 2.0,
+        "phone": "+91 94401 67890",
+        "registered_at": "2026-08-21T11:30:00"
+    },
+    "farmer_03": {
+        "farmer_id": "farmer_03",
+        "farmer_name": "रमेश कुमार भाई",
+        "main_crop": "Wheat",
+        "district": "Ludhiana",
+        "village": "Gill",
+        "state": "Punjab",
+        "acreage": 5.0,
+        "phone": "+91 98140 54321",
+        "registered_at": "2026-08-21T14:15:00"
+    },
+    "farmer_04": {
+        "farmer_id": "farmer_04",
+        "farmer_name": "రమేష్ సింగ్ గారూ",
+        "main_crop": "Tomato",
+        "district": "Chittoor",
+        "village": "Madanapalle",
+        "state": "Andhra Pradesh",
+        "acreage": 4.2,
+        "phone": "+91 97000 88990",
+        "registered_at": "2026-08-22T09:00:00"
+    }
+}
+
+# Fields Database Store
 FIELDS_DB: Dict[str, Dict[str, Any]] = {
     "field_01": {
         "field_id": "field_01",
-        "name": "Green Acres - Tomato Block A",
-        "crop_type": "Tomato",
-        "acreage": 2.5,
-        "location": "Nashik, Maharashtra",
+        "name": "Green Acres - Paddy Block A",
+        "crop_type": "Paddy",
+        "acreage": 3.5,
+        "location": "Guntur, Andhra Pradesh",
         "soil_type": "Black Loam",
-        "irrigation_system": "Drip Irrigation",
+        "irrigation_system": "Canal Irrigation",
         "planting_date": "2026-06-15",
         "growth_stage": "Fruiting",
         "soil_data": {
@@ -63,9 +111,25 @@ FIELDS_DB: Dict[str, Dict[str, Any]] = {
 }
 
 MANDI_PRICES_DB: Dict[str, Dict[str, Any]] = {
+    "Paddy": {
+        "nearest_mandi": "Guntur APMC Rice Yard",
+        "current_price": 2350.0, # INR per Quintal
+        "historical_prices": [
+            {"date": "10 Aug", "price": 2100},
+            {"date": "12 Aug", "price": 2150},
+            {"date": "14 Aug", "price": 2200},
+            {"date": "16 Aug", "price": 2250},
+            {"date": "18 Aug", "price": 2300},
+            {"date": "20 Aug", "price": 2350},
+            {"date": "21 Aug", "price": 2400}
+        ],
+        "projected_7d": 2650.0,
+        "trend": "Rising",
+        "optimal_window": "Hold harvest 3 days (+Rs 300/qtl gain)"
+    },
     "Tomato": {
-        "nearest_mandi": "Nashik APMC Mandi",
-        "current_price": 2450.0, # INR per Quintal
+        "nearest_mandi": "Madanapalle Wholesale Yard",
+        "current_price": 2450.0,
         "historical_prices": [
             {"date": "10 Aug", "price": 2100},
             {"date": "12 Aug", "price": 2180},
@@ -78,6 +142,22 @@ MANDI_PRICES_DB: Dict[str, Dict[str, Any]] = {
         "projected_7d": 2750.0,
         "trend": "Rising",
         "optimal_window": "Harvest in 3 days (Pre-Rain Gain)"
+    },
+    "Chilli": {
+        "nearest_mandi": "Guntur Mirchi Yard",
+        "current_price": 18500.0,
+        "historical_prices": [
+            {"date": "10 Aug", "price": 17000},
+            {"date": "12 Aug", "price": 17500},
+            {"date": "14 Aug", "price": 17800},
+            {"date": "16 Aug", "price": 18000},
+            {"date": "18 Aug", "price": 18200},
+            {"date": "20 Aug", "price": 18500},
+            {"date": "21 Aug", "price": 18900}
+        ],
+        "projected_7d": 19800.0,
+        "trend": "Rising",
+        "optimal_window": "Dry Pods for 2 Days Before Sale"
     },
     "Wheat": {
         "nearest_mandi": "Ludhiana Grain Market",
@@ -130,6 +210,28 @@ MANDI_PRICES_DB: Dict[str, Dict[str, Any]] = {
 }
 
 SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
+    "sample_paddy_rice_blast": {
+        "id": "sample_paddy_rice_blast",
+        "name": "Paddy Leaf - Rice Blast & Sheath Blight",
+        "crop": "Paddy",
+        "disease_name": "Rice Blast & Sheath Blight (Pyricularia oryzae)",
+        "confidence": 0.95,
+        "affected_area_pct": 32.5,
+        "severity_level": "High",
+        "spread_velocity": "Fast",
+        "pesticide": {
+            "name": "Tricyclazole 75% WP (Beam / Baan)",
+            "active_ingredient": "Tricyclazole",
+            "dosage_per_acre": "120 grams in 200L water",
+            "estimated_cost_inr": 420.0,
+            "nearby_mandi_availability": True
+        },
+        "preventive_actions": [
+            "Spray Tricyclazole 75% WP (120g/acre) within 48 hours",
+            "Drain standing water from paddy fields to dry the soil surface",
+            "Avoid over-application of nitrogenous (Urea) fertilizer"
+        ]
+    },
     "sample_tomato_early_blight": {
         "id": "sample_tomato_early_blight",
         "name": "Tomato Leaf - Early Blight Spotted",
@@ -148,7 +250,7 @@ SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
         },
         "preventive_actions": [
             "Prune lower infected leaves to prevent soil splash transmission",
-            "Spray Mancozeb or Copper Oxychloride within 48 hours",
+            "Spray Mancozeb 75% WP within 48 hours",
             "Avoid overhead irrigation to reduce canopy wetness duration"
         ]
     },
@@ -194,50 +296,6 @@ SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
             "Install Pheromone traps (5 per acre) for monitoring adult moths",
             "Spray Emamectin Benzoate during late evening hours",
             "Collect and destroy rosette flowers and damaged bolls"
-        ]
-    },
-    "sample_potato_late_blight": {
-        "id": "sample_potato_late_blight",
-        "name": "Potato Leaf - Late Blight Water-Soaked Lesions",
-        "crop": "Potato",
-        "disease_name": "Late Blight (Phytophthora infestans)",
-        "confidence": 0.96,
-        "affected_area_pct": 42.0,
-        "severity_level": "Severe",
-        "spread_velocity": "Fast",
-        "pesticide": {
-            "name": "Cymoxanil + Mancozeb (Curzate M8)",
-            "active_ingredient": "Cymoxanil 8% + Mancozeb 64%",
-            "dosage_per_acre": "600 grams in 200L water",
-            "estimated_cost_inr": 620.0,
-            "nearby_mandi_availability": True
-        },
-        "preventive_actions": [
-            "Immediate systemic fungicide spray before rain event",
-            "Earthing up soil around plants to protect tubers from spores",
-            "Burn or deeply bury severely blighted haulms"
-        ]
-    },
-    "sample_healthy_crop": {
-        "id": "sample_healthy_crop",
-        "name": "Healthy Crop Canopy",
-        "crop": "Tomato",
-        "disease_name": "Healthy - No Pathogens Detected",
-        "confidence": 0.98,
-        "affected_area_pct": 0.0,
-        "severity_level": "Low",
-        "spread_velocity": "Slow",
-        "pesticide": {
-            "name": "Neem Oil 10000 PPM (Preventive Bio-pesticide)",
-            "active_ingredient": "Azadirachtin",
-            "dosage_per_acre": "500 ml in 200L water",
-            "estimated_cost_inr": 210.0,
-            "nearby_mandi_availability": True
-        },
-        "preventive_actions": [
-            "Continue regular drip irrigation schedule",
-            "Perform bi-weekly visual scouting for early pest signs",
-            "Apply prophylactic Neem oil spray"
         ]
     }
 }

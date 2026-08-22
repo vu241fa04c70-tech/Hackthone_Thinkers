@@ -1,3 +1,4 @@
+import uuid
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, Dict, Any, List
@@ -10,7 +11,7 @@ from app.schemas import (
 )
 from app.database import (
     FIELDS_DB, MANDI_PRICES_DB, SAMPLE_CROP_IMAGES,
-    FARMER_FEEDBACK_DB, save_feedback
+    FARMER_FEEDBACK_DB, FARMERS_DB, save_feedback
 )
 from app.agents.crop_vision import CropVisionAgent
 from app.agents.weather import WeatherAgent
@@ -27,7 +28,6 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# Enable CORS for frontend Vite dev server
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,7 +36,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Instantiate Agents
 vision_agent = CropVisionAgent()
 weather_agent = WeatherAgent()
 soil_agent = SoilIrrigationAgent()
@@ -58,7 +57,28 @@ def read_root():
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "healthy", "agent_engine": "Multi-Agent Orchestrator & Morning Briefing Ready"}
+    return {"status": "healthy", "agent_engine": "Multi-Agent Orchestrator & Multi-Farmer Database Ready"}
+
+
+@app.get("/api/farmers")
+def get_all_farmers():
+    return list(FARMERS_DB.values())
+
+
+@app.post("/api/farmers")
+def create_or_update_farmer(farmer: Dict[str, Any] = Body(...)):
+    f_id = farmer.get("farmer_id") or f"farmer_{uuid.uuid4().hex[:6]}"
+    farmer["farmer_id"] = f_id
+    FARMERS_DB[f_id] = farmer
+    return {"message": "Farmer profile saved successfully", "farmer": farmer}
+
+
+@app.get("/api/farmers/{farmer_id}")
+def get_farmer_profile(farmer_id: str):
+    farmer = FARMERS_DB.get(farmer_id)
+    if not farmer:
+        raise HTTPException(status_code=404, detail="Farmer profile not found")
+    return farmer
 
 
 @app.get("/api/fields")
@@ -89,16 +109,18 @@ def get_morning_briefing(
 @app.post("/api/agents/crop-vision")
 async def analyze_crop_vision(
     sample_key: Optional[str] = Form(None),
-    crop_hint: Optional[str] = Form("Tomato"),
+    crop_hint: Optional[str] = Form("Paddy"),
+    language: Optional[str] = Form("te"),
     file: Optional[UploadFile] = File(None)
 ):
+    lang_code = language or "te"
     if file:
         content = await file.read()
-        return vision_agent.analyze_uploaded_image(content, crop_hint=crop_hint or "Tomato")
+        return vision_agent.analyze_uploaded_image(content, crop_hint=crop_hint or "Paddy", lang=lang_code)
     elif sample_key:
-        return vision_agent.analyze_sample(sample_key)
+        return vision_agent.analyze_sample(sample_key, lang=lang_code)
     else:
-        return vision_agent.analyze_sample("sample_tomato_early_blight")
+        return vision_agent.analyze_sample("sample_paddy_rice_blast", lang=lang_code)
 
 
 @app.post("/api/agents/weather")
@@ -109,9 +131,9 @@ def get_weather(location: str = Body(..., embed=True)):
 @app.post("/api/agents/soil-irrigation")
 def analyze_soil(
     field_id: str = Body("field_01"),
-    crop_type: str = Body("Tomato"),
+    crop_type: str = Body("Paddy"),
     growth_stage: str = Body("Fruiting"),
-    acreage: float = Body(2.5),
+    acreage: float = Body(3.5),
     nitrogen_n: float = Body(140.0),
     phosphorus_p: float = Body(22.0),
     potassium_k: float = Body(180.0),
@@ -123,15 +145,15 @@ def analyze_soil(
         potassium_k=potassium_k,
         moisture_percent=moisture_percent
     )
-    weather = weather_agent.get_weather_forecast("Nashik, Maharashtra")
+    weather = weather_agent.get_weather_forecast("Guntur, Andhra Pradesh")
     return soil_agent.calculate_requirements(soil, crop_type, growth_stage, acreage, weather)
 
 
 @app.post("/api/agents/market")
 def analyze_market(
-    crop_type: str = Body("Tomato"),
+    crop_type: str = Body("Paddy"),
     growth_stage: str = Body("Fruiting"),
-    location: str = Body("Nashik, Maharashtra")
+    location: str = Body("Guntur, Andhra Pradesh")
 ):
     weather = weather_agent.get_weather_forecast(location)
     return market_agent.evaluate_market_and_harvest(crop_type, growth_stage, weather)
@@ -140,7 +162,7 @@ def analyze_market(
 @app.post("/api/agents/integrate-decision")
 async def integrate_decision(
     field_id: Optional[str] = Form("field_01"),
-    sample_image_key: Optional[str] = Form("sample_tomato_early_blight"),
+    sample_image_key: Optional[str] = Form("sample_paddy_rice_blast"),
     file: Optional[UploadFile] = File(None)
 ):
     uploaded_bytes = None
