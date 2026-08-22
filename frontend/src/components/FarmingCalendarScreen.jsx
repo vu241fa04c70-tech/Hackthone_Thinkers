@@ -5,45 +5,52 @@ import { speakText, stopSpeech } from '../utils/voiceUtils';
 
 export default function FarmingCalendarScreen() {
   const { lang, t } = useLanguage();
-  const [tasks, setTasks] = useState([
+
+  const getTasks = () => [
     {
       id: 1,
-      week: lang === 'te' ? 'ఈ వారం (ప్రస్తుతం)' : 'Week 1 (Current)',
-      title: lang === 'te' ? 'ఆకు పిచికారీ: Mancozeb 75% WP' : 'Foliar Spray: Mancozeb 75% WP',
-      desc: lang === 'te' ? 'వర్షానికి ముందే ఎకరానికి 600 గ్రాములు పిచికారీ చేయండి.' : 'Spray 600g per acre before rainfall.',
-      category: lang === 'te' ? 'మందు పిచికారీ' : 'Spray',
+      week: t('calendar.task1Week'),
+      title: t('calendar.task1Title'),
+      desc: t('calendar.task1Desc'),
+      category: t('calendar.task1Cat'),
       completed: false
     },
     {
       id: 2,
-      week: lang === 'te' ? 'ఈ వారం (ప్రస్తుతం)' : 'Week 1 (Current)',
-      title: lang === 'te' ? 'డ్రిప్ నీటి సమయం తగ్గించండి' : 'Adjust Drip Schedule',
-      desc: lang === 'te' ? 'నేలలో 34% తేమ ఉంది. నీటిని 45 నిమిషాలకు పరిమితం చేయండి.' : 'Limit drip cycle to 45 mins due to rain forecast.',
-      category: lang === 'te' ? 'నీటి పారుదల' : 'Irrigation',
+      week: t('calendar.task2Week'),
+      title: t('calendar.task2Title'),
+      desc: t('calendar.task2Desc'),
+      category: t('calendar.task2Cat'),
       completed: false
     },
     {
       id: 3,
-      week: lang === 'te' ? 'వచ్చే వారం (Week 2)' : 'Week 2',
-      title: lang === 'te' ? 'పంట కోత సమయం (మండీ అమ్మకం)' : 'Optimal Harvest Window',
-      desc: lang === 'te' ? 'మండీ ధర రూ. 27/కిలోకు పెరుగుతుంది. 3 రోజుల్లో కోత పూర్తి చేయండి.' : 'Mandi price expected to rise to ₹27/kg in 3 days.',
-      category: lang === 'te' ? 'పంట కోత' : 'Harvest',
+      week: t('calendar.task3Week'),
+      title: t('calendar.task3Title'),
+      desc: t('calendar.task3Desc'),
+      category: t('calendar.task3Cat'),
       completed: false
     },
     {
       id: 4,
-      week: lang === 'te' ? '3వ వారం (Week 3)' : 'Week 3',
-      title: lang === 'te' ? 'ఎరువుల యాజమాన్యం (Urea)' : 'Fertilizer Application',
-      desc: lang === 'te' ? 'ఎకరానికి 15 కేజీల Urea డ్రిప్ ద్వారా అందించండి.' : 'Apply 15 kg Urea per acre via fertigation.',
-      category: lang === 'te' ? 'ఎరువులు' : 'Fertilizer',
+      week: t('calendar.task4Week'),
+      title: t('calendar.task4Title'),
+      desc: t('calendar.task4Desc'),
+      category: t('calendar.task4Cat'),
       completed: false
     }
-  ]);
+  ];
 
+  const [tasks, setTasks] = useState(getTasks());
   const [isPlayingId, setIsPlayingId] = useState(null);
 
+  // Sync tasks when language changes
+  React.useEffect(() => {
+    setTasks(getTasks());
+  }, [lang]);
+
   const toggleTask = (id) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    setTasks(prev => prev.map(tItem => tItem.id === id ? { ...tItem, completed: !tItem.completed } : tItem));
   };
 
   const toggleAudio = (id, text) => {

@@ -45,14 +45,44 @@ class PesticideRecommendation(BaseModel):
     estimated_cost_inr: float
     nearby_mandi_availability: bool
 
+class PredictionProbability(BaseModel):
+    disease_name: str
+    confidence_pct: float
+    status: str # Healthy or Diseased
+
 class CropVisionReport(BaseModel):
+    is_crop_detected: bool = True
+    crop_detected: str
+    plant_part_detected: str # Leaf, Fruit, Stem, Flower, Whole Plant, Multiple Parts
+    health_status: str # Healthy or Diseased
     disease_name: str
     confidence: float
     affected_area_pct: float
     severity_level: str # Low, Medium, High, Severe
     spread_velocity: str # Slow, Moderate, Fast
-    pesticide: PesticideRecommendation
-    preventive_actions: List[str]
+    top_3_predictions: List[PredictionProbability]
+    is_below_threshold: bool = False
+    quality_warning: Optional[str] = None
+    symptoms: List[str]
+    cause: str
+    immediate_treatment: List[str]
+    prevention_tips: List[str]
+    dosage_note: str
+    pesticide: Optional[PesticideRecommendation] = None
+    is_low_confidence: bool = False
+    user_message: Optional[str] = None
+    scan_date: Optional[str] = None
+
+class ScanHistoryEntry(BaseModel):
+    scan_id: str
+    scan_date: str
+    crop_name: str
+    plant_part_detected: Optional[str] = "Leaf"
+    disease_name: str
+    confidence_pct: float
+    health_status: str
+    immediate_treatment: List[str]
+    image_url: Optional[str] = None
 
 class SoilIrrigationReport(BaseModel):
     water_requirement_l_per_day: float

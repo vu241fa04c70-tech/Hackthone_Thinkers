@@ -9,25 +9,25 @@ export default function FarmCopilot({ activeField }) {
   const getQuickPrompts = () => {
     if (lang === 'te') {
       return [
-        "నా టమాటా ఆకులు పసుపు రంగులోకి మారుతున్నాయి. ఏం చేయాలి?",
+        "నా వరి పంటకు పురుగులు వస్తున్నాయి. నేను ఏం చేయాలి?",
+        "నా టమాటా ఆకులు పసుపు రంగులోకి మారుతున్నాయి",
         "ఈరోజు వర్షం పడుతుందా?",
         "పంట కోయవచ్చా లేక 3 రోజులు ఆగాలా?",
-        "ఎకరానికి ఎంత Urea ఎరువు వేయాలి?",
-        "ప్రభుత్వ ఫసల్ బీమా యోజన అర్హతలు ఏంటి?"
+        "ఎకరానికి ఎంత Urea ఎరువు వేయాలి?"
       ];
     } else if (lang === 'hi') {
       return [
+        "मेरी फसल में कीट लग रहे हैं, मुझे क्या करना चाहिए?",
         "मेरी टमाटर की पत्तियां पीली हो रही हैं",
         "क्या आज बारिश होगी?",
-        "क्या अभी फसल काटें या 3 दिन रुकें?",
         "यूरिया खाद कितनी मात्रा में डालें?"
       ];
     } else {
       return [
+        "Pests are infecting my rice crop, what should I do?",
         "My tomato leaves are turning yellow with brown spots",
         "Should I harvest my crop now or wait 3 days?",
-        "How much urea fertilizer should I apply for drip fertigation?",
-        "What are PM Fasal Bima Yojana crop insurance details?"
+        "How much urea fertilizer should I apply?"
       ];
     }
   };
@@ -36,15 +36,15 @@ export default function FarmCopilot({ activeField }) {
   const [inputQuery, setInputQuery] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [voiceState, setVoiceState] = useState('idle'); // idle, listening, processing, speaking, error
+  const [voiceState, setVoiceState] = useState('idle');
   const [speakingIdx, setSpeakingIdx] = useState(null);
 
   useEffect(() => {
     const welcome = lang === 'te'
-      ? `నమస్కారం రమేష్ గారూ! నేను మీ డిజిటల్ కిసాన్ మిత్రుడిని. మీ పంట గురించి ఏదైనా అడగండి — వాతావరణం, ఆకుల మచ్చలు, ఎరువులు లేదా మండీ ధరల గురించి మైక్ నొక్కి మాట్లాడండి!`
+      ? `నమస్కారం! నేను మీ వ్యవసాయ సహాయకుడిని. మీకు ఏ విధంగా సహాయం చేయగలను?`
       : (lang === 'hi'
-        ? `नमस्ते रमेश भाई! मैं आपका डिजिटल किसान मित्र हूँ। अपने खेत के बारे में कुछ भी पूछें — मौसम, खाद या मंडी भाव के बारे में बोलें!`
-        : `Namaste Ramesh Bhai! I am your AI Farm Copilot. Press the mic and ask anything about crop diseases, fertilizers, weather, or mandi prices!`);
+        ? `नमस्ते! मैं आपका कृषि सहायक हूँ। मैं आपकी किस प्रकार सहायता कर सकता हूँ?`
+        : `Namaste! I am your AI agriculture assistant. How can I help you today?`);
 
     setMessages([
       {
@@ -52,8 +52,8 @@ export default function FarmCopilot({ activeField }) {
         text: welcome,
         agents: ['WeatherAgent', 'MarketAgent', 'SoilIrrigationAgent'],
         actions: lang === 'te' 
-          ? ['ఆకు ఫోటో స్కాన్ చేయండి', 'మండీ ధరలు చూడండి', 'ఎరువుల సలహా వినండి']
-          : ['Scan crop leaf photo', 'Check market prices', 'View soil NPK advice']
+          ? ['ఆకు ఫోటో స్కాన్ చేయండి', 'మందుల వివరాలు వినండి', 'మండీ ధరలు చూడండి']
+          : ['Scan crop leaf photo', 'Check market prices', 'View soil advice']
       }
     ]);
   }, [lang, activeField]);
@@ -131,7 +131,7 @@ export default function FarmCopilot({ activeField }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query: textToSubmit,
-          language: lang === 'te' ? 'Telugu' : (lang === 'hi' ? 'Hindi' : 'English'),
+          language: lang,
           field_id: activeField?.field_id || 'field_01',
           farmer_profile: profileObj
         })
@@ -148,21 +148,21 @@ export default function FarmCopilot({ activeField }) {
       
       setMessages(prev => [...prev, botMsg]);
 
-      // AUTO-SPEAK RESPONSE (Requirement #3 & #7 & #8)
+      // AUTO-SPEAK RESPONSE IN SELECTED LANGUAGE (te -> te-IN)
       setTimeout(() => {
         handleSpeak(data.answer, newIdx);
       }, 300);
 
     } catch (err) {
       const fallbackText = lang === 'te'
-        ? `🌾 సమాధానం:\nటమాటా ఆకులపై పసుపు మచ్చలు లేదా ఎండు తెగులు లక్షణాలు ఉన్నాయి.\n\n✅ ప్రస్తుతం చేయాల్సిన పని:\n48 గంటలలోపు Mancozeb 75% WP మందు పిచికారీ చేయండి.\n\n📌 ముఖ్య గమనిక:\n1 లీటరు నీటికి 2 స్పూన్లు (ఎకరానికి 600 గ్రాములు) వాడండి.\n\n⚠️ నివారించాల్సినవి:\nవర్షం పడే ముందు మందు కొట్టవద్దు.`
-        : `🌾 Answer:\nTomato leaves show early blight spots.\n\n✅ Action Now:\nSpray Mancozeb 75% WP within 48 hours.\n\n📌 Note:\nDosage: 2 spoons per 1 liter water.\n\n⚠️ Avoid:\nDo not spray right before rain.`;
+        ? `మీ వరి పంటలో ఏ పురుగు సమస్య ఉందో ముందుగా గుర్తించడం ముఖ్యం. ఆకులు, కాండం లేదా గింజలపై పురుగుల లక్షణాలను పరిశీలించండి. మీరు పంటకు సంబంధించిన ఫోటోను పంపితే, సమస్యను గుర్తించడంలో నేను సహాయం చేస్తాను.`
+        : `Please inspect leaf or stem symptoms. Upload a crop photo so I can accurately identify the disease and recommend treatment.`;
       
       const botMsg = {
         sender: 'bot',
         text: fallbackText,
         agents: ['SoilIrrigationAgent', 'CropVisionAgent'],
-        actions: lang === 'te' ? ['మందు వివరాలు', 'మండీ ధరలు'] : ['Spray info', 'Check prices']
+        actions: lang === 'te' ? ['ఆకు ఫోటో స్కాన్ చేయండి', 'మండీ ధరలు చూడండి'] : ['Scan crop photo', 'Check prices']
       };
       
       setMessages(prev => [...prev, botMsg]);
@@ -199,7 +199,7 @@ export default function FarmCopilot({ activeField }) {
             <h2 className="font-black text-slate-100 flex items-center gap-2 text-base">
               {t('voiceAssistant.title')}
               <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-extrabold">
-                {lang === 'te' ? 'తెలుగు వాయిస్' : lang.toUpperCase()}
+                {lang === 'te' ? 'తెలుగు వాయిస్ AI (te-IN)' : lang.toUpperCase()}
               </span>
             </h2>
             <p className="text-xs text-slate-400 font-bold">
@@ -208,7 +208,7 @@ export default function FarmCopilot({ activeField }) {
           </div>
         </div>
 
-        {/* Voice State Badge (Requirement #7 & #10) */}
+        {/* Voice State Badge */}
         <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-emerald-400 flex items-center gap-2">
           <span className={`w-2.5 h-2.5 rounded-full ${voiceState === 'listening' ? 'bg-rose-500 animate-ping' : (voiceState === 'speaking' ? 'bg-emerald-400 animate-pulse' : 'bg-teal-400')}`}></span>
           <span>{getVoiceStateLabel()}</span>
@@ -265,7 +265,7 @@ export default function FarmCopilot({ activeField }) {
                 </div>
               )}
 
-              {/* Text-to-speech button (Requirement #7 & #8) */}
+              {/* Text-to-speech button */}
               {msg.sender === 'bot' && (
                 <button
                   onClick={() => handleSpeak(msg.text, idx)}

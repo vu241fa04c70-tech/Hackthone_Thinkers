@@ -12,9 +12,7 @@ export default function MarketIntelligence({ activeField }) {
     current_price: 24.50,
     forecast_3days: 27.50,
     forecast_change_pct: '+12.2%',
-    recommendation: lang === 'te' 
-      ? '3 రోజులు ఆగండి, ధర రూ. 27.50/కిలోకు పెరుగుతుంది' 
-      : 'Hold harvest for 3 days to get ₹27.50/kg',
+    recommendation: t('market.recommendation'),
     comparison: [
       { location: t('market.villageTrader'), price: 21.00, net: '₹21.00/kg' },
       { location: t('market.nearestMandi'), price: 24.50, net: '₹24.50/kg' },
@@ -29,9 +27,7 @@ export default function MarketIntelligence({ activeField }) {
       return;
     }
 
-    const textToSpeak = lang === 'te'
-      ? `మండీలో ప్రస్తుతం టమాటా ధర రూ. 24.50/కిలో ఉంది. రాబోయే 3 రోజుల్లో ధర రూ. 27.50 వరకు పెరుగుతుంది. మా సిఫార్సు: ఈ రోజు అమ్మవద్దు, 3 రోజుల తర్వాత కోత పూర్తి చేసి అమ్మండి!`
-      : `Tomato is trading at ₹24.50/kg. Projected price in 3 days is ₹27.50/kg. We recommend waiting 3 days before harvest to maximize profit!`;
+    const textToSpeak = t('market.audioText');
 
     setIsPlayingAudio(true);
     speakText(
@@ -65,7 +61,7 @@ export default function MarketIntelligence({ activeField }) {
           }`}
         >
           <Volume2 className="w-4 h-4 text-emerald-400" />
-          <span>{isPlayingAudio ? 'ఆపండి' : t('market.listenAudio')}</span>
+          <span>{isPlayingAudio ? (lang === 'te' ? 'ఆపండి' : 'Stop') : t('market.listenAudio')}</span>
         </button>
       </div>
 
