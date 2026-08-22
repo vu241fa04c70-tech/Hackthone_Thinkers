@@ -9,7 +9,7 @@ class CropVisionAgent:
     Crop Doctor Vision Agent:
     Performs real image pixel analysis using Pillow (PIL) on uploaded leaf image bytes,
     calculates RGB spectrum, greenness index, chlorosis/necrosis spot density, and returns
-    accurate crop disease classifications in 7 regional languages (Telugu, Hindi, Tamil, Kannada, Malayalam, Marathi, English).
+    accurate crop disease classifications in 8 regional languages (Telugu, Hindi, Tamil, Kannada, Malayalam, Marathi, Bengali, Gujarati, English).
     """
     def __init__(self):
         pass
@@ -22,46 +22,60 @@ class CropVisionAgent:
         l_code = (lang or "te").lower()
 
         if l_code in ["te", "telugu"]:
-            disease_loc = "ఎండు తెగులు (Early Blight - Alternaria solani)"
+            disease_loc = "టమాటా ఆకుపై ఎండు తెగులు"
             symptoms = ["ఆకులపై పసుపు రింగులతో కూడిన నల్లటి మచ్చలు", "క్రింది ఆకులు ఎండి రాలిపోవడం"]
             actions = ["పాడైన క్రింది ఆకులను కోసి కాల్చివేయండి", "48 గంటలలోపు Mancozeb 75% WP మందు పిచికారీ చేయండి"]
             avoid = ["వర్షం పడే సమయానికి ముందు పిచికారీ చేయవద్దు"]
             dosage_note = "1 లీటరు నీటికి 2 స్పూన్లు (2 గ్రాములు) మందు మాత్రమే కలపండి."
 
         elif l_code in ["hi", "hindi"]:
-            disease_loc = "अगेती झुलसा रोग (Early Blight - Alternaria solani)"
-            symptoms = ["पत्तियों पर काले एवं पीले धब्बे visible", "पत्तियों का सूखना"]
+            disease_loc = "टमाटर पत्ती अगेती झुलसा रोग"
+            symptoms = ["पत्तियों पर काले एवं पीले धब्बे", "पत्तियों का सूखना"]
             actions = ["प्रभावित पत्तियों को काटकर नष्ट करें", "अनुमोदित फफूंदनाशक Mancozeb 75% WP का छिड़काव करें"]
             avoid = ["बारिश से ठीक पहले छिड़काव न करें"]
             dosage_note = "1 लीटर पानी में 2 ग्राम दवा मिलाएं।"
 
         elif l_code in ["ta", "tamil"]:
-            disease_loc = "முன் பருவ கருகல் நோய் (Early Blight - Alternaria solani)"
+            disease_loc = "தக்காளி முன் பருவ கருகல் நோய்"
             symptoms = ["இலைகளில் மஞ்சள் நிற புள்ளிகள்", "இலைகள் காய்ந்து உதிர்தல்"]
             actions = ["பாதிக்கப்பட்ட இலைகளை அகற்றவும்", "Mancozeb 75% WP தெளிக்கவும்"]
             avoid = ["மழைக்கு முன் தெளிக்க வேண்டாம்"]
             dosage_note = "1 லிட்டர் தண்ணீருக்கு 2 கிராம் மருந்து கலக்கவும்."
 
         elif l_code in ["kn", "kannada"]:
-            disease_loc = "ಮುಂಗಾರು ಕರಗು ರೋಗ (Early Blight - Alternaria solani)"
+            disease_loc = "ಟೊಮೆಟೊ ಮುಂಗಾರು ಕರಗು ರೋಗ"
             symptoms = ["ಎಲೆಗಳ ಮೇಲೆ ಕಪ್ಪು ಮಚ್ಚೆಗಳು", "ಎಲೆಗಳು ಒಣಗಿ ಉದುರುವುದು"]
             actions = ["Mancozeb 75% WP ಸಿಂಪಡಿಸಿ"]
             avoid = ["ಮಳೆಯ ಮೊದಲು ಸಿಂಪಡಿಸಬೇಡಿ"]
             dosage_note = "1 ಲೀಟರ್ ನೀರಿಗೆ 2 ಗ್ರಾಂ ಔಷಧಿ ಬಳಸಿ."
 
         elif l_code in ["ml", "malayalam"]:
-            disease_loc = "അർലി ബ്ലൈറ്റ് രോഗം (Early Blight - Alternaria solani)"
+            disease_loc = "തക്കാളി അർലി ബ്ലൈറ്റ് രോഗം"
             symptoms = ["ഇലകളിൽ കറുത്ത പാടുകൾ", "ഇലകൾ ഉണങ്ങി വീഴുന്നു"]
             actions = ["Mancozeb 75% WP തളിക്കുക"]
             avoid = ["മഴയ്ക്ക് മുമ്പ് തളിക്കരുത്"]
             dosage_note = "1 ലിറ്റർ വെള്ളത്തിൽ 2 ഗ്രാം മരുന്ന് ഉപയോഗിക്കുക."
 
         elif l_code in ["mr", "marathi"]:
-            disease_loc = "अर्ली ब्लाइट रोग (Early Blight - Alternaria solani)"
+            disease_loc = "टोमॅटो अर्ली ब्लाइट रोग"
             symptoms = ["पानांवर काळे डाग", "पाने वाळून गळणे"]
             actions = ["Mancozeb 75% WP फवारा"]
             avoid = ["पावसापूर्वी फवारणी करू नका"]
             dosage_note = "१ लिटर पाण्यात २ ग्रॅम औषध वापरा."
+
+        elif l_code in ["bn", "bengali"]:
+            disease_loc = "টমেটো পাতা আর্লি ব্লাইট রোগ"
+            symptoms = ["পাতায় কালো ও হলুদ দাগ", "পাতা শুকিয়ে যাওয়া"]
+            actions = ["Mancozeb 75% WP স্প্রে করুন"]
+            avoid = ["বৃষ্টির আগে স্প্রে করবেন না"]
+            dosage_note = "প্রতি লিটার জলে ২ গ্রাম ওষুধ মেশান।"
+
+        elif l_code in ["gu", "gujarati"]:
+            disease_loc = "ટામેટા પાંદડા અગેતી સુકારો રોગ"
+            symptoms = ["પાંદડા પર કાળા અને પીળા ડાઘ", "પાંદડા સુકાઈ જવા"]
+            actions = ["Mancozeb 75% WP છંટકાવ કરો"]
+            avoid = ["વરસાદ પહેલાં છંટકાવ ન કરવો"]
+            dosage_note = "૧ લીટર પાણીમાં ૨ ગ્રામ દવા ઉમેરો."
 
         else:
             disease_loc = "Early Blight (Alternaria solani)"
@@ -114,46 +128,60 @@ class CropVisionAgent:
                 pesticide_name = "Tricyclazole 75% WP (Beam / Baan)"
 
                 if l_code in ["te", "telugu"]:
-                    disease_loc = f"వరి అగ్గి తెగులు / పండు తెగులు (Rice Blast - {disease_sci})"
+                    disease_loc = "వరి అగ్గి తెగులు మరియు పండు తెగులు"
                     symptoms = ["వరి ఆకులు మరియు కంకులపై గోధుమ రంగు మచ్చలు", "కంకులు విరిగిపోయి పాలు పోసుకోకపోవడం"]
                     actions = ["ఎకరానికి 120 గ్రాముల 'Tricyclazole 75% WP' మందు పిచికారీ చేయండి", "పొలంలో నిలిచిన నీటిని తీసివేసి ఆరబెట్టండి"]
                     avoid = ["నత్రజని (యూరియా) ఎరువును అధికంగా వేయవద్దు"]
                     dosage_note = "మోతాదు: లీటర్ నీటికి 2 గ్రాములు ఉపయోగించండి."
 
                 elif l_code in ["hi", "hindi"]:
-                    disease_loc = f"धान का झुलसा रोग (Rice Blast - {disease_sci})"
+                    disease_loc = "धान का झुलसा एवं अंगमारी रोग"
                     symptoms = ["धान की पत्तियों पर भूरे धब्बे", "बालियां सूखना"]
                     actions = ["Tricyclazole 75% WP का छिड़काव करें", "अतिरिक्त पानी निकाल दें"]
                     avoid = ["अत्यधिक यूरिया न डालें"]
                     dosage_note = "मात्रा: 1 लीटर पानी में 2 ग्राम मिलाएं।"
 
                 elif l_code in ["ta", "tamil"]:
-                    disease_loc = f"நெல் கருக்கல் நோய் (Rice Blast - {disease_sci})"
+                    disease_loc = "நெல் கருக்கல் நோய்"
                     symptoms = ["இலைகளில் பழுப்பு நிற புள்ளிகள்"]
                     actions = ["Tricyclazole 75% WP தெளிக்கவும்"]
                     avoid = ["அதிக யூரியா இட வேண்டாம்"]
                     dosage_note = "அளவு: லிட்டர் தண்ணீருக்கு 2 கிராம்."
 
                 elif l_code in ["kn", "kannada"]:
-                    disease_loc = f"ಬತ್ತದ ಕರಗು ರೋಗ (Rice Blast - {disease_sci})"
+                    disease_loc = "ಬತ್ತದ ಕರಗು ರೋಗ"
                     symptoms = ["ಎಲೆಗಳ ಮೇಲೆ ಕಂದು ಮಚ್ಚೆಗಳು"]
                     actions = ["Tricyclazole 75% WP ಸಿಂಪಡಿಸಿ"]
                     avoid = ["ಹೆಚ್ಚು ಯುರಿಯಾ ಬಳಸಬೇಡಿ"]
                     dosage_note = "ಪ್ರಮಾಣ: 1 ಲೀಟರ್ ನೀರಿಗೆ 2 ಗ್ರಾಂ."
 
                 elif l_code in ["ml", "malayalam"]:
-                    disease_loc = f"നെല്ലിലെ വാട്ടരോഗം (Rice Blast - {disease_sci})"
+                    disease_loc = "നെല്ലിലെ വാട്ടരോഗം"
                     symptoms = ["ഇലകളിൽ തവിട്ടു പാടുകൾ"]
                     actions = ["Tricyclazole 75% WP തളിക്കുക"]
                     avoid = ["അമിതമായി യൂറിയ ഉപയോഗിക്കരുത്"]
                     dosage_note = "അളവ്: 1 ലിറ്റർ വെള്ളത്തിൽ 2 ഗ്രാം."
 
                 elif l_code in ["mr", "marathi"]:
-                    disease_loc = f"भातावरील करपा रोग (Rice Blast - {disease_sci})"
+                    disease_loc = "भातावरील करपा रोग"
                     symptoms = ["पानांवर तांबूस डाग"]
                     actions = ["Tricyclazole 75% WP फवारा"]
                     avoid = ["जास्त युरिया वापरू नका"]
                     dosage_note = "मात्रा: १ लिटर पाण्यात २ ग्रॅम."
+
+                elif l_code in ["bn", "bengali"]:
+                    disease_loc = "ধানের ব্লাস্ট ও ধসা রোগ"
+                    symptoms = ["ধানের পাতায় বাদামী দাগ"]
+                    actions = ["Tricyclazole 75% WP স্প্রে করুন"]
+                    avoid = ["অতিরিক্ত ইউরিয়া দেবেন না"]
+                    dosage_note = "প্রতি লিটার জলে ২ গ্রাম।"
+
+                elif l_code in ["gu", "gujarati"]:
+                    disease_loc = "ડાંગરનો બ્લાસ્ટ રોગ"
+                    symptoms = ["પાંદડા પર બદામી ડાઘ"]
+                    actions = ["Tricyclazole 75% WP છંટકાવ કરો"]
+                    avoid = ["વધારે યુરિયા ન આપવું"]
+                    dosage_note = "૧ લીટર પાણીમાં ૨ ગ્રામ."
 
                 else:
                     disease_loc = f"Rice Blast & Sheath Blight ({disease_sci})"
@@ -169,46 +197,60 @@ class CropVisionAgent:
                 pesticide_name = "Mancozeb 75% WP (Indofil M-45)"
 
                 if l_code in ["te", "telugu"]:
-                    disease_loc = f"{crop} ఆకుపై ఎండు తెగులు (Early Blight - {disease_sci})"
+                    disease_loc = "టమాటా ఆకుపై ఎండు తెగులు"
                     symptoms = ["ఆకులపై పసుపు అంచులతో కూడిన మచ్చలు", "ఆకులు ఎండి రాలిపోవడం"]
                     actions = ["పాడైన ఆకులను తీసివేయండి", "48 గంటలలోపు Mancozeb 75% WP మందు పిచికారీ చేయండి"]
                     avoid = ["వర్షం పడే సమయానికి ముందు మందు కొట్టవద్దు"]
                     dosage_note = "మోతాదు: లీటర్ నీటికి 2 గ్రాములు ఉపయోగించండి."
 
                 elif l_code in ["hi", "hindi"]:
-                    disease_loc = f"{crop} अगेती झुलसा (Early Blight - {disease_sci})"
+                    disease_loc = "टमाटर पत्ती अगेती झुलसा रोग"
                     symptoms = ["पत्तियों पर काले धब्बे", "पत्तियां सूखना"]
                     actions = ["Mancozeb 75% WP का छिड़काव करें"]
                     avoid = ["बारिश से ठीक पहले छिड़काव न करें"]
                     dosage_note = "मात्रा: 1 लीटर पानी में 2 ग्राम मिलाएं।"
 
                 elif l_code in ["ta", "tamil"]:
-                    disease_loc = f"{crop} இலைக் கருகல் (Early Blight - {disease_sci})"
+                    disease_loc = "தக்காளி இலைக் கருகல் நோய்"
                     symptoms = ["இலைகளில் புள்ளிகள்"]
                     actions = ["Mancozeb 75% WP தெளிக்கவும்"]
                     avoid = ["மழைக்கு முன் தெளிக்க வேண்டாம்"]
                     dosage_note = "அளவு: லிட்டர் தண்ணீருக்கு 2 கிராம்."
 
                 elif l_code in ["kn", "kannada"]:
-                    disease_loc = f"{crop} ಎಲೆ ರೋಗ (Early Blight - {disease_sci})"
+                    disease_loc = "ಟೊಮೆಟೊ ಎಲೆ ರೋಗ"
                     symptoms = ["ಎಲೆಗಳ ಮೇಲೆ ಮಚ್ಚೆಗಳು"]
                     actions = ["Mancozeb 75% WP ಸಿಂಪಡಿಸಿ"]
                     avoid = ["ಮಳೆಯ ಮೊದಲು ಸಿಂಪಡಿಸಬೇಡಿ"]
                     dosage_note = "ಪ್ರಮಾಣ: 1 ಲೀಟರ್ ನೀರಿಗೆ 2 ಗ್ರಾಂ."
 
                 elif l_code in ["ml", "malayalam"]:
-                    disease_loc = f"{crop} ഇല രോഗം (Early Blight - {disease_sci})"
+                    disease_loc = "തക്കാളി ഇല രോഗം"
                     symptoms = ["ഇലകളിൽ പാടുകൾ"]
                     actions = ["Mancozeb 75% WP തളിക്കുക"]
                     avoid = ["മഴയ്ക്ക് മുമ്പ് തളിക്കരുത്"]
                     dosage_note = "അളവ്: 1 ലിറ്റർ വെള്ളത്തിൽ 2 ഗ്രാം."
 
                 elif l_code in ["mr", "marathi"]:
-                    disease_loc = f"{crop} करपा रोग (Early Blight - {disease_sci})"
+                    disease_loc = "टोमॅटो करपा रोग"
                     symptoms = ["पानांवर डाग"]
                     actions = ["Mancozeb 75% WP फवारा"]
                     avoid = ["पावसापूर्वी फवारणी करू नका"]
                     dosage_note = "मात्रा: १ लिटर पाण्यात २ ग्रॅम."
+
+                elif l_code in ["bn", "bengali"]:
+                    disease_loc = "টমেটো আর্লি ব্লাইট রোগ"
+                    symptoms = ["পাতায় কালো দাগ"]
+                    actions = ["Mancozeb 75% WP স্প্রে করুন"]
+                    avoid = ["বৃষ্টির আগে স্প্রে করবেন না"]
+                    dosage_note = "প্রতি লিটার জলে ২ গ্রাম।"
+
+                elif l_code in ["gu", "gujarati"]:
+                    disease_loc = "ટામેટા અગેતી સુકારો રોગ"
+                    symptoms = ["પાંદડા પર ડાઘ"]
+                    actions = ["Mancozeb 75% WP છંટકાવ કરો"]
+                    avoid = ["વરસાદ પહેલાં છંટકાવ ન કરવો"]
+                    dosage_note = "૧ લીટર પાણીમાં ૨ ગ્રામ."
 
                 else:
                     disease_loc = f"{crop} Early Blight ({disease_sci})"
@@ -274,6 +316,16 @@ class CropVisionAgent:
             symptoms = ["फोटोची स्पष्टता कमी आहे"]
             actions = ["जवळून स्पष्ट फोटो घ्या"]
             avoid = ["पुसट फोटो टाळा"]
+        elif l_code in ["bn", "bengali"]:
+            msg = "এই ছবি থেকে রোগ সঠিকভাবে সনাক্ত করা যায়নি। দয়া করে একটি পরিষ্কার ছবি আপলোড করুন।"
+            symptoms = ["ছবির স্পষ্টতা কম"]
+            actions = ["কাছ থেকে পরিষ্কার ছবি তুলুন"]
+            avoid = ["ঝাপসা ছবি দেবেন না"]
+        elif l_code in ["gu", "gujarati"]:
+            msg = "આ ચિત્રમાંથી રોગ સ્પષ્ટપણે ઓળખી શકાયો નથી. કૃપા કરીને સ્પષ્ટ ફોટો અપલોડ કરો."
+            symptoms = ["ચિત્રની સ્પષ્ટતા ઓછી છે"]
+            actions = ["નજીકથી સ્પષ્ટ ફોટો લો"]
+            avoid = ["ઝાંખા ફોટા ન પાડો"]
         else:
             msg = "Unable to confidently identify the problem from this image. Please capture a clear, close-up photo of the affected leaf."
             symptoms = ["Low image clarity or unidentifiable leaf area"]

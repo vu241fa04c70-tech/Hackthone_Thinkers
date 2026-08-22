@@ -27,14 +27,14 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
   };
 
   useEffect(() => {
-    fetch('/api/samples')
+    fetch(`/api/samples?language=${lang}`)
       .then(res => res.json())
       .then(data => setSamples(data))
       .catch(() => {});
     
     // Initial demo load
     runAnalysis('sample_tomato_early_blight', null);
-  }, []);
+  }, [lang]);
 
   const runAnalysis = async (sampleKey, file) => {
     setIsAnalyzing(true);

@@ -93,8 +93,63 @@ def create_field(profile: FieldProfile):
 
 
 @app.get("/api/samples")
-def get_samples():
-    return list(SAMPLE_CROP_IMAGES.values())
+def get_samples(language: Optional[str] = "te"):
+    samples = list(SAMPLE_CROP_IMAGES.values())
+    l_code = (language or "te").lower()
+    
+    if l_code in ["te", "telugu"]:
+        localized = []
+        for s in samples:
+            item = dict(s)
+            if "paddy" in s["id"]:
+                item["disease_name"] = "వరి అగ్గి తెగులు మరియు పండు తెగులు"
+            elif "tomato" in s["id"]:
+                item["disease_name"] = "టమాటా ఆకుపై ఎండు తెగులు"
+            elif "wheat" in s["id"]:
+                item["disease_name"] = "గోధుమ ఆకు పసుపు మచ్చ తెగులు"
+            elif "cotton" in s["id"]:
+                item["disease_name"] = "పత్తి గులాబీ రంగు పురుగు తెగులు"
+            localized.append(item)
+        return localized
+
+    elif l_code in ["hi", "hindi"]:
+        localized = []
+        for s in samples:
+            item = dict(s)
+            if "paddy" in s["id"]:
+                item["disease_name"] = "धान का झुलसा एवं अंगमारी रोग"
+            elif "tomato" in s["id"]:
+                item["disease_name"] = "टमाटर पत्ती अगेती झुलसा रोग"
+            elif "wheat" in s["id"]:
+                item["disease_name"] = "गेहूं का पीला रतुआ रोग"
+            elif "cotton" in s["id"]:
+                item["disease_name"] = "कपास का गुलाबी सुंडी प्रकोप"
+            localized.append(item)
+        return localized
+
+    elif l_code in ["ta", "tamil"]:
+        localized = []
+        for s in samples:
+            item = dict(s)
+            if "paddy" in s["id"]:
+                item["disease_name"] = "நெல் கருக்கல் நோய்"
+            elif "tomato" in s["id"]:
+                item["disease_name"] = "தக்காளி இலைக் கருகல் நோய்"
+            localized.append(item)
+        return localized
+
+    elif l_code in ["kn", "kannada"]:
+        localized = []
+        for s in samples:
+            item = dict(s)
+            if "paddy" in s["id"]:
+                item["disease_name"] = "ಬತ್ತದ ಕರಗು ರೋಗ"
+            elif "tomato" in s["id"]:
+                item["disease_name"] = "ಟೊಮೆಟೊ ಎಲೆ ರೋಗ"
+            localized.append(item)
+        return localized
+
+    return samples
 
 
 @app.get("/api/agents/morning-briefing")
