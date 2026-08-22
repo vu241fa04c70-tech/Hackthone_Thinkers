@@ -16,31 +16,26 @@ import FarmProfiles from './components/FarmProfiles';
 export default function App() {
   const { lang, setLanguage, t } = useLanguage();
 
-  const [hasSelectedLang, setHasSelectedLang] = useState(() => {
-    return !!localStorage.getItem('kisanLanguage');
-  });
-
-  const [activeTab, setActiveTab] = useState('home');
-
   const [farmerProfile, setFarmerProfile] = useState(() => {
     const saved = localStorage.getItem('kisan_farmer_profile');
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
-    return {
-      farmer_name: 'రమేష్ గారూ',
-      main_crop: 'Paddy',
-      district: 'Guntur',
-      state: 'Andhra Pradesh'
-    };
+    return null;
   });
+
+  const [hasSelectedLang, setHasSelectedLang] = useState(() => {
+    return !!localStorage.getItem('kisanLanguage') && !!localStorage.getItem('kisan_farmer_profile');
+  });
+
+  const [activeTab, setActiveTab] = useState('home');
 
   const [activeField, setActiveField] = useState({
     field_id: 'field_01',
     name: 'వరి పొలం',
-    crop_type: farmerProfile.main_crop || 'Paddy',
-    acreage: 2.5,
-    location: `${farmerProfile.district || 'Guntur'}, ${farmerProfile.state || 'Andhra Pradesh'}`,
+    crop_type: farmerProfile?.main_crop || 'Paddy',
+    acreage: farmerProfile?.acreage || 2.5,
+    location: `${farmerProfile?.district || 'Guntur'}, ${farmerProfile?.state || 'Andhra Pradesh'}`,
     soil_type: 'Black Loam',
     irrigation_system: 'Canal Irrigation',
     planting_date: '2026-06-15',
@@ -63,8 +58,8 @@ export default function App() {
     setHasSelectedLang(true);
   };
 
-  // If first visit or language reset, show Language Selection Screen
-  if (!hasSelectedLang) {
+  // If no account created or first visit, show Language & Account Creation Screen
+  if (!hasSelectedLang || !farmerProfile) {
     return (
       <LanguageSelectionScreen
         onConfirm={handleInitialSetupComplete}
@@ -104,7 +99,7 @@ export default function App() {
       <header className="border-b border-emerald-500/30 bg-slate-950/90 backdrop-blur-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           
-          {/* Logo & Title */}
+          {/* Logo & Current User Info */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 text-xl">
               🌾
@@ -116,13 +111,13 @@ export default function App() {
                   {t('nav.tagline')}
                 </span>
               </h1>
-              <p className="text-[11px] text-slate-400 font-bold hidden sm:block">
-                🌾 {farmerProfile.farmer_name} ({farmerProfile.main_crop}) • 📍 {farmerProfile.district}
+              <p className="text-[11px] text-slate-300 font-bold hidden sm:block">
+                👨‍🌾 {farmerProfile.farmer_name} ({farmerProfile.main_crop}) • 📍 {farmerProfile.district}, {farmerProfile.state}
               </p>
             </div>
           </div>
 
-          {/* Multilingual Selector & Account Switcher */}
+          {/* Multilingual Selector & Account Creation / Switch Button */}
           <div className="flex items-center gap-2">
             {/* 🌐 Multilingual Language Dropdown */}
             <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-lg shadow-emerald-500/10">
@@ -141,17 +136,21 @@ export default function App() {
               </select>
             </div>
 
-            {/* 👨‍🌾 Farmer Profiles & Account Reset Button */}
+            {/* ➕ Create Account / Switch User Button */}
             <button
               onClick={() => {
+                localStorage.removeItem('kisan_farmer_profile');
                 localStorage.removeItem('kisanLanguage');
+                setFarmerProfile(null);
                 setHasSelectedLang(false);
               }}
               className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all"
-              title="Switch Account / Reset Session"
+              title="Create New Account / Switch User"
             >
               <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="hidden sm:inline">{lang === 'te' ? 'ఖాతాలు' : 'Accounts'}</span>
+              <span className="hidden sm:inline">
+                {lang === 'te' ? '➕ కొత్త ఖాతా' : (lang === 'hi' ? '➕ नया खाता' : '➕ New Account')}
+              </span>
             </button>
           </div>
 
@@ -205,6 +204,11 @@ export default function App() {
                 crop_type: newP.main_crop || 'Paddy',
                 location: `${newP.district || 'Guntur'}, ${newP.state || 'Andhra Pradesh'}`
               }));
+            }}
+            onNewAccountClick={() => {
+              localStorage.removeItem('kisan_farmer_profile');
+              setFarmerProfile(null);
+              setHasSelectedLang(false);
             }}
           />
         )}
