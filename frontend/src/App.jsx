@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus } from 'lucide-react';
 import { useLanguage } from './localization/LanguageContext';
+import { SUPPORTED_LANGUAGES } from './localization/languageMap';
 
 import LanguageSelectionScreen from './components/LanguageSelectionScreen';
 import KisanHomeGrid from './components/KisanHomeGrid';
@@ -15,42 +16,58 @@ import FarmProfiles from './components/FarmProfiles';
 export default function App() {
   const { lang, setLanguage, t } = useLanguage();
 
-  // Requirement #1 & #21: Check if language has been selected previously in localStorage
   const [hasSelectedLang, setHasSelectedLang] = useState(() => {
     return !!localStorage.getItem('kisanLanguage');
   });
 
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
 
-  const [profile, setProfile] = useState({
-    farmer_name: 'రమేష్ గారూ',
-    crop_type: 'Tomato',
-    location: 'Guntur, Andhra Pradesh',
-    language: 'Telugu'
+  const [farmerProfile, setFarmerProfile] = useState(() => {
+    const saved = localStorage.getItem('kisan_farmer_profile');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      farmer_name: 'రమేష్ గారూ',
+      main_crop: 'Paddy',
+      district: 'Guntur',
+      state: 'Andhra Pradesh'
+    };
   });
 
   const [activeField, setActiveField] = useState({
     field_id: 'field_01',
-    name: 'టమాటా తోట (Tomato Block)',
-    crop_type: 'Tomato',
+    name: 'వరి పొలం',
+    crop_type: farmerProfile.main_crop || 'Paddy',
     acreage: 2.5,
-    location: 'Guntur, Andhra Pradesh',
+    location: `${farmerProfile.district || 'Guntur'}, ${farmerProfile.state || 'Andhra Pradesh'}`,
     soil_type: 'Black Loam',
-    irrigation_system: 'Drip Irrigation',
+    irrigation_system: 'Canal Irrigation',
     planting_date: '2026-06-15',
     growth_stage: 'Fruiting'
   });
 
-  const handleInitialLanguageSelect = () => {
+  const handleInitialSetupComplete = () => {
+    const saved = localStorage.getItem('kisan_farmer_profile');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setFarmerProfile(parsed);
+        setActiveField(prev => ({
+          ...prev,
+          crop_type: parsed.main_crop || 'Paddy',
+          location: `${parsed.district || 'Guntur'}, ${parsed.state || 'Andhra Pradesh'}`
+        }));
+      } catch (e) {}
+    }
     setHasSelectedLang(true);
   };
 
-  // Requirement #1: If first visit, show FULL SCREEN Language Selection Page!
+  // If first visit, show Language Selection Screen
   if (!hasSelectedLang) {
     return (
       <LanguageSelectionScreen
-        onConfirm={handleInitialLanguageSelect}
+        onConfirm={handleInitialSetupComplete}
       />
     );
   }
@@ -71,30 +88,19 @@ export default function App() {
 
   const tabs = [
     { id: 'home', icon: Home },
-    { id: 'doctor', icon: Camera, badge: 'Vision' },
+    { id: 'doctor', icon: Camera },
     { id: 'weather', icon: Sun },
     { id: 'market', icon: TrendingUp },
     { id: 'schemes', icon: Scroll },
     { id: 'calendar', icon: Calendar },
-    { id: 'copilot', icon: Bot, badge: 'Voice AI' },
+    { id: 'copilot', icon: Bot },
     { id: 'profile', icon: UserCheck },
   ];
 
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950">
       
-      {/* Settings Change Language Modal */}
-      {showLanguageModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="max-w-md w-full">
-            <LanguageSelectionScreen
-              onConfirm={() => setShowLanguageModal(false)}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Top Header (Requirement #19: NO permanent language button in top right) */}
+      {/* Top Header Bar */}
       <header className="border-b border-emerald-500/30 bg-slate-950/90 backdrop-blur-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           
@@ -111,9 +117,26 @@ export default function App() {
                 </span>
               </h1>
               <p className="text-[11px] text-slate-400 font-bold hidden sm:block">
-                {t('nav.greeting')}
+                🌾 {farmerProfile.farmer_name} ({farmerProfile.main_crop}) • 📍 {farmerProfile.district}
               </p>
             </div>
+          </div>
+
+          {/* Multilingual Dropdown Selector (Requirements 1 & 4) */}
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+            <select
+              value={lang}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-black text-emerald-400 focus:outline-none focus:border-emerald-500 cursor-pointer shadow-lg shadow-emerald-500/10"
+              title="Choose Language"
+            >
+              {Object.values(SUPPORTED_LANGUAGES).map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.flag} {l.name} ({l.subName})
+                </option>
+              ))}
+            </select>
           </div>
 
         </div>
@@ -139,13 +162,6 @@ export default function App() {
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-emerald-400'}`} />
                   <span>{labelText}</span>
-                  {tab.badge && (
-                    <span className={`text-[9px] px-1.5 py-0.2 rounded font-extrabold ${
-                      isActive ? 'bg-slate-950 text-emerald-400' : 'bg-slate-800 text-emerald-300'
-                    }`}>
-                      {tab.badge}
-                    </span>
-                  )}
                 </button>
               );
             })}
@@ -156,7 +172,7 @@ export default function App() {
       {/* Main Active Tab Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'home' && (
-          <KisanHomeGrid profile={profile} onSelectAction={(tabId) => setActiveTab(tabId)} />
+          <KisanHomeGrid profile={farmerProfile} onSelectAction={(tabId) => setActiveTab(tabId)} />
         )}
         {activeTab === 'doctor' && <CropDoctor activeField={activeField} />}
         {activeTab === 'weather' && <WeatherScreen />}
@@ -164,14 +180,25 @@ export default function App() {
         {activeTab === 'schemes' && <GovtSchemesScreen />}
         {activeTab === 'calendar' && <FarmingCalendarScreen />}
         {activeTab === 'copilot' && <FarmCopilot activeField={activeField} />}
-        {activeTab === 'profile' && <FarmProfiles onChangeLanguageClick={() => setShowLanguageModal(true)} />}
+        {activeTab === 'profile' && (
+          <FarmProfiles 
+            onProfileSwitch={(newP) => {
+              setFarmerProfile(newP);
+              setActiveField(prev => ({
+                ...prev,
+                crop_type: newP.main_crop || 'Paddy',
+                location: `${newP.district || 'Guntur'}, ${newP.state || 'Andhra Pradesh'}`
+              }));
+            }}
+          />
+        )}
       </main>
 
       {/* Footer */}
       <footer className="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>🌾 {t('nav.appName')} • Voice AI Farmer Application</span>
-          <span>Telugu Speech Recognition (`te-IN`) & Text-to-Speech (`te-IN`)</span>
+          <span>Multilingual Speech Recognition & Text-to-Speech Enabled</span>
         </div>
       </footer>
 
