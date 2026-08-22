@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
-import { Check, Volume2, ArrowRight, ChevronLeft, UserPlus, Sprout, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, Volume2, ArrowRight, ChevronLeft, UserPlus, LogIn, UserCheck, Search } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { speakText } from '../utils/voiceUtils';
 
 export default function LanguageSelectionScreen({ onConfirm }) {
   const { lang, setLanguage, t } = useLanguage();
-  const [step, setStep] = useState(1); // 1: Language Selection, 2: Create Account Form
+  const [step, setStep] = useState(1); // 1: Language Selection, 2: Auth Screen (Sign In / Register)
+  const [authTab, setAuthTab] = useState('signin'); // 'signin' or 'register'
+
+  const [registeredFarmers, setRegisteredFarmers] = useState([]);
+  const [selectedFarmerId, setSelectedFarmerId] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Form State for creating a new farmer profile (Blank by default!)
   const [formData, setFormData] = useState({
@@ -17,6 +22,18 @@ export default function LanguageSelectionScreen({ onConfirm }) {
     acreage: 2.5,
     phone: ''
   });
+
+  useEffect(() => {
+    fetch('/api/farmers')
+      .then(res => res.json())
+      .then(data => {
+        setRegisteredFarmers(data || []);
+        if (data && data.length > 0) {
+          setSelectedFarmerId(data[0].farmer_id);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const languages = [
     { id: 'te', mainLabel: 'తెలుగు', subLabel: 'Telugu', flag: '🌾', greeting: 'తెలుగు భాష ఎంచుకున్నారు. నమస్కారం!' },
@@ -42,6 +59,22 @@ export default function LanguageSelectionScreen({ onConfirm }) {
   const handleSelectLang = (l) => {
     setLanguage(l.id);
     speakText(l.greeting, l.id);
+  };
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    const existing = registeredFarmers.find(f => f.farmer_id === selectedFarmerId);
+    if (!existing) return;
+
+    localStorage.setItem('kisan_farmer_profile', JSON.stringify(existing));
+    speakText(
+      lang === 'te' 
+        ? `నమస్కారం ${existing.farmer_name}! మీ ఖాతాలోకి విజయవంతంగా ప్రవేశించారు.` 
+        : `Welcome back ${existing.farmer_name}! Signed in successfully.`,
+      lang
+    );
+
+    if (onConfirm) onConfirm();
   };
 
   const handleCreateAccountSubmit = async (e) => {
@@ -81,6 +114,12 @@ export default function LanguageSelectionScreen({ onConfirm }) {
     if (onConfirm) onConfirm();
   };
 
+  const filteredFarmers = registeredFarmers.filter(f => 
+    f.farmer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (f.district && f.district.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (f.village && f.village.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
     <div className="min-h-screen bg-[#070a12] text-slate-100 flex items-center justify-center p-4 sm:p-6 selection:bg-emerald-500 selection:text-slate-950 font-['Plus_Jakarta_Sans',sans-serif]">
       <div className="bg-slate-900/95 border-2 border-emerald-500/50 p-6 sm:p-8 rounded-3xl max-w-xl w-full shadow-2xl space-y-6 backdrop-blur-xl">
@@ -94,7 +133,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
             🌾 Kisan Mitra (కిసాన్ మిత్ర)
           </h1>
           <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
-            {step === 1 ? 'Step 1 of 2 • Regional Language Selection' : 'Step 2 of 2 • Create Farmer Account'}
+            {step === 1 ? 'Step 1 of 2 • Regional Language Selection' : 'Step 2 of 2 • Farmer Authentication'}
           </p>
         </div>
 
@@ -157,17 +196,19 @@ export default function LanguageSelectionScreen({ onConfirm }) {
             >
               <span>
                 {lang === 'te' 
-                  ? 'అకౌంట్ సృష్టించండి (Next Step) →' 
-                  : (lang === 'hi' ? 'खाता बनाएं (Next Step) →' : 'Create Account (Next Step) →')}
+                  ? 'ప్రవేశించండి / అకౌంట్ సృష్టించండి (Next Step) →' 
+                  : (lang === 'hi' ? 'साइन इन / खाता बनाएं (Next Step) →' : 'Sign In / Create Account (Next Step) →')}
               </span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
         )}
 
-        {/* STEP 2: FARMER ACCOUNT CREATION FORM */}
+        {/* STEP 2: FARMER AUTHENTICATION (SIGN IN vs CREATE ACCOUNT) */}
         {step === 2 && (
-          <form onSubmit={handleCreateAccountSubmit} className="space-y-5">
+          <div className="space-y-5">
+            
+            {/* Navigation & Language Back */}
             <div className="flex items-center justify-between">
               <button
                 type="button"
@@ -177,131 +218,239 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 <ChevronLeft className="w-4 h-4" />
                 <span>{lang === 'te' ? 'భాష మార్చండి' : 'Change Language'}</span>
               </button>
-              <span className="text-xs font-black text-emerald-400 flex items-center gap-1">
+              <span className="text-xs font-black text-emerald-400">
+                {lang === 'te' ? 'రైతు అకౌంట్ ప్రవేశం' : 'Farmer Access'}
+              </span>
+            </div>
+
+            {/* 2-Tab Switcher: Sign In vs Create Account */}
+            <div className="grid grid-cols-2 p-1.5 rounded-2xl bg-slate-950 border border-slate-800 gap-1">
+              <button
+                type="button"
+                onClick={() => setAuthTab('signin')}
+                className={`py-3 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  authTab === 'signin'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <LogIn className="w-4 h-4" />
+                <span>{lang === 'te' ? 'ఖాతాలోకి ప్రవేశించండి (Sign In)' : (lang === 'hi' ? 'साइन इन करें' : 'Sign In')}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAuthTab('register')}
+                className={`py-3 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  authTab === 'register'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
                 <UserPlus className="w-4 h-4" />
-                {lang === 'te' ? 'కొత్త ఖాతా సృష్టించండి' : (lang === 'hi' ? 'नया खाता बनाएं' : 'Create New Account')}
-              </span>
+                <span>{lang === 'te' ? 'కొత్త ఖాతా సృష్టించండి' : (lang === 'hi' ? 'नया खाता बनाएं' : 'Create Account')}</span>
+              </button>
             </div>
 
-            {/* Profile Input Fields */}
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">
-                  {lang === 'te' ? 'రైతు పేరు (Farmer Name):' : (lang === 'hi' ? 'किसान का नाम:' : 'Farmer Name:')}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.farmer_name}
-                  onChange={(e) => setFormData({ ...formData, farmer_name: e.target.value })}
-                  placeholder={lang === 'te' ? 'మీ పేరు నమోదు చేయండి (उदा. రమేష్ గారూ)' : 'Enter Farmer Name (e.g. Ramesh Bhai)'}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">
-                    {lang === 'te' ? 'ముఖ్య పంట (Main Crop):' : (lang === 'hi' ? 'मुख्य फसल:' : 'Main Crop:')}
+            {/* TAB 1: SIGN IN (EXISTING ACCOUNT) */}
+            {authTab === 'signin' && (
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-300 block">
+                    {lang === 'te' ? 'మీ రిజిస్టర్ అయిన అకౌంట్‌ను ఎంచుకోండి:' : 'Select Your Registered Account:'}
                   </label>
-                  <select
-                    value={formData.main_crop}
-                    onChange={(e) => setFormData({ ...formData, main_crop: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
-                  >
-                    {crops.map(c => (
-                      <option key={c.id} value={c.id}>
-                        {lang === 'te' ? c.labelTe : (lang === 'hi' ? c.labelHi : c.labelEn)}
-                      </option>
-                    ))}
-                  </select>
+
+                  {/* Search Bar */}
+                  <div className="relative">
+                    <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={lang === 'te' ? 'పేరు లేదా ఊరు శోధించండి...' : 'Search Name or Village...'}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  {/* Farmers List Grid */}
+                  <div className="grid grid-cols-1 gap-2.5 max-h-56 overflow-y-auto pr-1 no-scrollbar pt-1">
+                    {filteredFarmers.length > 0 ? (
+                      filteredFarmers.map((f) => {
+                        const isSelected = selectedFarmerId === f.farmer_id;
+                        return (
+                          <button
+                            key={f.farmer_id}
+                            type="button"
+                            onClick={() => setSelectedFarmerId(f.farmer_id)}
+                            className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all flex items-center justify-between ${
+                              isSelected
+                                ? 'bg-gradient-to-r from-emerald-950/90 to-teal-950/90 border-emerald-500 text-emerald-300 shadow-md scale-[1.01]'
+                                : 'bg-slate-950 border-slate-800 hover:border-slate-700 text-slate-300'
+                            }`}
+                          >
+                            <div>
+                              <div className="text-sm font-black flex items-center gap-1.5">
+                                <span>👨‍🌾</span> {f.farmer_name}
+                              </div>
+                              <div className="text-xs text-slate-400 font-bold mt-0.5">
+                                🌾 {f.main_crop} • 📍 {f.village}, {f.district} ({f.acreage} Acres)
+                              </div>
+                            </div>
+
+                            {isSelected && (
+                              <div className="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-black shrink-0">
+                                <UserCheck className="w-4 h-4" />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })
+                    ) : (
+                      <div className="text-center py-6 text-xs text-slate-400 font-bold bg-slate-950 rounded-2xl border border-slate-800">
+                        {lang === 'te' 
+                          ? 'ఏ రికార్డు నమోదు కాలేదు. దయచేసి "కొత్త ఖాతా సృష్టించండి" ట్యాబ్ ద్వారా నమోదు చేయండి.' 
+                          : 'No existing account found. Please click "Create Account" tab.'}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">
-                    {lang === 'te' ? 'రాష్ట్రం (State):' : (lang === 'hi' ? 'राज्य:' : 'State:')}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.state}
-                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    placeholder="e.g. Andhra Pradesh / Telangana"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
+                <button
+                  type="submit"
+                  disabled={!selectedFarmerId || filteredFarmers.length === 0}
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2 cursor-pointer transition-transform hover:scale-[1.02] disabled:opacity-50"
+                >
+                  <LogIn className="w-5 h-5" />
+                  <span>{lang === 'te' ? 'ప్రవేశించండి (Sign In) ➔' : 'Sign In to Account ➔'}</span>
+                </button>
+              </form>
+            )}
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">
-                    {lang === 'te' ? 'జిల్లా (District):' : (lang === 'hi' ? 'जिला:' : 'District:')}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.district}
-                    onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                    placeholder="e.g. Guntur / Karimnagar"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                  />
+            {/* TAB 2: CREATE NEW ACCOUNT */}
+            {authTab === 'register' && (
+              <form onSubmit={handleCreateAccountSubmit} className="space-y-4">
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-300 block mb-1">
+                      {lang === 'te' ? 'రైతు పేరు (Farmer Name):' : (lang === 'hi' ? 'किसान का नाम:' : 'Farmer Name:')}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.farmer_name}
+                      onChange={(e) => setFormData({ ...formData, farmer_name: e.target.value })}
+                      placeholder={lang === 'te' ? 'మీ పేరు నమోదు చేయండి (उदा. రమేష్ గారూ)' : 'Enter Farmer Name (e.g. Ramesh Bhai)'}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">
+                        {lang === 'te' ? 'ముఖ్య పంట (Main Crop):' : (lang === 'hi' ? 'मुख्य फसल:' : 'Main Crop:')}
+                      </label>
+                      <select
+                        value={formData.main_crop}
+                        onChange={(e) => setFormData({ ...formData, main_crop: e.target.value })}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
+                      >
+                        {crops.map(c => (
+                          <option key={c.id} value={c.id}>
+                            {lang === 'te' ? c.labelTe : (lang === 'hi' ? c.labelHi : c.labelEn)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">
+                        {lang === 'te' ? 'రాష్ట్రం (State):' : (lang === 'hi' ? 'राज्य:' : 'State:')}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.state}
+                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                        placeholder="e.g. Andhra Pradesh / Telangana"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">
+                        {lang === 'te' ? 'జిల్లా (District):' : (lang === 'hi' ? 'जिला:' : 'District:')}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.district}
+                        onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                        placeholder="e.g. Guntur / Karimnagar"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">
+                        {lang === 'te' ? 'గ్రామం (Village):' : (lang === 'hi' ? 'गाँव:' : 'Village:')}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.village}
+                        onChange={(e) => setFormData({ ...formData, village: e.target.value })}
+                        placeholder="e.g. Mangalagiri / Tenali"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">
+                        {lang === 'te' ? 'సాగు భూమి (Acres):' : (lang === 'hi' ? 'भूमि (एकड़):' : 'Land Size (Acres):')}
+                      </label>
+                      <input
+                        type="number"
+                        step="0.5"
+                        value={formData.acreage}
+                        onChange={(e) => setFormData({ ...formData, acreage: parseFloat(e.target.value) || 2.5 })}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">
+                        {lang === 'te' ? 'ఫోన్ నెంబర్ (Optional):' : (lang === 'hi' ? 'फोन नंबर (ऐच्छिक):' : 'Phone Number (Optional):')}
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+91 98480 12345"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">
-                    {lang === 'te' ? 'గ్రామం (Village):' : (lang === 'hi' ? 'गाँव:' : 'Village:')}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.village}
-                    onChange={(e) => setFormData({ ...formData, village: e.target.value })}
-                    placeholder="e.g. Mangalagiri / Tenali"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
+                <button
+                  type="submit"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2 cursor-pointer transition-transform hover:scale-[1.02]"
+                >
+                  <UserPlus className="w-5 h-5" />
+                  <span>
+                    {lang === 'te' 
+                      ? 'అకౌంట్ సృష్టించి ప్రారంభించండి ➔' 
+                      : (lang === 'hi' ? 'खाता बनाकर शुरू करें ➔' : 'Create Account & Sign In ➔')}
+                  </span>
+                </button>
+              </form>
+            )}
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">
-                    {lang === 'te' ? 'సాగు భూమి (Acres):' : (lang === 'hi' ? 'भूमि (एकड़):' : 'Land Size (Acres):')}
-                  </label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={formData.acreage}
-                    onChange={(e) => setFormData({ ...formData, acreage: parseFloat(e.target.value) || 2.5 })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">
-                    {lang === 'te' ? 'ఫోన్ నెంబర్ (Optional):' : (lang === 'hi' ? 'फोन नंबर (ऐच्छिक):' : 'Phone Number (Optional):')}
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+91 98480 12345"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-black text-base sm:text-lg shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2 cursor-pointer transition-transform hover:scale-[1.02]"
-            >
-              <span>
-                {lang === 'te' 
-                  ? 'అకౌంట్ సృష్టించి ప్రారంభించండి ➔' 
-                  : (lang === 'hi' ? 'खाता बनाकर शुरू करें ➔' : 'Create Account & Start ➔')}
-              </span>
-            </button>
-          </form>
+          </div>
         )}
 
       </div>
