@@ -58,11 +58,8 @@ class CropVisionAgent:
         g_ratio = g / tot
         b_ratio = b / tot
 
-        # Agricultural images typically have green foliage (g_ratio > 0.32),
-        # red/yellow fruits (r_ratio > 0.38), or brown soil/stalk (r_ratio > 0.34 & g_ratio > 0.32).
         is_vegetation = (g_ratio > 0.31) or (r_ratio > 0.38 and g_ratio < 0.36) or (r_ratio > 0.34 and g_ratio > 0.31)
         
-        # If blue is dominant (e.g. sky/car/blue shirt) or color variance is extremely flat/grayscale
         if b_ratio > 0.42 and g_ratio < 0.32 and r_ratio < 0.32:
             return False
 
@@ -105,7 +102,7 @@ class CropVisionAgent:
         # 2. Determine Crop Type
         crop_clean = (crop_hint or "").lower()
 
-        if "chilli" in crop_clean or "mirchi" in crop_clean or "మిరప" in crop_clean or "மிளகாய்" in crop_clean or "मिर्च" in crop_clean:
+        if "chilli" in crop_clean or "mirchi" in crop_clean or "మిరప" in crop_clean or "మిర్చి" in crop_clean or "मिर्च" in crop_clean:
             matched_crop = "Chilli"
         elif "rice" in crop_clean or "paddy" in crop_clean or "వరి" in crop_clean or "धान" in crop_clean:
             matched_crop = "Rice"
@@ -122,7 +119,6 @@ class CropVisionAgent:
         elif "tomato" in crop_clean or "టమాటా" in crop_clean or "టమోటా" in crop_clean or "टमाटर" in crop_clean:
             matched_crop = "Tomato"
         else:
-            # Pure image visual classification
             if g_ratio > 0.34:
                 matched_crop = "Chilli"
             else:
@@ -284,7 +280,7 @@ class CropVisionAgent:
         }
         part_loc = part_maps.get(l_code, part_maps["en"]).get(plant_part, plant_part)
 
-        # 1. CHILLI / MIRCHI (మిరప / मिर्च / மிளகாய் / మెಣಸಿನಕಾಯಿ / Chilli)
+        # 1. CHILLI / MIRCHI (మిరప / मिर्च / மிளகாய் / మెణసినకాయి / Chilli)
         if "Chilli" in crop_norm or "Chili" in crop_norm or "Mirchi" in crop_norm or "మిరప" in crop_norm or "मिर्च" in crop_norm:
             crop_loc_map = {"te": "మిరప (Chilli / Pepper)", "hi": "मिर्च (Chilli / Pepper)", "ta": "மிளகாய் (Chilli)", "kn": "ಮೆಣಸಿನಕಾಯಿ (Chilli)", "ml": "മുളക് (Chilli)", "mr": "मिरची (Chilli)", "en": "Chilli (Pepper)"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
