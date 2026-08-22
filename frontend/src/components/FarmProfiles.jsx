@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { User, MapPin, Sprout, Globe, Check, Save } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, MapPin, Sprout, Globe, Check, Save, UserCheck, UserPlus } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 
-export default function FarmProfiles({ onChangeLanguageClick }) {
+export default function FarmProfiles({ onProfileSwitch }) {
   const { lang, t } = useLanguage();
+
+  const [farmersList, setFarmersList] = useState([]);
+  const [selectedFarmerId, setSelectedFarmerId] = useState('farmer_01');
 
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem('kisan_farmer_profile');
@@ -14,27 +17,62 @@ export default function FarmProfiles({ onChangeLanguageClick }) {
       farmer_name: 'రమేష్ గారూ (Ramesh)',
       state: 'Andhra Pradesh',
       district: 'Guntur',
-      village: 'Tenali',
+      village: 'Mangalagiri',
       main_crop: 'Tomato',
-      land_size: '2.5'
+      acreage: 2.5
     };
   });
 
   const [savedMsg, setSavedMsg] = useState(false);
 
+  useEffect(() => {
+    fetch('/api/farmers')
+      .then(res => res.json())
+      .then(data => {
+        setFarmersList(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSelectExisting = (farmer) => {
+    setSelectedFarmerId(farmer.farmer_id);
+    const updated = {
+      farmer_name: farmer.farmer_name,
+      main_crop: farmer.main_crop || 'Tomato',
+      district: farmer.district || 'Guntur',
+      village: farmer.village || 'Mangalagiri',
+      state: farmer.state || 'Andhra Pradesh',
+      acreage: farmer.acreage || 2.5
+    };
+    setProfile(updated);
+    localStorage.setItem('kisan_farmer_profile', JSON.stringify(updated));
+    if (onProfileSwitch) onProfileSwitch(updated);
+    setSavedMsg(true);
+    setTimeout(() => setSavedMsg(false), 2500);
+  };
+
   const handleChange = (field, val) => {
     setProfile(prev => ({ ...prev, [field]: val }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+    try {
+      await fetch('/api/farmers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profile)
+      });
+    } catch (err) {}
+
     localStorage.setItem('kisan_farmer_profile', JSON.stringify(profile));
+    if (onProfileSwitch) onProfileSwitch(profile);
     setSavedMsg(true);
     setTimeout(() => setSavedMsg(false), 3000);
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 flex items-center justify-between gap-4">
         <div>
@@ -43,23 +81,60 @@ export default function FarmProfiles({ onChangeLanguageClick }) {
           </h2>
           <p className="text-xs text-slate-400 font-bold mt-0.5">
             {lang === 'te' 
-              ? 'మీ ప్రొఫైల్ ఆధారంగా వాతావరణం, మందులు మరియు మండీ ధరల సలహాలు అందుతాయి' 
-              : 'Personalized weather, advisory and mandi recommendations based on your profile'}
+              ? 'రిజిస్టర్ అయిన రైతు ఖాతాను ఎంచుకోండి లేదా కొత్త అకౌంట్ సృష్టించండి' 
+              : 'Switch registered farmer account or create a new farmer profile'}
           </p>
         </div>
-
-        {/* Change Language Button (Requirement #19) */}
-        <button
-          onClick={onChangeLanguageClick}
-          className="px-4 py-2.5 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-2 cursor-pointer transition-all shrink-0"
-        >
-          <Globe className="w-4 h-4 text-emerald-400" />
-          <span>{t('profile.changeLangBtn')}</span>
-        </button>
       </div>
 
-      {/* Profile Form */}
+      {/* Registered Multi-Farmer Profiles Selector */}
+      <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
+        <h3 className="text-sm font-black text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+          <span>👥</span>
+          {lang === 'te' ? 'రిజిస్టర్ అయిన రైతు ఖాతాలు (Registered Farmers):' : 'Registered Farmer Accounts:'}
+        </h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {farmersList.map((f) => {
+            const isSelected = profile.farmer_name === f.farmer_name;
+            return (
+              <button
+                key={f.farmer_id}
+                type="button"
+                onClick={() => handleSelectExisting(f)}
+                className={`p-4 rounded-2xl border-2 text-left cursor-pointer transition-all flex items-center justify-between ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-emerald-950/90 to-teal-950/90 border-emerald-500 text-emerald-300 shadow-lg shadow-emerald-500/20 scale-[1.01]'
+                    : 'bg-slate-950 border-slate-800 hover:border-slate-700 text-slate-300'
+                }`}
+              >
+                <div>
+                  <div className="text-sm font-black flex items-center gap-1.5">
+                    <span>👨‍🌾</span> {f.farmer_name}
+                  </div>
+                  <div className="text-xs text-slate-400 font-bold mt-1">
+                    🌾 {f.main_crop} • 📍 {f.village}, {f.district} ({f.acreage} Acres)
+                  </div>
+                </div>
+
+                {isSelected && (
+                  <div className="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-black shrink-0">
+                    <Check className="w-4 h-4" />
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Profile Form (Edit or Add New) */}
       <form onSubmit={handleSave} className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5 shadow-2xl">
+        <h3 className="text-sm font-black text-slate-200 flex items-center gap-2">
+          <UserPlus className="w-4 h-4 text-emerald-400" />
+          {lang === 'te' ? 'ఖాతా వివరాలు మార్చండి / కొత్త ఖాతా సృష్టించండి:' : 'Edit Account / Create New Profile:'}
+        </h3>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           
           <div className="space-y-1.5">
@@ -68,6 +143,7 @@ export default function FarmProfiles({ onChangeLanguageClick }) {
             </label>
             <input
               type="text"
+              required
               value={profile.farmer_name}
               onChange={(e) => handleChange('farmer_name', e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
@@ -88,6 +164,8 @@ export default function FarmProfiles({ onChangeLanguageClick }) {
               <option value="Chilli">మిరప (Chilli)</option>
               <option value="Cotton">పత్తి (Cotton)</option>
               <option value="Maize">మొక్కజొన్న (Maize)</option>
+              <option value="Wheat">గోధుమ (Wheat)</option>
+              <option value="Potato">బంగాళాదుంప (Potato)</option>
             </select>
           </div>
 
@@ -132,9 +210,10 @@ export default function FarmProfiles({ onChangeLanguageClick }) {
               {t('profile.land')}
             </label>
             <input
-              type="text"
-              value={profile.land_size}
-              onChange={(e) => handleChange('land_size', e.target.value)}
+              type="number"
+              step="0.5"
+              value={profile.acreage}
+              onChange={(e) => handleChange('acreage', parseFloat(e.target.value) || 2.5)}
               className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
             />
           </div>
@@ -153,7 +232,7 @@ export default function FarmProfiles({ onChangeLanguageClick }) {
           {savedMsg && (
             <span className="text-xs font-black text-emerald-400 flex items-center gap-1">
               <Check className="w-4 h-4" />
-              {lang === 'te' ? 'భద్రపరచబడింది!' : 'Profile Saved Successfully!'}
+              {lang === 'te' ? 'భద్రపరచబడింది!' : 'Account Saved Successfully!'}
             </span>
           )}
         </div>
