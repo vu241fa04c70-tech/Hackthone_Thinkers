@@ -75,7 +75,6 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
 
     fetchHistory();
     
-    // Automatically re-trigger analysis when language changes so entire diagnosis updates dynamically!
     if (uploadedFile) {
       runAnalysis(null, uploadedFile);
     } else if (selectedSample) {
@@ -148,6 +147,43 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
     return `${lang === 'te' ? 'పంట' : 'Crop'}: ${report.crop_detected}. ${lang === 'te' ? 'భాగం' : 'Part'}: ${report.plant_part_detected}. ${report.disease_name}. ${symptomsStr}. ${treatmentStr}. ${report.dosage_note || ''}`;
   };
 
+  // Crop Selector Option Labels per language
+  const getCropOptionLabels = () => {
+    if (lang === 'te') {
+      return {
+        auto: '✨ స్వయంచాలక గుర్తింపు (AI Auto-Detect)',
+        chilli: '🌶️ మిరప (Chilli)',
+        paddy: '🌾 వరి (Paddy)',
+        tomato: '🍅 టమాటా (Tomato)',
+        cotton: '☁️ పత్తి (Cotton)',
+        potato: '🥔 బంగాళాదుంప (Potato)',
+        maize: '🌽 మొక్కజొన్న (Maize)'
+      };
+    } else if (lang === 'hi') {
+      return {
+        auto: '✨ स्वचालित पहचान (AI Auto-Detect)',
+        chilli: '🌶️ मिर्च (Chilli)',
+        paddy: '🌾 धान (Paddy)',
+        tomato: '🍅 टमाटर (Tomato)',
+        cotton: '☁️ कपास (Cotton)',
+        potato: '🥔 आलू (Potato)',
+        maize: '🌽 मक्का (Maize)'
+      };
+    } else {
+      return {
+        auto: '✨ AI Auto-Detect',
+        chilli: '🌶️ Chilli (Pepper)',
+        paddy: '🌾 Paddy (Rice)',
+        tomato: '🍅 Tomato',
+        cotton: '☁️ Cotton',
+        potato: '🥔 Potato',
+        maize: '🌽 Maize'
+      };
+    }
+  };
+
+  const cropOptions = getCropOptionLabels();
+
   return (
     <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Header & Controls */}
@@ -166,7 +202,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
 
         {/* Action Bar: Crop Select + Camera / Gallery */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Crop Selection Dropdown */}
+          {/* Localized Crop Selection Dropdown */}
           <select
             value={selectedCropHint}
             onChange={(e) => {
@@ -179,13 +215,13 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
             className="bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2.5 text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500 cursor-pointer"
             title="Crop Auto Detection / Specific Override"
           >
-            <option value="AUTO">✨ స్వయంచాలక గుర్తింపు (AI Auto-Detect)</option>
-            <option value="Chilli">🌶️ మిరప (Chilli / Pepper)</option>
-            <option value="Paddy">🌾 వరి (Paddy / Rice)</option>
-            <option value="Tomato">🍅 టమాటా (Tomato)</option>
-            <option value="Cotton">☁️ పత్తి (Cotton)</option>
-            <option value="Potato">🥔 బంగాళాదుంప (Potato)</option>
-            <option value="Maize">🌽 మొక్కజొన్న (Maize)</option>
+            <option value="AUTO">{cropOptions.auto}</option>
+            <option value="Chilli">{cropOptions.chilli}</option>
+            <option value="Paddy">{cropOptions.paddy}</option>
+            <option value="Tomato">{cropOptions.tomato}</option>
+            <option value="Cotton">{cropOptions.cotton}</option>
+            <option value="Potato">{cropOptions.potato}</option>
+            <option value="Maize">{cropOptions.maize}</option>
           </select>
 
           {/* Camera Capture */}

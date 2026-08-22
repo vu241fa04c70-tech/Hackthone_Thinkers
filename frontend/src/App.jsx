@@ -58,7 +58,24 @@ export default function App() {
     setHasSelectedLang(true);
   };
 
-  // If no account created or first visit, show 23-Language & Account Creation Screen
+  // Format farmer display name according to active language
+  const getFormattedFarmerHeader = () => {
+    if (!farmerProfile) return '';
+    const rawName = farmerProfile.farmer_name || 'Ramesh';
+    const crop = farmerProfile.main_crop || 'Tomato';
+    const location = `${farmerProfile.district || 'Guntur'}, ${farmerProfile.state || 'Andhra Pradesh'}`;
+
+    if (lang === 'en') {
+      // Strip any Telugu script in parentheses if present
+      const cleanName = rawName.replace(/[\u0C00-\u0C7F]/g, '').replace(/[()]/g, '').trim() || 'Ramesh';
+      return `👨‍🌾 ${cleanName} (${crop}) • 📍 ${location}`;
+    } else if (lang === 'hi') {
+      return `👨‍🌾 ${rawName} (${crop}) • 📍 ${location}`;
+    } else {
+      return `👨‍🌾 ${rawName} (${crop}) • 📍 ${location}`;
+    }
+  };
+
   if (!hasSelectedLang || !farmerProfile) {
     return (
       <LanguageSelectionScreen
@@ -112,7 +129,7 @@ export default function App() {
                 </span>
               </h1>
               <p className="text-[11px] text-slate-300 font-bold hidden sm:block">
-                👨‍🌾 {farmerProfile.farmer_name} ({farmerProfile.main_crop}) • 📍 {farmerProfile.district}, {farmerProfile.state}
+                {getFormattedFarmerHeader()}
               </p>
             </div>
           </div>

@@ -95,36 +95,44 @@ def get_samples(language: Optional[str] = "te"):
     samples = list(SAMPLE_CROP_IMAGES.values())
     l_code = (language or "te").lower()
     
-    if l_code in ["te", "telugu"]:
-        localized = []
-        for s in samples:
-            item = dict(s)
+    localized = []
+    for s in samples:
+        item = dict(s)
+        if l_code in ["te", "telugu"]:
             if "paddy" in s["id"]:
                 item["disease_name"] = "వరి అగ్గి తెగులు మరియు పండు తెగులు"
             elif "tomato" in s["id"]:
                 item["disease_name"] = "టమాటా ఆకుపై ఎండు తెగులు"
-            localized.append(item)
-        return localized
-    return samples
+        elif l_code in ["hi", "hindi"]:
+            if "paddy" in s["id"]:
+                item["disease_name"] = "धान का झोंका रोग (Rice Blast)"
+            elif "tomato" in s["id"]:
+                item["disease_name"] = "टमाटर अगेती झुलसा रोग (Early Blight)"
+        else: # English & all other languages
+            if "paddy" in s["id"]:
+                item["disease_name"] = "Paddy Blast & Sheath Blight"
+            elif "tomato" in s["id"]:
+                item["disease_name"] = "Tomato Early Blight"
+        localized.append(item)
+    return localized
 
 
 @app.post("/api/agents/crop-vision")
 async def analyze_crop_vision(
     sample_key: Optional[str] = Form(None),
-    crop_hint: Optional[str] = Form("Paddy"),
+    crop_hint: Optional[str] = Form("Chilli"),
     language: Optional[str] = Form("te"),
     file: Optional[UploadFile] = File(None)
 ):
     lang_code = language or "te"
     if file:
         content = await file.read()
-        report = vision_agent.analyze_uploaded_image(content, crop_hint=crop_hint or "Paddy", lang=lang_code)
+        report = vision_agent.analyze_uploaded_image(content, crop_hint=crop_hint or "", lang=lang_code)
     elif sample_key:
         report = vision_agent.analyze_sample(sample_key, lang=lang_code)
     else:
         report = vision_agent.analyze_sample("sample_tomato_early_blight", lang=lang_code)
 
-    # Save to history DB automatically
     if report and not report.is_below_threshold:
         save_scan_history({
             "scan_id": f"scan_{uuid.uuid4().hex[:6]}",
