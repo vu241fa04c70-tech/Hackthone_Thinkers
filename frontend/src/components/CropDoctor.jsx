@@ -14,18 +14,9 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
-
-  const getFarmerCrop = () => {
-    if (activeField && activeField.crop_type) return activeField.crop_type;
-    const saved = localStorage.getItem('kisan_farmer_profile');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.main_crop) return parsed.main_crop;
-      } catch (e) {}
-    }
-    return 'Tomato';
-  };
+  
+  // Optional Crop Selector (Auto-Detect by default!)
+  const [selectedCropHint, setSelectedCropHint] = useState('AUTO');
 
   const fetchHistory = () => {
     fetch('/api/scans/history')
@@ -42,7 +33,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
 
     fetchHistory();
     
-    // Initial load
+    // Initial load demo
     runAnalysis('sample_tomato_early_blight', null);
   }, [lang]);
 
@@ -51,7 +42,15 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
     setErrorMsg(null);
     const formData = new FormData();
     formData.append('language', lang);
-    formData.append('crop_hint', getFarmerCrop());
+
+    // If AUTO or file uploaded, do NOT force Tomato; let vision engine auto-detect!
+    if (selectedCropHint !== 'AUTO') {
+      formData.append('crop_hint', selectedCropHint);
+    } else if (file) {
+      formData.append('crop_hint', ''); // Pure vision auto-detection!
+    } else {
+      formData.append('crop_hint', '');
+    }
 
     if (file) {
       formData.append('file', file);
@@ -75,7 +74,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
       fetchHistory();
     } catch (err) {
       const fallbackErr = lang === 'te'
-        ? 'క్షమించండి. చిత్రాన్ని విశ్లేషించలేకపోయాము. దయచేసి స్పష్టమైన పంట ఫోటోను (ఆకు/పండు) మళ్లీ అప్‌లోడ్ చేయండి.'
+        ? 'క్షమించండి. చిత్రాన్ని విశ్లేషించలేకపోయాము. దయచేసి స్పష్టమైన పంట ఫోటోను మళ్లీ అప్‌లోడ్ చేయండి.'
         : (lang === 'hi' ? 'क्षमा करें, चित्र का विश्लेषण नहीं हो सका। कृपया साफ़ फ़ोटो पुनः अपलोड करें।' : "Sorry, we couldn't analyze this image. Please upload a clearer crop photo.");
       setErrorMsg(fallbackErr);
     } finally {
@@ -148,7 +147,7 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
 
   return (
     <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
-      {/* Header & Camera / Gallery Input */}
+      {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 p-6 rounded-3xl border border-slate-800 shadow-xl">
         <div>
           <h2 className="text-xl font-black text-slate-100 flex items-center gap-2">
@@ -162,9 +161,29 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
           </p>
         </div>
 
-        {/* Camera / Gallery Dual Input */}
-        <div className="flex items-center gap-2">
-          <label className="px-4 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs flex items-center gap-2 cursor-pointer transition-all shadow-lg shadow-emerald-500/20 hover:scale-105">
+        {/* Action Bar: Crop Select + Camera / Gallery */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Optional Crop Selection Dropdown */}
+          <select
+            value={selectedCropHint}
+            onChange={(e) => {
+              setSelectedCropHint(e.target.value);
+              if (uploadedFile) runAnalysis(null, uploadedFile);
+            }}
+            className="bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2.5 text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500 cursor-pointer"
+            title="Crop Auto Detection / Specific Override"
+          >
+            <option value="AUTO">✨ స్వయంచాలక గుర్తింపు (AI Auto-Detect)</option>
+            <option value="Chilli">🌶️ మిరప (Chilli / Pepper)</option>
+            <option value="Paddy">🌾 వరి (Paddy / Rice)</option>
+            <option value="Tomato">🍅 టమాటా (Tomato)</option>
+            <option value="Cotton">☁️ పత్తి (Cotton)</option>
+            <option value="Potato">🥔 బంగాళాదుంప (Potato)</option>
+            <option value="Maize">🌽 మొక్కజొన్న (Maize)</option>
+          </select>
+
+          {/* Camera Capture */}
+          <label className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs flex items-center gap-2 cursor-pointer transition-all shadow-lg shadow-emerald-500/20 hover:scale-105">
             <Camera className="w-4 h-4" />
             <span>{t('cropDoctor.takePhoto')}</span>
             <input 
@@ -176,7 +195,8 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
             />
           </label>
 
-          <label className="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 font-black text-xs flex items-center gap-2 cursor-pointer transition-all hover:scale-105">
+          {/* Gallery Upload */}
+          <label className="px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 font-black text-xs flex items-center gap-2 cursor-pointer transition-all hover:scale-105">
             <Upload className="w-4 h-4 text-emerald-400" />
             <span>{t('cropDoctor.uploadPhoto')}</span>
             <input 
