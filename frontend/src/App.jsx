@@ -30,7 +30,7 @@ export default function App() {
   });
 
   const [hasSelectedLang, setHasSelectedLang] = useState(() => {
-    return !!localStorage.getItem('kisanLanguage') && !!localStorage.getItem('kisan_farmer_profile');
+    return !!localStorage.getItem('kisanLanguage');
   });
 
   const [activeTab, setActiveTab] = useState('home');
@@ -61,6 +61,7 @@ export default function App() {
       } catch (e) {}
     }
     setHasSelectedLang(true);
+    setCurrentMode('welcome');
   };
 
   // Format farmer display name according to active language
@@ -78,7 +79,16 @@ export default function App() {
     }
   };
 
-  // Render 1: Welcome Role Screen
+  // STEP 1: First Choose Language Screen
+  if (!hasSelectedLang) {
+    return (
+      <LanguageSelectionScreen
+        onConfirm={handleInitialSetupComplete}
+      />
+    );
+  }
+
+  // STEP 2: Welcome Role Landing Page in Selected Language
   if (currentMode === 'welcome') {
     return (
       <WelcomeRoleScreen
@@ -88,7 +98,7 @@ export default function App() {
     );
   }
 
-  // Render 2: Admin Dashboard (Password Verified)
+  // STEP 3: Admin Dashboard (Password Authenticated)
   if (currentMode === 'admin') {
     return (
       <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
@@ -126,15 +136,7 @@ export default function App() {
     );
   }
 
-  // Render 3: Farmer Setup / Language Screen if profile not set
-  if (!hasSelectedLang || !farmerProfile) {
-    return (
-      <LanguageSelectionScreen
-        onConfirm={handleInitialSetupComplete}
-      />
-    );
-  }
-
+  // STEP 4: Full Farmer Application
   const getTabLabel = (id) => {
     switch (id) {
       case 'home': return t('nav.home');

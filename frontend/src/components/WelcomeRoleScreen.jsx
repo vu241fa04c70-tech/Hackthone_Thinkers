@@ -1,23 +1,67 @@
-import React, { useState } from 'react';
-import { ShieldCheck, UserCheck, Key, Lock, ArrowRight, Globe, AlertCircle, X, Sparkles, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldCheck, UserCheck, Key, Lock, ArrowRight, Globe, AlertCircle, X, Sparkles, CheckCircle2, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '../localization/languageMap';
 
 export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
   const { lang, setLanguage, t } = useLanguage();
+  
+  // Check if an Admin password has been created in localStorage
+  const [existingPassword, setExistingPassword] = useState(() => {
+    return localStorage.getItem('kisan_admin_password') || '';
+  });
+
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleAdminLoginSubmit = (e) => {
+  // Admin Login or Registration Handler
+  const handleAdminAuthSubmit = (e) => {
     e.preventDefault();
-    if (passwordInput === 'admin123' || passwordInput === 'admin') {
-      setPasswordError('');
+    setPasswordError('');
+
+    // MODE A: First-time Admin Password Registration
+    if (!existingPassword) {
+      if (!passwordInput || passwordInput.length < 4) {
+        setPasswordError(
+          lang === 'te'
+            ? 'మార్గదర్శకం: పాస్‌వర్డ్ కనీసం 4 అక్షరాలు ఉండాలి.'
+            : (lang === 'hi' ? 'पासवर्ड कम से कम 4 अक्षरों का होना चाहिए।' : 'Password must be at least 4 characters long.')
+        );
+        return;
+      }
+      if (passwordInput !== confirmPasswordInput) {
+        setPasswordError(
+          lang === 'te'
+            ? 'పాస్‌వర్డ్‌లు సరిపోలడం లేదు. దయచేసి మళ్లీ తనిఖీ చేయండి.'
+            : (lang === 'hi' ? 'पासवर्ड मेल नहीं खाते। कृपया पुनः जांचें।' : 'Passwords do not match. Please verify.')
+        );
+        return;
+      }
+
+      // Save newly created custom password
+      localStorage.setItem('kisan_admin_password', passwordInput);
+      setExistingPassword(passwordInput);
       setShowAdminModal(false);
       setPasswordInput('');
+      setConfirmPasswordInput('');
       onSelectAdmin();
-    } else {
-      setPasswordError('❌ Inorrect Admin Password. Access Denied.');
+    } 
+    // MODE B: Returning Admin Login Verification
+    else {
+      if (passwordInput === existingPassword) {
+        setShowAdminModal(false);
+        setPasswordInput('');
+        onSelectAdmin();
+      } else {
+        setPasswordError(
+          lang === 'te'
+            ? '❌ తప్పు పాస్‌వర్డ్. అడ్మిన్ ప్రవేశం నిరాకరించబడింది.'
+            : (lang === 'hi' ? '❌ गलत पासवर्ड। एडमिन प्रवेश अस्वीकृत।' : '❌ Incorrect Admin Password. Access Denied.')
+        );
+      }
     }
   };
 
@@ -25,7 +69,7 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
     switch (lang) {
       case 'te': return '🌾 కిసాన్ మిత్ర కు సాదర స్వాగతం!';
       case 'hi': return '🌾 किसान मित्र में आपका हार्दिक स्वागत है!';
-      case 'ta': return '🌾 கிசான் மித்ரா உங்களை அன்புடன் வரவேற்கிறது!';
+      case 'ta': return '🌾 கிசான் மித்ராவுக்கு நல்வரவு!';
       case 'kn': return '🌾 ಕಿಸಾನ್ ಮಿತ್ರಕ್ಕೆ ನಿಮಗಿದೋ ಸ್ವಾಗತ!';
       case 'ml': return '🌾 കിസാൻ മിത്രയിലേക്ക് സ്വാഗതം!';
       case 'mr': return '🌾 किसान मित्र मध्ये आपले स्वागत आहे!';
@@ -37,6 +81,8 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
     switch (lang) {
       case 'te': return 'రైతుల సేవలో AI సాంకేతికత • ప్రభుత్వ పథకాలు • మార్కెట్ ధరలు • పంట వ్యాధి నిర్ధారణ';
       case 'hi': return 'किसानों की सेवा में AI तकनीक • सरकारी योजनाएं • मंडी भाव • फसल रोग निदान';
+      case 'ta': return 'விவசாயிகளுக்கான செயற்கை நுண்ணறிவு • அரசு திட்டங்கள் • சந்தை விலை • பயிர் நோய் ஆய்வு';
+      case 'kn': return 'ರೈತರ ಸೇವೆಗಾಗಿ AI ತಂತ್ರಜ್ಞಾನ • ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು • ಮಾರುಕಟ್ಟೆ ದರ • ಬೆಳೆ ರೋಗ ತಪಾಸಣೆ';
       default: return 'AI-Powered Smart Agriculture • Govt Schemes • Mandi Prices • Vision Crop Diagnosis';
     }
   };
@@ -48,7 +94,7 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/10 blur-3xl pointer-events-none" />
 
-      {/* Top Header Bar with Language Dropdown */}
+      {/* Top Header Bar with Language Switcher */}
       <header className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-xl shadow-emerald-500/20 text-2xl">
@@ -58,14 +104,14 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
             <h1 className="text-xl sm:text-2xl font-black text-emerald-400 flex items-center gap-2">
               Kisan Mitra
               <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-black">
-                AI Agent Platform
+                AI Platform
               </span>
             </h1>
             <p className="text-xs text-slate-400 font-bold">Farmer Voice & Vision AI Engine</p>
           </div>
         </div>
 
-        {/* 🌐 Language Switcher */}
+        {/* 🌐 Native Language Switcher */}
         <div className="flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-2xl px-3.5 py-2 shadow-lg backdrop-blur-md">
           <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
           <select
@@ -89,7 +135,7 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
         <div className="space-y-4 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold shadow-lg">
             <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span>Select Your Access Portal Below</span>
+            <span>{lang === 'te' ? 'క్రింది పోర్టల్‌లలో ఒకదాన్ని ఎంచుకోండి' : 'Select Your Portal Below'}</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-black text-slate-100 tracking-tight leading-tight">
@@ -121,7 +167,9 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
                     {lang === 'te' ? 'ప్రభుత్వ & అడ్మిన్ పోర్టల్' : (lang === 'hi' ? 'शासन एवं एडमिन पोर्टल' : 'Government & Admin Portal')}
                   </h3>
                   <span className="px-2 py-0.5 rounded text-[10px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                    Password Protected
+                    {existingPassword
+                      ? (lang === 'te' ? 'పాస్‌వర్డ్‌తో రక్షించబడింది' : 'Password Protected')
+                      : (lang === 'te' ? 'పాస్‌వర్డ్ సెటప్ అవసరం' : 'Password Setup Needed')}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 font-bold mt-2 leading-relaxed">
@@ -134,15 +182,15 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
               <div className="space-y-2 pt-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                   <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>Publish New Government Schemes</span>
+                  <span>{lang === 'te' ? 'కొత్త ప్రభుత్వ పథకాలను జోడించండి' : 'Publish New Government Schemes'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                   <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>Update Live Crop Mandi Prices</span>
+                  <span>{lang === 'te' ? 'మండీ ధరలను నవీకరించండి' : 'Update Live Crop Mandi Prices'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                   <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>Broadcast Weather Warnings to Farmers</span>
+                  <span>{lang === 'te' ? 'వాతావరణ హెచ్చరికలను పంపండి' : 'Broadcast Weather Warnings to Farmers'}</span>
                 </div>
               </div>
             </div>
@@ -155,7 +203,11 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
               className="mt-8 w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xl shadow-cyan-500/20 transition-all group-hover:shadow-cyan-500/30"
             >
               <Lock className="w-4 h-4" />
-              <span>{lang === 'te' ? 'అడ్మిన్ లాగిన్ (పాస్‌వర్డ్ అవసరం)' : 'Admin Login (Password Required)'}</span>
+              <span>
+                {existingPassword
+                  ? (lang === 'te' ? 'అడ్మిన్ లాగిన్ (పాస్‌వర్డ్ నమోదు చేయండి)' : 'Admin Login (Enter Password)')
+                  : (lang === 'te' ? 'అడ్మిన్ పాస్‌వర్డ్‌ను సృష్టించండి ➔' : 'Create Admin Password ➔')}
+              </span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </button>
           </div>
@@ -177,7 +229,7 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
                     {lang === 'te' ? 'రైతుల అప్లికేషన్' : (lang === 'hi' ? 'किसान आवेदन ऐप' : 'Farmer Application')}
                   </h3>
                   <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    Direct Farmer Access
+                    {lang === 'te' ? 'నేరుగా ప్రవేశించండి' : 'Direct Farmer Access'}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 font-bold mt-2 leading-relaxed">
@@ -190,15 +242,15 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
               <div className="space-y-2 pt-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Crop & Disease AI Diagnosis (Google Lens)</span>
+                  <span>{lang === 'te' ? 'పంట & వ్యాధి గుర్తింపు AI (Google Lens)' : 'Crop & Disease AI Diagnosis (Google Lens)'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Live Mandi Prices & Weather Advisory</span>
+                  <span>{lang === 'te' ? 'మండీ ధరలు & వాతావరణ సలహాలు' : 'Live Mandi Prices & Weather Advisory'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Voice AI Assistant & Farming Calendar</span>
+                  <span>{lang === 'te' ? 'వాయిస్ సహాయకుడు & వ్యవసాయ క్యాలెండర్' : 'Voice AI Assistant & Farming Calendar'}</span>
                 </div>
               </div>
             </div>
@@ -216,7 +268,7 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
 
       </main>
 
-      {/* Admin Password Login Modal */}
+      {/* Admin Password Login / Registration Modal */}
       {showAdminModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 w-full max-w-md p-6 sm:p-8 rounded-3xl shadow-2xl space-y-6 relative animate-in fade-in zoom-in duration-200">
@@ -230,13 +282,17 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
 
             <div className="text-center space-y-2">
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 flex items-center justify-center mx-auto text-xl font-black">
-                🔑
+                {existingPassword ? '🔑' : '⚙️'}
               </div>
               <h3 className="text-xl font-black text-slate-100">
-                {lang === 'te' ? 'అడ్మిన్ లాగిన్ పాస్‌వర్డ్ నమోదు చేయండి' : 'Government Admin Login'}
+                {existingPassword
+                  ? (lang === 'te' ? 'అడ్మిన్ లాగిన్ పాస్‌వర్డ్ నమోదు చేయండి' : 'Government Admin Login')
+                  : (lang === 'te' ? 'అడ్మిన్ పాస్‌వర్డ్‌ను సృష్టించండి' : 'Create Admin Security Password')}
               </h3>
               <p className="text-xs text-slate-400 font-bold">
-                Enter the official administrator password to access the portal.
+                {existingPassword
+                  ? (lang === 'te' ? 'పోర్టల్‌లోకి ప్రవేశించడానికి మీ పాస్‌వర్డ్‌ను నమోదు చేయండి.' : 'Enter your custom admin password to access the portal.')
+                  : (lang === 'te' ? 'భవిష్యత్తు లాగిన్‌ల కోసం మీ స్వంత రహస్య పాస్‌వర్డ్‌ను సెట్ చేయండి.' : 'Set up your secret admin password for securing the portal.')}
               </p>
             </div>
 
@@ -247,30 +303,64 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
               </div>
             )}
 
-            <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
+            <form onSubmit={handleAdminAuthSubmit} className="space-y-4">
               <div>
-                <label className="text-xs font-extrabold text-slate-300">Admin Password:</label>
+                <label className="text-xs font-extrabold text-slate-300">
+                  {existingPassword
+                    ? (lang === 'te' ? 'అడ్మిన్ పాస్‌వర్డ్:' : 'Admin Password:')
+                    : (lang === 'te' ? 'క్రొత్త అడ్మిన్ పాస్‌వర్డ్‌ను సృష్టించండి:' : 'Create New Admin Password:')}
+                </label>
                 <div className="relative mt-1">
                   <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
-                    type="password"
-                    placeholder="Enter Admin Password (e.g. admin123)"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder={existingPassword ? 'Enter Password' : 'Create Admin Password (min 4 chars)'}
                     value={passwordInput}
                     onChange={(e) => setPasswordInput(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-10 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-cyan-500"
                     autoFocus
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
-                <p className="text-[11px] text-slate-500 font-extrabold mt-1">Default Password: <code className="text-cyan-400">admin123</code></p>
               </div>
+
+              {/* Confirm Password Field for First-Time Setup */}
+              {!existingPassword && (
+                <div>
+                  <label className="text-xs font-extrabold text-slate-300">
+                    {lang === 'te' ? 'పాస్‌వర్డ్‌ను నిర్ధారించండి:' : 'Confirm Password:'}
+                  </label>
+                  <div className="relative mt-1">
+                    <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Confirm Admin Password"
+                      value={confirmPasswordInput}
+                      onChange={(e) => setConfirmPasswordInput(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-10 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-cyan-500"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
 
               <button
                 type="submit"
                 className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/20"
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>Verify Password & Access Portal</span>
+                <span>
+                  {existingPassword
+                    ? (lang === 'te' ? 'పాస్‌వర్డ్ తనిఖీ చేసి ప్రవేశించండి' : 'Verify Password & Access Portal')
+                    : (lang === 'te' ? 'పాస్‌వర్డ్‌ను సేవ్ చేసి లాగిన్ అవ్వండి ➔' : 'Save Password & Access Portal ➔')}
+                </span>
               </button>
             </form>
 
