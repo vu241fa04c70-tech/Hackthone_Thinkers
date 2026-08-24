@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Trash2, Edit3, Save, ShieldAlert, CheckCircle, RefreshCw, Layers, TrendingUp, Users, AlertOctagon, ExternalLink, Globe } from 'lucide-react';
+import { PlusCircle, Trash2, Edit3, Save, ShieldAlert, CheckCircle, RefreshCw, Layers, TrendingUp, Users, AlertOctagon, ExternalLink, Globe, LogOut, Lock, PhoneCall, Building } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ onLogout }) {
   const { lang } = useLanguage();
   const [activeTab, setActiveTab] = useState('schemes');
   const [schemes, setSchemes] = useState([]);
   const [mandiData, setMandiData] = useState({});
   const [farmers, setFarmers] = useState([]);
+  const [officerContacts, setOfficerContacts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -40,6 +41,21 @@ export default function AdminDashboard() {
     message: 'తదుపరి 48 గంటల్లో భారీ వర్షాలు కురిసే అవకాశం ఉంది. పంటలకు క్రిమిసంహారకాల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి.'
   });
 
+  // Officer Contact Form State
+  const [contactForm, setContactForm] = useState({
+    category: 'Agriculture / Horticulture Assistant',
+    designation: 'Village Agriculture Assistant (VAA)',
+    officer_name: '',
+    department: 'Department of Agriculture',
+    phone: '',
+    state: 'Andhra Pradesh',
+    district: 'Guntur',
+    mandal: 'Mangalagiri',
+    village: 'Mangalagiri',
+    services_en: '',
+    services_te: ''
+  });
+
   const fetchAllData = () => {
     setIsLoading(true);
     fetch('/api/schemes')
@@ -55,6 +71,11 @@ export default function AdminDashboard() {
     fetch('/api/farmers')
       .then(res => res.json())
       .then(data => setFarmers(data || []))
+      .catch(() => {});
+
+    fetch('/api/contacts')
+      .then(res => res.json())
+      .then(data => setOfficerContacts(data || []))
       .catch(() => {})
       .finally(() => setIsLoading(false));
   };
@@ -98,8 +119,7 @@ export default function AdminDashboard() {
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error('Failed to add scheme');
-
-      setSuccessMsg('✅ New Government Scheme published successfully! Farmers can view it live now.');
+      setSuccessMsg('Government scheme published successfully to database!');
       setNewScheme({
         title_te: '',
         title_en: '',
@@ -113,14 +133,14 @@ export default function AdminDashboard() {
       });
       fetchAllData();
     } catch (err) {
-      setErrorMsg('Error publishing scheme.');
+      setErrorMsg('Failed to save scheme to server.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDeleteScheme = async (schemeId) => {
-    if (!window.confirm('Are you sure you want to delete this Government Scheme?')) return;
+    if (!window.confirm('Are you sure you want to delete this government scheme?')) return;
     setIsLoading(true);
     try {
       await fetch(`/api/schemes/${schemeId}`, { method: 'DELETE' });
@@ -133,19 +153,103 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleUpdatePrice = async (e) => {
+  const handleAddOfficerContact = async (e) => {
     e.preventDefault();
+    if (!contactForm.officer_name || !contactForm.phone) {
+      setErrorMsg('Please enter officer name and contact phone number.');
+      return;
+    }
+
+    // Phone Number Validation (At least 8-10 digits)
+    const digits = contactForm.phone.replace(/[^0-9]/g, '');
+    if (digits.length < 8) {
+      setErrorMsg('Invalid phone number. Must contain at least 8 to 10 digits.');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    const payload = {
+      contact_id: `contact_${Date.now()}`,
+      category: contactForm.category,
+      designation: contactForm.designation,
+      officer_name: contactForm.officer_name,
+      department: contactForm.department,
+      phone: contactForm.phone,
+      phone_display: contactForm.phone,
+      state: contactForm.state,
+      district: contactForm.district,
+      mandal: contactForm.mandal,
+      village: contactForm.village,
+      services: {
+        te: contactForm.services_te || contactForm.services_en,
+        en: contactForm.services_en
+      },
+      is_verified: True,
+      status: 'Active'
+    };
+
+    try {
+      const res = await fetch('/api/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Failed to save officer contact');
+      setSuccessMsg(`Government Officer contact for ${contactForm.officer_name} saved successfully!`);
+      setContactForm({
+        category: 'Agriculture / Horticulture Assistant',
+        designation: 'Village Agriculture Assistant (VAA)',
+        officer_name: '',
+        department: 'Department of Agriculture',
+        phone: '',
+        state: 'Andhra Pradesh',
+        district: 'Guntur',
+        mandal: 'Mangalagiri',
+        village: 'Mangalagiri',
+        services_en: '',
+        services_te: ''
+      });
+      fetchAllData();
+    } catch (err) {
+      setErrorMsg('Failed to save officer contact to server.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteContact = async (contactId) => {
+    if (!window.confirm('Are you sure you want to delete this officer contact?')) return;
     setIsLoading(true);
     try {
-      await fetch('/api/mandi', {
+      await fetch(`/api/contacts/${contactId}`, { method: 'DELETE' });
+      setSuccessMsg('Officer contact deleted successfully.');
+      fetchAllData();
+    } catch (err) {
+      setErrorMsg('Failed to delete contact.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateMandiPrice = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+    try {
+      const res = await fetch('/api/mandi/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(priceForm)
       });
-      setSuccessMsg(`✅ Mandi price for ${priceForm.crop} updated to ₹${priceForm.current_price}!`);
+      if (!res.ok) throw new Error('Failed to update mandi price');
+      setSuccessMsg(`Updated Mandi price for ${priceForm.crop} to ₹${priceForm.current_price}/qtl`);
       fetchAllData();
     } catch (err) {
-      setErrorMsg('Failed to update mandi price.');
+      setErrorMsg('Failed to update mandi rate.');
     } finally {
       setIsLoading(false);
     }
@@ -154,13 +258,16 @@ export default function AdminDashboard() {
   const handleBroadcastAlert = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
     try {
-      await fetch('/api/alerts', {
+      const res = await fetch('/api/alerts/broadcast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(alertForm)
       });
-      setSuccessMsg('⚠️ Emergency Weather Warning broadcasted live to all farmers!');
+      if (!res.ok) throw new Error('Failed to broadcast alert');
+      setSuccessMsg('Emergency Weather Alert broadcasted to all farmer devices!');
     } catch (err) {
       setErrorMsg('Failed to broadcast alert.');
     } finally {
@@ -171,317 +278,373 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
       
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-cyan-950 p-6 sm:p-8 rounded-3xl border border-emerald-500/40 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Info */}
+      <div className="bg-white p-6 rounded-3xl border border-emerald-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🏛️</span>
-            <h2 className="text-xl sm:text-2xl font-black text-emerald-400">
-              Government Agriculture & Admin Control Portal
-            </h2>
-          </div>
-          <p className="text-xs text-slate-300 font-bold mt-1 max-w-2xl">
-            Publish new government schemes, update live Mandi crop prices, view registered farmers, and broadcast emergency weather advisories directly to farmers.
+          <h2 className="text-xl font-black text-[#2C3333] flex items-center gap-2">
+            🏛️ Government Official Control Dashboard
+          </h2>
+          <p className="text-xs text-slate-500 font-bold mt-0.5">
+            Manage officer contacts, government schemes, Mandi prices & emergency weather alerts.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={fetchAllData}
-            className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-700 font-black text-xs flex items-center gap-2 cursor-pointer"
-          >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh Data</span>
-          </button>
-        </div>
+        <button
+          onClick={onLogout}
+          className="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 cursor-pointer border border-slate-200 transition-all shrink-0 shadow-sm"
+        >
+          <LogOut className="w-4 h-4 text-[#2D6A4F]" />
+          <span>Exit Admin Portal</span>
+        </button>
       </div>
 
       {/* Alert Messages */}
       {successMsg && (
-        <div className="p-4 rounded-2xl bg-emerald-950/90 border border-emerald-500/60 text-emerald-300 text-xs font-black flex items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>{successMsg}</span>
-          </div>
-          <button onClick={() => setSuccessMsg('')} className="p-1 hover:bg-emerald-900 rounded-lg">
-            ✕
-          </button>
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-[#2D6A4F] text-xs font-bold flex items-center gap-2 shadow-sm">
+          <CheckCircle className="w-4 h-4 text-[#2D6A4F]" />
+          <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 rounded-2xl bg-rose-950/90 border border-rose-500/60 text-rose-300 text-xs font-black flex items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-2">
-            <AlertOctagon className="w-4 h-4 text-rose-400 shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-          <button onClick={() => setErrorMsg('')} className="p-1 hover:bg-rose-900 rounded-lg">
-            ✕
-          </button>
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2 shadow-sm">
+          <AlertOctagon className="w-4 h-4 text-rose-600" />
+          <span>{errorMsg}</span>
         </div>
       )}
 
-      {/* Navigation Sub-Tabs */}
-      <div className="flex space-x-2 border-b border-slate-800 pb-3 overflow-x-auto">
+      {/* Control Tabs Bar */}
+      <div className="flex space-x-2 border-b border-emerald-100 pb-3 overflow-x-auto no-scrollbar">
+        <button
+          onClick={() => setActiveTab('contacts')}
+          className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
+            activeTab === 'contacts'
+              ? 'bg-[#2D6A4F] text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
+          }`}
+        >
+          <PhoneCall className="w-4 h-4" />
+          <span>Officer Contacts Manager ({officerContacts.length})</span>
+        </button>
+
         <button
           onClick={() => setActiveTab('schemes')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
             activeTab === 'schemes'
-              ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+              ? 'bg-[#2D6A4F] text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
           }`}
         >
           <Layers className="w-4 h-4" />
-          <span>📜 Manage Govt Schemes ({schemes.length})</span>
+          <span>Government Schemes Manager</span>
         </button>
 
         <button
           onClick={() => setActiveTab('mandi')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
             activeTab === 'mandi'
-              ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+              ? 'bg-[#2D6A4F] text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
           }`}
         >
           <TrendingUp className="w-4 h-4" />
-          <span>💰 Update Mandi Prices</span>
+          <span>Update Mandi Rates</span>
         </button>
 
         <button
           onClick={() => setActiveTab('farmers')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
             activeTab === 'farmers'
-              ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+              ? 'bg-[#2D6A4F] text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
           }`}
         >
           <Users className="w-4 h-4" />
-          <span>👨‍🌾 Farmers Log ({farmers.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('alerts')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
-            activeTab === 'alerts'
-              ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <ShieldAlert className="w-4 h-4" />
-          <span>⚠️ Broadcast Weather Warning</span>
+          <span>Registered Farmers Log ({farmers.length})</span>
         </button>
       </div>
 
-      {/* Tab 1: Schemes Management */}
-      {activeTab === 'schemes' && (
+      {/* TAB: OFFICER CONTACTS MANAGER */}
+      {activeTab === 'contacts' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Form: Add New Scheme */}
-          <div className="lg:col-span-1 bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
-            <h3 className="text-sm font-black text-emerald-400 flex items-center gap-2">
-              <PlusCircle className="w-4 h-4" />
-              <span>Add New Government Scheme</span>
+          {/* Add New Officer Form */}
+          <div className="lg:col-span-1 bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
+              <PlusCircle className="w-4 h-4 text-[#2D6A4F]" />
+              <span>Add / Update Government Officer</span>
             </h3>
 
-            <form onSubmit={handleAddScheme} className="space-y-3">
+            <form onSubmit={handleAddOfficerContact} className="space-y-3">
               <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Scheme Title (Telugu / Native):</label>
-                <input
-                  type="text"
-                  placeholder="ఉదా: కొత్త రైతు భరోసా పథకం"
-                  value={newScheme.title_te}
-                  onChange={(e) => setNewScheme({ ...newScheme, title_te: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Scheme Title (English):</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Solar Pump Subsidy Scheme"
-                  value={newScheme.title_en}
-                  onChange={(e) => setNewScheme({ ...newScheme, title_en: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Category:</label>
+                <label className="text-[11px] font-bold text-slate-700">Category:</label>
                 <select
-                  value={newScheme.category}
-                  onChange={(e) => setNewScheme({ ...newScheme, category: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
+                  value={contactForm.category}
+                  onChange={(e) => setContactForm({ ...contactForm, category: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1 cursor-pointer"
                 >
-                  <option value="Direct Income Support">Direct Income Support</option>
-                  <option value="Crop Insurance & Risk Management">Crop Insurance & Risk Management</option>
-                  <option value="Subsidized Machinery & Irrigation">Subsidized Machinery & Irrigation</option>
-                  <option value="State Investment Support">State Investment Support</option>
+                  <option value="Agriculture / Horticulture Assistant">Agriculture / Horticulture Assistant</option>
+                  <option value="Village Surveyor">Village Surveyor</option>
+                  <option value="Agriculture Officer">Agriculture Officer</option>
+                  <option value="VRO (Village Revenue Officer)">VRO (Village Revenue Officer)</option>
+                  <option value="MRI (Mandal Revenue Inspector)">MRI (Mandal Revenue Inspector)</option>
+                  <option value="Kisan Call Centre">Kisan Call Centre</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Financial Benefit (₹):</label>
+                <label className="text-[11px] font-bold text-slate-700">Officer Designation:</label>
                 <input
                   type="text"
-                  placeholder="e.g. ₹10,000 subsidy per acre"
-                  value={newScheme.financial_benefit}
-                  onChange={(e) => setNewScheme({ ...newScheme, financial_benefit: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
+                  value={contactForm.designation}
+                  onChange={(e) => setContactForm({ ...contactForm, designation: e.target.value })}
+                  placeholder="e.g. Village Agriculture Assistant (VAA)"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Eligibility Criteria:</label>
+                <label className="text-[11px] font-bold text-slate-700">Officer Name:</label>
                 <input
                   type="text"
-                  placeholder="e.g. All small & marginal farmers holding up to 5 acres"
-                  value={newScheme.eligibility}
-                  onChange={(e) => setNewScheme({ ...newScheme, eligibility: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
+                  value={contactForm.officer_name}
+                  onChange={(e) => setContactForm({ ...contactForm, officer_name: e.target.value })}
+                  placeholder="e.g. K. Suresh Kumar"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  required
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Application Deadline:</label>
+                <label className="text-[11px] font-bold text-slate-700">Department:</label>
                 <input
                   type="text"
-                  placeholder="e.g. 31 October 2026 / Open Year-Round"
-                  value={newScheme.deadline}
-                  onChange={(e) => setNewScheme({ ...newScheme, deadline: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
+                  value={contactForm.department}
+                  onChange={(e) => setContactForm({ ...contactForm, department: e.target.value })}
+                  placeholder="e.g. Department of Agriculture, Govt. of AP"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  required
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Official Portal Link:</label>
+                <label className="text-[11px] font-bold text-slate-700">Official Phone Number:</label>
                 <input
                   type="text"
-                  placeholder="https://agri.gov.in"
-                  value={newScheme.application_link}
-                  onChange={(e) => setNewScheme({ ...newScheme, application_link: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
+                  value={contactForm.phone}
+                  onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                  placeholder="e.g. +91 94401 23456 or 18001801551"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] font-bold text-slate-700">District:</label>
+                  <input
+                    type="text"
+                    value={contactForm.district}
+                    onChange={(e) => setContactForm({ ...contactForm, district: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-[#2C3333]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-700">Village/Mandal:</label>
+                  <input
+                    type="text"
+                    value={contactForm.village}
+                    onChange={(e) => setContactForm({ ...contactForm, village: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-[#2C3333]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Help Provided / Services (English):</label>
+                <textarea
+                  rows={2}
+                  value={contactForm.services_en}
+                  onChange={(e) => setContactForm({ ...contactForm, services_en: e.target.value })}
+                  placeholder="e.g. Seed distribution, e-crop registration & fertilizer coupons"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Help Provided / Services (Telugu):</label>
+                <textarea
+                  rows={2}
+                  value={contactForm.services_te}
+                  onChange={(e) => setContactForm({ ...contactForm, services_te: e.target.value })}
+                  placeholder="ఉదా: విత్తనాల పంపిణీ, ఇ-పంట నమొదు మరియు ఎరువుల టోకెన్లు"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/20"
+                className="w-full py-3 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all"
               >
                 <Save className="w-4 h-4" />
-                <span>Publish Scheme to Farmers</span>
+                <span>Save Officer Contact</span>
               </button>
             </form>
           </div>
 
-          {/* List: Existing Schemes */}
-          <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-sm font-black text-slate-100 flex items-center justify-between">
-              <span>Active Government Schemes ({schemes.length})</span>
-              <span className="text-xs text-emerald-400 font-bold">Live Synced with Farmer App</span>
-            </h3>
+          {/* Active Contacts Directory List */}
+          <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#2C3333]">Verified Government Contacts Directory ({officerContacts.length})</h3>
 
-            <div className="grid grid-cols-1 gap-4">
-              {schemes.map((s) => {
-                const titleStr = typeof s.title === 'object' ? (s.title.te || s.title.en) : s.title;
-                return (
-                  <div key={s.scheme_id} className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-3 hover:border-slate-700 transition-all">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          {s.category}
-                        </span>
-                        <h4 className="text-base font-black text-slate-100 mt-1">{titleStr}</h4>
-                      </div>
-
-                      <button
-                        onClick={() => handleDeleteScheme(s.scheme_id)}
-                        className="p-2 rounded-xl bg-slate-950 border border-slate-800 hover:bg-rose-950 hover:text-rose-400 text-slate-400 cursor-pointer transition-all"
-                        title="Delete Scheme"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold text-slate-300 bg-slate-950 p-3 rounded-2xl border border-slate-800">
-                      <div>💰 Benefit: <span className="text-emerald-400 font-black">{s.financial_benefit}</span></div>
-                      <div>📅 Deadline: <span className="text-amber-400">{s.deadline}</span></div>
-                      <div className="sm:col-span-2">🎯 Eligibility: {s.eligibility}</div>
-                    </div>
-
-                    {s.application_link && (
-                      <a
-                        href={s.application_link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 font-bold"
-                      >
-                        <span>Official Portal: {s.application_link}</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
-                    )}
+            <div className="space-y-3">
+              {officerContacts.map((c) => (
+                <div key={c.contact_id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      {c.category}
+                    </span>
+                    <h4 className="text-base font-bold text-[#2C3333]">👤 {c.officer_name} ({c.designation})</h4>
+                    <p className="text-xs text-[#2D6A4F] font-bold">📞 {c.phone_display || c.phone}</p>
+                    <p className="text-xs text-slate-500 font-semibold">📍 {c.village}, {c.mandal}, {c.district}, {c.state}</p>
                   </div>
-                );
-              })}
+
+                  <button
+                    onClick={() => handleDeleteContact(c.contact_id)}
+                    className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer transition-all shrink-0"
+                    title="Delete Contact"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
 
         </div>
       )}
 
-      {/* Tab 2: Mandi Prices Management */}
-      {activeTab === 'mandi' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
-            <h3 className="text-sm font-black text-emerald-400 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              <span>Update Mandi Market Prices</span>
+      {/* Tab 1: Government Schemes Manager */}
+      {activeTab === 'schemes' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1 bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
+              <PlusCircle className="w-4 h-4 text-[#2D6A4F]" />
+              <span>Publish New Scheme</span>
             </h3>
 
-            <form onSubmit={handleUpdatePrice} className="space-y-4">
+            <form onSubmit={handleAddScheme} className="space-y-3">
               <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Select Crop:</label>
-                <select
-                  value={priceForm.crop}
-                  onChange={(e) => setPriceForm({ ...priceForm, crop: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
-                >
-                  <option value="Tomato">Tomato (టమాటా)</option>
-                  <option value="Paddy">Paddy / Rice (వరి)</option>
-                  <option value="Chilli">Chilli / Mirchi (మిరప)</option>
-                  <option value="Cotton">Cotton (పత్తి)</option>
-                  <option value="Potato">Potato (బంగాళాదుంప)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Current Market Price (₹ / Quintal):</label>
+                <label className="text-[11px] font-bold text-slate-700">Scheme Title (English):</label>
                 <input
-                  type="number"
-                  value={priceForm.current_price}
-                  onChange={(e) => setPriceForm({ ...priceForm, current_price: parseFloat(e.target.value) || 0 })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500 mt-1"
+                  type="text"
+                  value={newScheme.title_en}
+                  onChange={(e) => setNewScheme({ ...newScheme, title_en: e.target.value })}
+                  placeholder="e.g. PM Kisan Samman Nidhi Phase 2"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-extrabold text-slate-400">Nearest Mandi / Wholesale Yard Name:</label>
+                <label className="text-[11px] font-bold text-slate-700">Scheme Title (Telugu Translation):</label>
                 <input
                   type="text"
-                  value={priceForm.nearest_mandi}
-                  onChange={(e) => setPriceForm({ ...priceForm, nearest_mandi: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500 mt-1"
+                  value={newScheme.title_te}
+                  onChange={(e) => setNewScheme({ ...newScheme, title_te: e.target.value })}
+                  placeholder="e.g. పిఎం కిసాన్ సమ్మాన్ నిధి"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Financial Benefit Amount:</label>
+                <input
+                  type="text"
+                  value={newScheme.financial_benefit}
+                  onChange={(e) => setNewScheme({ ...newScheme, financial_benefit: e.target.value })}
+                  placeholder="e.g. ₹6,000 per year (3 installments)"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  required
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                className="w-full py-3 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all"
+              >
+                <Save className="w-4 h-4" />
+                <span>Publish Scheme to DB</span>
+              </button>
+            </form>
+          </div>
+
+          <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#2C3333]">Active Published Schemes ({schemes.length})</h3>
+            <div className="space-y-3">
+              {schemes.map((s) => {
+                const titleStr = typeof s.title === 'object' ? (s.title.te || s.title.en) : s.title;
+                const benefitStr = typeof s.financial_benefit === 'object' ? (s.financial_benefit.te || s.financial_benefit.en) : s.financial_benefit;
+                return (
+                  <div key={s.scheme_id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-4">
+                    <div className="space-y-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        {s.category}
+                      </span>
+                      <h4 className="text-base font-bold text-[#2C3333]">{titleStr}</h4>
+                      <p className="text-xs text-[#2D6A4F] font-bold">💰 {benefitStr}</p>
+                    </div>
+
+                    <button
+                      onClick={() => handleDeleteScheme(s.scheme_id)}
+                      className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer transition-all shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 2: Mandi Price Updates */}
+      {activeTab === 'mandi' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#2C3333]">Update Live Wholesale Mandi Rates</h3>
+            <form onSubmit={handleUpdateMandiPrice} className="space-y-3">
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Select Crop:</label>
+                <select
+                  value={priceForm.crop}
+                  onChange={(e) => setPriceForm({ ...priceForm, crop: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333] cursor-pointer"
+                >
+                  <option value="Tomato">🍅 Tomato (టమాటా)</option>
+                  <option value="Paddy">🌾 Paddy (వరి)</option>
+                  <option value="Chilli">🌶️ Chilli (మిరప)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Wholesale Price (₹ / Quintal):</label>
+                <input
+                  type="number"
+                  value={priceForm.current_price}
+                  onChange={(e) => setPriceForm({ ...priceForm, current_price: parseFloat(e.target.value) })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333]"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3.5 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Live Mandi Price</span>
@@ -489,20 +652,17 @@ export default function AdminDashboard() {
             </form>
           </div>
 
-          <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4">
-            <h3 className="text-sm font-black text-slate-100">Live Mandi Prices DB Overview</h3>
+          <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#2C3333]">Live Mandi Prices DB Overview</h3>
             <div className="space-y-3">
               {Object.entries(mandiData).map(([cName, cData]) => (
-                <div key={cName} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                <div key={cName} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                   <div>
-                    <h4 className="text-sm font-black text-slate-100">🌾 {cName}</h4>
-                    <p className="text-xs text-slate-400 font-bold">{cData.nearest_mandi}</p>
+                    <h4 className="text-sm font-bold text-[#2C3333]">🌾 {cName}</h4>
+                    <p className="text-xs text-slate-500 font-semibold">{cData.nearest_mandi}</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-black text-emerald-400">₹{cData.current_price} / qtl</div>
-                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300">
-                      Trend: {cData.trend}
-                    </span>
+                    <div className="text-lg font-extrabold text-[#2D6A4F]">₹{cData.current_price} / qtl</div>
                   </div>
                 </div>
               ))}
@@ -513,70 +673,17 @@ export default function AdminDashboard() {
 
       {/* Tab 3: Farmers Log */}
       {activeTab === 'farmers' && (
-        <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4">
-          <h3 className="text-sm font-black text-slate-100">Registered Farmers ({farmers.length})</h3>
+        <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+          <h3 className="text-sm font-bold text-[#2C3333]">Registered Farmers ({farmers.length})</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {farmers.map((f, idx) => (
-              <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <div className="text-sm font-black text-emerald-400">👨‍🌾 {f.farmer_name}</div>
-                <div className="text-xs text-slate-300 font-bold">Crop: {f.main_crop || 'Tomato'} • Acreage: {f.acreage || 2.5} acres</div>
-                <div className="text-xs text-slate-400 font-bold">📍 {f.village || 'Mangalagiri'}, {f.district || 'Guntur'}, {f.state || 'Andhra Pradesh'}</div>
+              <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                <div className="text-sm font-bold text-[#2D6A4F]">👨‍🌾 {f.farmer_name}</div>
+                <div className="text-xs text-slate-700 font-semibold">Crop: {f.main_crop || 'Tomato'} • Acreage: {f.acreage || 2.5} acres</div>
+                <div className="text-xs text-slate-500 font-semibold">📍 {f.village || 'Mangalagiri'}, {f.district || 'Guntur'}, {f.state || 'Andhra Pradesh'}</div>
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Tab 4: Broadcast Alert */}
-      {activeTab === 'alerts' && (
-        <div className="max-w-2xl bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
-          <h3 className="text-sm font-black text-amber-400 flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4" />
-            <span>Broadcast Emergency Weather Advisory</span>
-          </h3>
-
-          <form onSubmit={handleBroadcastAlert} className="space-y-4">
-            <div>
-              <label className="text-[11px] font-extrabold text-slate-400">Alert Title:</label>
-              <input
-                type="text"
-                value={alertForm.alert_title}
-                onChange={(e) => setAlertForm({ ...alertForm, alert_title: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-100 focus:outline-none focus:border-amber-500 mt-1"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-[11px] font-extrabold text-slate-400">Target Districts:</label>
-              <input
-                type="text"
-                value={alertForm.district}
-                onChange={(e) => setAlertForm({ ...alertForm, district: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-100 focus:outline-none focus:border-amber-500 mt-1"
-              />
-            </div>
-
-            <div>
-              <label className="text-[11px] font-extrabold text-slate-400">Advisory Message for Farmers:</label>
-              <textarea
-                rows={3}
-                value={alertForm.message}
-                onChange={(e) => setAlertForm({ ...alertForm, message: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-100 focus:outline-none focus:border-amber-500 mt-1"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg"
-            >
-              <ShieldAlert className="w-4 h-4" />
-              <span>Broadcast Alert to All Farmers</span>
-            </button>
-          </form>
         </div>
       )}
 

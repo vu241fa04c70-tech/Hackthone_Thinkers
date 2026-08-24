@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus, ShieldCheck } from 'lucide-react';
+import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus, ShieldCheck, LogOut, PhoneCall } from 'lucide-react';
 import { useLanguage } from './localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from './localization/languageMap';
+import { getLocalizedLocationName } from './localization/locationTranslator';
 
+import WelcomeRoleScreen from './components/WelcomeRoleScreen';
 import LanguageSelectionScreen from './components/LanguageSelectionScreen';
 import KisanHomeGrid from './components/KisanHomeGrid';
 import FarmCopilot from './components/FarmCopilot';
@@ -13,9 +15,13 @@ import FarmingCalendarScreen from './components/FarmingCalendarScreen';
 import WeatherScreen from './components/WeatherScreen';
 import FarmProfiles from './components/FarmProfiles';
 import AdminDashboard from './components/AdminDashboard';
+import FarmerSupportScreen from './components/FarmerSupportScreen';
 
 export default function App() {
   const { lang, setLanguage, t, isRTL } = useLanguage();
+
+  // Navigation Mode: 'welcome' (Welcome to Kisan Mitra) | 'lang_select' | 'farmer' | 'admin'
+  const [currentMode, setCurrentMode] = useState('welcome');
 
   const [farmerProfile, setFarmerProfile] = useState(() => {
     const saved = localStorage.getItem('kisan_farmer_profile');
@@ -23,10 +29,6 @@ export default function App() {
       try { return JSON.parse(saved); } catch (e) {}
     }
     return null;
-  });
-
-  const [hasSelectedLang, setHasSelectedLang] = useState(() => {
-    return !!localStorage.getItem('kisanLanguage') && !!localStorage.getItem('kisan_farmer_profile');
   });
 
   const [activeTab, setActiveTab] = useState('home');
@@ -43,7 +45,7 @@ export default function App() {
     growth_stage: 'Fruiting'
   });
 
-  const handleInitialSetupComplete = () => {
+  const handleAccountSetupComplete = () => {
     const saved = localStorage.getItem('kisan_farmer_profile');
     if (saved) {
       try {
@@ -56,31 +58,92 @@ export default function App() {
         }));
       } catch (e) {}
     }
-    setHasSelectedLang(true);
+    setCurrentMode('farmer');
   };
 
-  // Format farmer display name according to active language
   const getFormattedFarmerHeader = () => {
     if (!farmerProfile) return '';
     const rawName = farmerProfile.farmer_name || 'Ramesh';
     const crop = farmerProfile.main_crop || 'Tomato';
-    const location = `${farmerProfile.district || 'Guntur'}, ${farmerProfile.state || 'Andhra Pradesh'}`;
+    const rawLocation = `${farmerProfile.district || 'Guntur'}, ${farmerProfile.state || 'Andhra Pradesh'}`;
+    const localizedLoc = getLocalizedLocationName(rawLocation, lang);
 
     if (lang === 'en') {
       const cleanName = rawName.replace(/[\u0C00-\u0C7F]/g, '').replace(/[()]/g, '').trim() || 'Ramesh';
-      return `👨‍🌾 ${cleanName} (${crop}) • 📍 ${location}`;
+      return `👨‍🌾 ${cleanName} (${crop}) • 📍 ${localizedLoc}`;
     } else {
-      return `👨‍🌾 ${rawName} (${crop}) • 📍 ${location}`;
+      return `👨‍🌾 ${rawName} (${crop}) • 📍 ${localizedLoc}`;
     }
   };
 
-  if (!hasSelectedLang || !farmerProfile) {
+  // STEP 1: Application Launch Landing Page (Welcome to Kisan Mitra)
+  if (currentMode === 'welcome') {
     return (
-      <LanguageSelectionScreen
-        onConfirm={handleInitialSetupComplete}
+      <WelcomeRoleScreen
+        onSelectFarmer={() => setCurrentMode('lang_select')}
+        onSelectAdmin={() => setCurrentMode('admin')}
       />
     );
   }
+
+  // STEP 2: Language Selection & Create Account Screen
+  if (currentMode === 'lang_select') {
+    return (
+      <LanguageSelectionScreen
+        onConfirm={handleAccountSetupComplete}
+      />
+    );
+  }
+
+  // STEP 3: Admin Dashboard (Password Authenticated)
+  if (currentMode === 'admin') {
+    return (
+      <div className={`min-h-screen bg-[#FAF8F3] text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
+        <header className="border-b border-emerald-100 bg-white/90 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center text-xl font-black shadow-sm">
+                🏛️
+              </div>
+              <div>
+                <h1 className="text-lg font-black tracking-tight text-[#2D6A4F]">
+                  Admin Control Portal
+                </h1>
+                <p className="text-[11px] text-slate-500 font-semibold">
+                  Government Official Management Console
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setCurrentMode('welcome')}
+              className="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 border border-slate-200 cursor-pointer transition-all shadow-sm shrink-0"
+            >
+              <LogOut className="w-4 h-4 text-[#2D6A4F]" />
+              <span>Exit Admin Portal</span>
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <AdminDashboard onLogout={() => setCurrentMode('welcome')} />
+        </main>
+      </div>
+    );
+  }
+
+  // STEP 4: Main Farmer Application
+  const tabs = [
+    { id: 'home', icon: Home },
+    { id: 'doctor', icon: Camera },
+    { id: 'weather', icon: Sun },
+    { id: 'market', icon: TrendingUp },
+    { id: 'schemes', icon: Scroll },
+    { id: 'support', icon: PhoneCall },
+    { id: 'calendar', icon: Calendar },
+    { id: 'copilot', icon: Bot },
+    { id: 'profile', icon: UserCheck }
+  ];
 
   const getTabLabel = (id) => {
     switch (id) {
@@ -89,69 +152,65 @@ export default function App() {
       case 'weather': return t('nav.weather');
       case 'market': return t('nav.market');
       case 'schemes': return t('nav.schemes');
+      case 'support': return lang === 'te' ? '📞 రైతు సహాయం & అధికారులు' : (lang === 'hi' ? '📞 किसान सहायता एवं अधिकारी' : '📞 Farmer Support & Contacts');
       case 'calendar': return t('nav.calendar');
       case 'copilot': return t('nav.copilot');
       case 'profile': return t('nav.profile');
-      case 'admin': return lang === 'te' ? '🏛️ అడ్మిన్' : (lang === 'hi' ? '🏛️ एडमिन' : '🏛️ Admin Portal');
       default: return id;
     }
   };
 
-  const tabs = [
-    { id: 'home', icon: Home },
-    { id: 'doctor', icon: Camera },
-    { id: 'weather', icon: Sun },
-    { id: 'market', icon: TrendingUp },
-    { id: 'schemes', icon: Scroll },
-    { id: 'calendar', icon: Calendar },
-    { id: 'copilot', icon: Bot },
-    { id: 'profile', icon: UserCheck },
-    { id: 'admin', icon: ShieldCheck },
-  ];
-
   return (
-    <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950 transition-all ${isRTL ? 'text-right' : 'text-left'}`}>
+    <div className={`min-h-screen bg-[#FAF8F3] text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
       
-      {/* Top Header Bar */}
-      <header className="border-b border-emerald-500/30 bg-slate-950/90 backdrop-blur-xl sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+      {/* Top Main Navigation Header */}
+      <header className="border-b border-emerald-100 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           
-          {/* Logo & Current User Info */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 text-xl">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center text-xl font-black shadow-sm">
               🌾
             </div>
             <div>
-              <h1 className="text-lg sm:text-xl font-black tracking-tight text-emerald-400 flex items-center gap-2">
+              <h1 className="text-lg sm:text-xl font-black tracking-tight text-[#2D6A4F] flex items-center gap-2">
                 {t('nav.appName')}
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-extrabold">
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#2D6A4F] border border-emerald-200 font-extrabold">
                   {t('nav.tagline')}
                 </span>
               </h1>
-              <p className="text-[11px] text-slate-300 font-bold hidden sm:block">
+              <p className="text-[11px] text-slate-500 font-semibold hidden sm:block">
                 {getFormattedFarmerHeader()}
               </p>
             </div>
           </div>
 
-          {/* Multilingual Selector (23 Languages) & Account Creation Button */}
+          {/* Multilingual Selector & Navigation Buttons */}
           <div className="flex items-center gap-2">
-            {/* 🌐 23 Languages Selector Dropdown */}
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-lg shadow-emerald-500/10">
-              <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+            {/* 🌐 Languages Selector Dropdown */}
+            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 shadow-sm">
+              <Globe className="w-4 h-4 text-[#2D6A4F] shrink-0" />
               <select
                 value={lang}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[190px]"
+                className="bg-transparent text-xs font-bold text-[#2D6A4F] focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[190px]"
                 title="Choose Language (22 Scheduled Languages of India)"
               >
                 {Object.values(SUPPORTED_LANGUAGES).map((l) => (
-                  <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100 font-bold">
+                  <option key={l.code} value={l.code} className="bg-white text-slate-800 font-semibold">
                     {l.flag} {l.name} ({l.subName}) {l.isRTL ? '• RTL' : ''}
                   </option>
                 ))}
               </select>
             </div>
+
+            {/* 🏠 Switch Portal Button */}
+            <button
+              onClick={() => setCurrentMode('welcome')}
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm shrink-0"
+              title="Return to Welcome Screen"
+            >
+              <span>{lang === 'hi' ? '🏠 वापस' : (lang === 'te' ? '🏠 వెనుకకు' : '🏠 Exit')}</span>
+            </button>
 
             {/* ➕ Create Account / Switch User Button */}
             <button
@@ -159,14 +218,14 @@ export default function App() {
                 localStorage.removeItem('kisan_farmer_profile');
                 localStorage.removeItem('kisanLanguage');
                 setFarmerProfile(null);
-                setHasSelectedLang(false);
+                setCurrentMode('lang_select');
               }}
-              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#2D6A4F] border border-emerald-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm shrink-0"
               title="Create New Account / Switch User"
             >
-              <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
+              <UserPlus className="w-3.5 h-3.5 text-[#2D6A4F]" />
               <span className="hidden sm:inline">
-                {lang === 'te' ? '➕ కొత్త ఖాతా' : (lang === 'hi' ? '➕ नया खाता' : '➕ Account')}
+                {lang === 'hi' ? '➕ नया खाता' : (lang === 'te' ? '➕ కొత్త ఖాతా' : '➕ Account')}
               </span>
             </button>
           </div>
@@ -174,8 +233,8 @@ export default function App() {
         </div>
       </header>
 
-      {/* Navigation Tabs Bar */}
-      <div className="border-b border-slate-800/80 bg-slate-950/40">
+      {/* Navigation Pill Tabs Bar */}
+      <div className="border-b border-emerald-100 bg-white/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto py-2.5 no-scrollbar">
             {tabs.map((tab) => {
@@ -186,15 +245,13 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all shrink-0 cursor-pointer ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
                     isActive
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-lg shadow-emerald-500/20 scale-[1.02]'
-                      : (tab.id === 'admin'
-                          ? 'text-cyan-400 hover:text-cyan-200 bg-cyan-950/30 border border-cyan-500/30'
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60')
+                      ? 'bg-[#2D6A4F] text-white shadow-md scale-[1.02]'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-emerald-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#2D6A4F]'}`} />
                   <span>{labelText}</span>
                 </button>
               );
@@ -212,6 +269,7 @@ export default function App() {
         {activeTab === 'weather' && <WeatherScreen />}
         {activeTab === 'market' && <MarketIntelligence activeField={activeField} />}
         {activeTab === 'schemes' && <GovtSchemesScreen />}
+        {activeTab === 'support' && <FarmerSupportScreen />}
         {activeTab === 'calendar' && <FarmingCalendarScreen />}
         {activeTab === 'copilot' && <FarmCopilot activeField={activeField} />}
         {activeTab === 'profile' && (
@@ -227,18 +285,17 @@ export default function App() {
             onNewAccountClick={() => {
               localStorage.removeItem('kisan_farmer_profile');
               setFarmerProfile(null);
-              setHasSelectedLang(false);
+              setCurrentMode('lang_select');
             }}
           />
         )}
-        {activeTab === 'admin' && <AdminDashboard />}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
+      <footer className="border-t border-emerald-100 py-5 bg-white text-center text-xs text-slate-500 font-semibold">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>🌾 {t('nav.appName')} • Government & Admin Management Control Active</span>
-          <span>Multilingual Speech Recognition & Text-to-Speech (STT & TTS)</span>
+          <span>🌾 {t('nav.appName')} • {lang === 'hi' ? 'शासकीय एवं प्रशासनिक पोर्टल सक्रिय' : (lang === 'te' ? 'ప్రభుత్వ సేవలు మరియు అడ్మిన్ నిర్వహణ సక్రియంగా ఉంది' : 'Government & Admin Management Active')}</span>
+          <span>{lang === 'hi' ? 'बहुभाषी वॉयस AI और कंप्यूटर विजन सिस्टम' : (lang === 'te' ? 'బహుభాషా వాయిస్ AI మరియు కంప్యూటర్ విజన్ సాధనం' : 'Multilingual Speech Recognition & Text-to-Speech (STT & TTS)')}</span>
         </div>
       </footer>
 

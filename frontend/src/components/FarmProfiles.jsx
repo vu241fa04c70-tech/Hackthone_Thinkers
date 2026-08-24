@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, MapPin, Sprout, Globe, Check, Save, UserPlus } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
+import { INDIAN_STATES } from '../utils/indianStates';
 
 export default function FarmProfiles({ onProfileSwitch, onNewAccountClick }) {
   const { lang, t } = useLanguage();
@@ -11,10 +12,10 @@ export default function FarmProfiles({ onProfileSwitch, onNewAccountClick }) {
       try { return JSON.parse(saved); } catch (e) {}
     }
     return {
-      farmer_name: '',
-      state: '',
-      district: '',
-      village: '',
+      farmer_name: 'రమేష్ కుమార్ (Ramesh)',
+      state: 'Andhra Pradesh',
+      district: 'Guntur',
+      village: 'Mangalagiri',
       main_crop: 'Tomato',
       acreage: 2.5
     };
@@ -43,160 +44,148 @@ export default function FarmProfiles({ onProfileSwitch, onNewAccountClick }) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Header */}
-      <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 flex items-center justify-between gap-4 shadow-xl">
+      <div className="bg-white p-6 rounded-3xl border border-emerald-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div>
-          <h2 className="text-xl font-black text-slate-100 flex items-center gap-2">
-            👨‍🌾 {t('profile.title')}
+          <h2 className="text-xl font-black text-[#2C3333] flex items-center gap-2">
+            ⚙️ {t('profile.title')}
           </h2>
-          <p className="text-xs text-slate-400 font-bold mt-0.5">
-            {lang === 'te' 
-              ? 'మీ ప్రొఫైల్ వివరాలు మరియు ఖాతా సమాచారం' 
-              : 'Your active farmer account details'}
+          <p className="text-xs text-slate-500 font-semibold mt-0.5">
+            {t('profile.subtitle')}
           </p>
         </div>
 
-        <button
-          onClick={onNewAccountClick}
-          className="px-4 py-2.5 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-2 cursor-pointer transition-all shrink-0"
-        >
-          <UserPlus className="w-4 h-4 text-emerald-400" />
-          <span>{lang === 'te' ? '➕ కొత్త ఖాతా' : '➕ Create New Account'}</span>
-        </button>
+        {onNewAccountClick && (
+          <button
+            type="button"
+            onClick={onNewAccountClick}
+            className="px-4 py-2.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#2D6A4F] border border-emerald-200 text-xs font-bold flex items-center gap-2 cursor-pointer transition-all shrink-0"
+          >
+            <UserPlus className="w-4 h-4 text-[#2D6A4F]" />
+            <span>➕ {lang === 'te' ? 'క్రొత్త ఖాతాని సృష్టించండి' : (lang === 'hi' ? 'नया खाता बनाएं' : 'Create New Account')}</span>
+          </button>
+        )}
       </div>
 
-      {/* Active User Card Summary */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border-2 border-emerald-500/40 space-y-3 shadow-xl">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">
-            {lang === 'te' ? 'ప్రస్తుత రైతు ఖాతా' : 'Active Logged In Profile'}
-          </span>
-          <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-            ID: {profile.farmer_id || 'active_user'}
-          </span>
+      {savedMsg && (
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs font-bold flex items-center gap-2 shadow-sm">
+          <Check className="w-4 h-4 text-[#2D6A4F]" />
+          <span>{lang === 'te' ? 'రైతు ప్రొఫైల్ వివరాలు విజయవంతంగా సేవ్ అయ్యాయి!' : (lang === 'hi' ? 'किसान प्रोफाइल अपडेट हो गई है!' : 'Farmer profile updated successfully!')}</span>
         </div>
+      )}
 
+      {/* Profile Form */}
+      <form onSubmit={handleSave} className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 space-y-6 shadow-sm">
+        
+        {/* Name */}
         <div className="space-y-1">
-          <h3 className="text-xl sm:text-2xl font-black text-slate-100 flex items-center gap-2">
-            👨‍🌾 {profile.farmer_name || (lang === 'te' ? 'రైతు సోదరుడు' : 'Farmer')}
-          </h3>
-          <p className="text-xs font-bold text-slate-300">
-            🌾 {profile.main_crop || 'Tomato'} • 📍 {profile.village || 'Village'}, {profile.district || 'District'}, {profile.state || 'State'} ({profile.acreage || 2.5} Acres)
-          </p>
+          <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+            <User className="w-4 h-4 text-[#2D6A4F]" />
+            <span>{t('profile.name')}</span>
+          </label>
+          <input
+            type="text"
+            value={profile.farmer_name || ''}
+            onChange={(e) => handleChange('farmer_name', e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F]"
+            required
+          />
         </div>
-      </div>
 
-      {/* Profile Form (Edit Active User Details) */}
-      <form onSubmit={handleSave} className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5 shadow-2xl">
-        <h3 className="text-sm font-black text-slate-200">
-          {lang === 'te' ? 'మీ ఖాతా వివరాలు సవరించండి (Edit Details):' : 'Edit Account Details:'}
-        </h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* State (Alphabetical Dropdown for 36 States & UTs) */}
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <MapPin className="w-4 h-4 text-[#2D6A4F]" />
+              <span>{lang === 'te' ? 'రాష్ట్రం (భారతదేశం)' : (lang === 'hi' ? 'राज्य (भारत)' : 'State (India)')}</span>
+            </span>
+            <span className="text-[10px] text-[#2D6A4F] font-bold">
+              {lang === 'te' ? 'అక్షరక్రమంలో (36 రాష్ట్రాలు & కేంద్రపాలిత ప్రాంతాలు)' : (lang === 'hi' ? 'वर्णमाला क्रम में' : 'Alphabetical (36 States & UTs)')}
+            </span>
+          </label>
           
-          <div className="space-y-1.5">
-            <label className="text-xs font-black text-slate-300 uppercase tracking-wider">
-              {t('profile.name')}
-            </label>
+          <select
+            value={profile.state || 'Andhra Pradesh'}
+            onChange={(e) => handleChange('state', e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] cursor-pointer"
+            required
+          >
+            {INDIAN_STATES.map((st) => (
+              <option key={st} value={st} className="bg-white text-slate-800 font-semibold">
+                📍 {st}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* District & Village */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700">{t('profile.district')}</label>
             <input
               type="text"
+              value={profile.district || ''}
+              onChange={(e) => handleChange('district', e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F]"
               required
-              value={profile.farmer_name}
-              onChange={(e) => handleChange('farmer_name', e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-black text-slate-300 uppercase tracking-wider">
-              {t('profile.crop')}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700">{t('profile.village')}</label>
+            <input
+              type="text"
+              value={profile.village || ''}
+              onChange={(e) => handleChange('village', e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F]"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Crop & Acreage */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+              <Sprout className="w-4 h-4 text-[#2D6A4F]" />
+              <span>{t('profile.mainCrop')}</span>
             </label>
             <select
-              value={profile.main_crop}
+              value={profile.main_crop || 'Tomato'}
               onChange={(e) => handleChange('main_crop', e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] cursor-pointer"
             >
-              <option value="Tomato">టమాటా (Tomato)</option>
-              <option value="Paddy">వరి (Paddy / Rice)</option>
-              <option value="Chilli">మిరప (Chilli)</option>
-              <option value="Cotton">పత్తి (Cotton)</option>
-              <option value="Maize">మొక్కజొన్న (Maize)</option>
-              <option value="Wheat">గోధుమ (Wheat)</option>
-              <option value="Potato">బంగాళాదుంప (Potato)</option>
+              <option value="Tomato">🍅 Tomato (టమాటా / टमाटर)</option>
+              <option value="Paddy">🌾 Paddy (వరి / धान)</option>
+              <option value="Chilli">🌶️ Chilli (మిరప / मिर्च)</option>
+              <option value="Cotton">☁️ Cotton (పత్తి / कपास)</option>
+              <option value="Potato">🥔 Potato (బంగాళాదుంప / आलू)</option>
             </select>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-black text-slate-300 uppercase tracking-wider">
-              {t('profile.state')}
-            </label>
-            <input
-              type="text"
-              required
-              value={profile.state}
-              onChange={(e) => handleChange('state', e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-black text-slate-300 uppercase tracking-wider">
-              {t('profile.district')}
-            </label>
-            <input
-              type="text"
-              required
-              value={profile.district}
-              onChange={(e) => handleChange('district', e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-black text-slate-300 uppercase tracking-wider">
-              {t('profile.village')}
-            </label>
-            <input
-              type="text"
-              required
-              value={profile.village}
-              onChange={(e) => handleChange('village', e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-black text-slate-300 uppercase tracking-wider">
-              {t('profile.land')}
-            </label>
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700">{t('profile.acreage')}</label>
             <input
               type="number"
-              step="0.5"
-              value={profile.acreage}
-              onChange={(e) => handleChange('acreage', parseFloat(e.target.value) || 2.5)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
+              step="0.1"
+              value={profile.acreage || 2.5}
+              onChange={(e) => handleChange('acreage', parseFloat(e.target.value))}
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F]"
+              required
             />
           </div>
-
         </div>
 
-        <div className="pt-4 flex items-center justify-between">
-          <button
-            type="submit"
-            className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black flex items-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer"
-          >
-            <Save className="w-4 h-4" />
-            <span>{t('profile.saveBtn')}</span>
-          </button>
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full py-3.5 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+        >
+          <Save className="w-4 h-4 text-white" />
+          <span>{t('profile.save')}</span>
+        </button>
 
-          {savedMsg && (
-            <span className="text-xs font-black text-emerald-400 flex items-center gap-1">
-              <Check className="w-4 h-4" />
-              {lang === 'te' ? 'భద్రపరచబడింది!' : 'Saved to Backend Database!'}
-            </span>
-          )}
-        </div>
       </form>
     </div>
   );
