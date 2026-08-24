@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, AlertTriangle, ShieldCheck, Volume2, PhoneCall, CheckCircle, RefreshCw, X, AlertCircle, History, Activity, Sparkles, RotateCcw, Sprout, Tag } from 'lucide-react';
+import { Camera, Upload, AlertTriangle, ShieldCheck, Volume2, PhoneCall, CheckCircle, RefreshCw, X, AlertCircle, History, Activity, Sparkles, RotateCcw, Sprout, Tag, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { speakText, stopSpeech } from '../utils/voiceUtils';
 
@@ -49,87 +49,60 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
         body: formData
       });
 
-      if (!res.ok) {
-        throw new Error('API analysis failed');
-      }
+      if (!res.ok) throw new Error('Analysis failed');
 
       const data = await res.json();
       setReport(data);
       if (onDiagnosisComplete) onDiagnosisComplete(data);
       fetchHistory();
     } catch (err) {
-      const fallbackErr = lang === 'te'
-        ? 'క్షమించండి. చిత్రాన్ని విశ్లేషించలేకపోయాము. దయచేసి స్పష్టమైన పంట ఫోటోను మళ్లీ అప్‌లోడ్ చేయండి.'
-        : (lang === 'hi' ? 'क्षमा करें, चित्र का विश्लेषण नहीं हो सका। कृपया साफ़ फ़ोटो पुनः अपलोड करें।' : "Sorry, we couldn't analyze this image. Please upload a clearer crop photo.");
-      setErrorMsg(fallbackErr);
+      setErrorMsg('Failed to run crop vision diagnosis. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }
   };
 
   useEffect(() => {
-    fetch(`/api/samples?language=${lang}`)
+    fetch('/api/scans/samples')
       .then(res => res.json())
-      .then(data => setSamples(data))
+      .then(data => setSamples(data || []))
       .catch(() => {});
-
     fetchHistory();
-    
-    if (uploadedFile) {
-      runAnalysis(null, uploadedFile);
-    } else if (selectedSample) {
-      runAnalysis(selectedSample, null);
-    } else {
-      runAnalysis('sample_tomato_early_blight', null);
-    }
-  }, [lang]);
+  }, []);
 
-  const handleSampleClick = (sampleKey) => {
-    setSelectedSample(sampleKey);
-    setUploadedFile(null);
-    setImagePreview(null);
-    runAnalysis(sampleKey, null);
-  };
-
-  const handleFileUpload = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type.toLowerCase())) {
-      setErrorMsg('Please select a valid image file (JPG, PNG, WEBP).');
-      return;
+    if (file) {
+      setUploadedFile(file);
+      setSelectedSample(null);
+      setImagePreview(URL.createObjectURL(file));
+      setReport(null);
     }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setErrorMsg('Image file size must be less than 10MB.');
-      return;
-    }
-
-    setUploadedFile(file);
-    setSelectedSample(null);
-    const objectUrl = URL.createObjectURL(file);
-    setImagePreview(objectUrl);
-    runAnalysis(null, file);
   };
 
-  const handleClearUpload = () => {
+  const handleSampleClick = (sample) => {
+    setSelectedSample(sample.key);
     setUploadedFile(null);
-    setImagePreview(null);
-    setSelectedSample('sample_tomato_early_blight');
-    runAnalysis('sample_tomato_early_blight', null);
+    setImagePreview(sample.url);
+    setReport(null);
   };
 
-  const toggleAudio = (textToSpeak) => {
+  const toggleAudio = () => {
     if (isPlayingAudio) {
       stopSpeech();
       setIsPlayingAudio(false);
       return;
     }
 
+    if (!report) return;
+
+    const speechText = lang === 'te'
+      ? `నమస్కారం! గుర్తించిన పంట: ${report.crop_name}. భాగం: ${report.plant_part_detected}. వ్యాధి: ${report.disease_name}. నివారణ చికిత్స: ${report.immediate_treatment}`
+      : `Crop detected: ${report.crop_name}. Plant Part: ${report.plant_part_detected}. Disease: ${report.disease_name}. Recommended treatment: ${report.immediate_treatment}`;
+
     setIsPlayingAudio(true);
     speakText(
-      textToSpeak,
+      speechText,
       lang,
       () => setIsPlayingAudio(true),
       () => setIsPlayingAudio(false),
@@ -137,494 +110,252 @@ export default function CropDoctor({ activeField, onDiagnosisComplete }) {
     );
   };
 
-  const getAudioScript = () => {
-    if (!report) return '';
-    if (!report.is_crop_detected) {
-      return report.quality_warning || report.user_message || 'Crop or plant not detected.';
-    }
-    if (report.is_low_confidence || report.is_below_threshold) {
-      return report.quality_warning || report.user_message || 'Please upload a clear crop photo.';
-    }
-    const symptomsStr = report.symptoms ? report.symptoms.join('. ') : '';
-    const treatmentStr = report.immediate_treatment ? report.immediate_treatment.join('. ') : '';
-    return `${lang === 'te' ? 'పంట' : 'Crop'}: ${report.crop_detected}. ${lang === 'te' ? 'భాగం' : 'Part'}: ${report.plant_part_detected}. ${report.disease_name}. ${symptomsStr}. ${treatmentStr}. ${report.dosage_note || ''}`;
-  };
-
-  // Crop Selector Option Labels per language
-  const getCropOptionLabels = () => {
-    if (lang === 'te') {
-      return {
-        auto: '✨ స్వయంచాలక గుర్తింపు (AI Auto-Detect)',
-        chilli: '🌶️ మిరప (Chilli)',
-        paddy: '🌾 వరి (Paddy)',
-        tomato: '🍅 టమాటా (Tomato)',
-        cotton: '☁️ పత్తి (Cotton)',
-        potato: '🥔 బంగాళాదుంప (Potato)',
-        maize: '🌽 మొక్కజొన్న (Maize)'
-      };
-    } else if (lang === 'hi') {
-      return {
-        auto: '✨ स्वचालित पहचान (AI Auto-Detect)',
-        chilli: '🌶️ मिर्च (Chilli)',
-        paddy: '🌾 धान (Paddy)',
-        tomato: '🍅 टमाटर (Tomato)',
-        cotton: '☁️ कपास (Cotton)',
-        potato: '🥔 आलू (Potato)',
-        maize: '🌽 मक्का (Maize)'
-      };
-    } else {
-      return {
-        auto: '✨ AI Auto-Detect',
-        chilli: '🌶️ Chilli (Pepper)',
-        paddy: '🌾 Paddy (Rice)',
-        tomato: '🍅 Tomato',
-        cotton: '☁️ Cotton',
-        potato: '🥔 Potato',
-        maize: '🌽 Maize'
-      };
+  const getSeverityBadge = (severity) => {
+    switch (severity?.toUpperCase()) {
+      case 'HIGH':
+        return <span className="px-3 py-1 rounded-full text-xs font-black bg-rose-500/20 text-rose-300 border border-rose-500/40">🔴 HIGH SEVERITY</span>;
+      case 'MEDIUM':
+        return <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-300 border border-amber-500/40">🟡 MEDIUM SEVERITY</span>;
+      default:
+        return <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">🟢 LOW SEVERITY</span>;
     }
   };
-
-  const cropOptions = getCropOptionLabels();
 
   return (
-    <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
-      {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 p-6 rounded-3xl border border-slate-800 shadow-xl">
-        <div>
-          <h2 className="text-xl font-black text-slate-100 flex items-center gap-2">
-            📷 {t('cropDoctor.title')}
-            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-extrabold">
-              Agricultural Vision Pipeline
-            </span>
+    <div className="space-y-8 font-['Plus_Jakarta_Sans',sans-serif]">
+      
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 p-6 sm:p-8 rounded-3xl border border-emerald-500/40 shadow-2xl space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">📷</span>
+          <h2 className="text-xl sm:text-2xl font-black text-emerald-400">
+            {t('cropDoctor.title') || 'Agricultural Vision AI Lens'}
           </h2>
-          <p className="text-xs text-slate-400 font-bold mt-0.5">
-            {t('cropDoctor.subtitle')}
-          </p>
         </div>
-
-        {/* Action Bar: Crop Select + Camera / Gallery */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Localized Crop Selection Dropdown */}
-          <select
-            value={selectedCropHint}
-            onChange={(e) => {
-              const val = e.target.value;
-              setSelectedCropHint(val);
-              if (uploadedFile) {
-                runAnalysis(null, uploadedFile);
-              }
-            }}
-            className="bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2.5 text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500 cursor-pointer"
-            title="Crop Auto Detection / Specific Override"
-          >
-            <option value="AUTO">{cropOptions.auto}</option>
-            <option value="Chilli">{cropOptions.chilli}</option>
-            <option value="Paddy">{cropOptions.paddy}</option>
-            <option value="Tomato">{cropOptions.tomato}</option>
-            <option value="Cotton">{cropOptions.cotton}</option>
-            <option value="Potato">{cropOptions.potato}</option>
-            <option value="Maize">{cropOptions.maize}</option>
-          </select>
-
-          {/* Camera Capture */}
-          <label className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs flex items-center gap-2 cursor-pointer transition-all shadow-lg shadow-emerald-500/20 hover:scale-105">
-            <Camera className="w-4 h-4" />
-            <span>{t('cropDoctor.takePhoto')}</span>
-            <input 
-              type="file" 
-              accept="image/*" 
-              capture="environment" 
-              onChange={handleFileUpload} 
-              className="hidden" 
-            />
-          </label>
-
-          {/* Gallery Upload */}
-          <label className="px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 font-black text-xs flex items-center gap-2 cursor-pointer transition-all hover:scale-105">
-            <Upload className="w-4 h-4 text-emerald-400" />
-            <span>{t('cropDoctor.uploadPhoto')}</span>
-            <input 
-              type="file" 
-              accept="image/jpeg,image/jpg,image/png,image/webp" 
-              onChange={handleFileUpload} 
-              className="hidden" 
-            />
-          </label>
-        </div>
+        <p className="text-xs sm:text-sm text-slate-300 font-bold max-w-3xl">
+          {t('cropDoctor.subtitle') || 'Upload photo of leaf, fruit, stem, flower or plant to diagnose crop disease & receive chemical dosages.'}
+        </p>
       </div>
 
-      {/* Error Alert */}
-      {errorMsg && (
-        <div className="p-4 rounded-2xl bg-rose-950/80 border border-rose-500/50 text-rose-300 text-xs font-black flex items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-          <button onClick={() => setErrorMsg(null)} className="p-1 hover:bg-rose-900 rounded-lg">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Grid: Upload & Crop Hint Selector vs Results */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Left Column: Upload Preview & Demo Samples */}
-        <div className="lg:col-span-1 space-y-4">
+        {/* Left Column: Photo Upload Dropzone */}
+        <div className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 shadow-2xl flex flex-col justify-between">
           
-          {/* Active Upload Preview Card */}
-          {imagePreview && (
-            <div className="bg-slate-900/90 p-4 rounded-3xl border-2 border-emerald-500/60 space-y-4 shadow-xl">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  {t('cropDoctor.uploadPhoto')}
-                </span>
-                <button
-                  onClick={handleClearUpload}
-                  className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 cursor-pointer"
-                  title="Remove image"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center">
-                <img src={imagePreview} alt="Uploaded crop" className="w-full h-full object-cover" />
-              </div>
-
-              {/* Action Button */}
-              <button
-                type="button"
-                onClick={() => runAnalysis(null, uploadedFile)}
-                disabled={isAnalyzing}
-                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xl shadow-emerald-500/30 transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+          <div className="space-y-4">
+            {/* Optional Crop Type Hint Selector */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-black text-slate-300 flex items-center gap-1.5">
+                <Tag className="w-4 h-4 text-emerald-400" />
+                <span>Crop Type Hint (Auto-Detected if blank):</span>
+              </label>
+              <select
+                value={selectedCropHint}
+                onChange={(e) => setSelectedCropHint(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500 cursor-pointer"
               >
-                {isAnalyzing ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>{t('cropDoctor.analyzing')}</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    <span>{t('cropDoctor.checkDiseaseBtn')}</span>
-                  </>
-                )}
-              </button>
+                <option value="AUTO">✨ Auto Detect Crop & Plant Part</option>
+                <option value="Tomato">Tomato (టమాటా)</option>
+                <option value="Chilli">Chilli / Mirchi (మిరప)</option>
+                <option value="Paddy">Paddy / Rice (వరి)</option>
+                <option value="Cotton">Cotton (పత్తి)</option>
+                <option value="Potato">Potato (బంగాళాదుంప)</option>
+                <option value="Maize">Maize (మొక్కజొన్న)</option>
+              </select>
             </div>
-          )}
 
-          {/* Demo Sample Cards */}
-          <div className="bg-slate-900/60 p-5 rounded-3xl border border-slate-800 space-y-3">
-            <h3 className="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-              {t('cropDoctor.demoSamples')}
-            </h3>
-            <div className="grid grid-cols-1 gap-2.5">
-              {samples.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => handleSampleClick(s.id)}
-                  className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all flex items-center justify-between ${
-                    selectedSample === s.id && !imagePreview
-                      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-black'
-                      : 'bg-slate-950 border-slate-800 hover:border-slate-700 text-slate-300 font-bold'
-                  }`}
-                >
-                  <div>
-                    <div className="text-xs font-black">{s.disease_name}</div>
-                    <div className="text-[11px] text-slate-400 font-bold mt-0.5">Demo • {s.crop}</div>
-                  </div>
-                  <span className="text-xs font-black text-emerald-400">{(s.confidence * 100).toFixed(0)}%</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+            {/* Dropzone Upload Box */}
+            <div className="relative border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 bg-slate-950/80 rounded-3xl p-6 sm:p-8 text-center space-y-4 transition-all group cursor-pointer overflow-hidden">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="absolute inset-0 opacity-0 cursor-pointer z-20"
+              />
 
-        {/* Right Column: Diagnostic Result Card */}
-        <div className="lg:col-span-2">
-          {isAnalyzing ? (
-            <div className="bg-slate-900/60 p-12 rounded-3xl border border-slate-800 text-center space-y-4 shadow-xl">
-              <RefreshCw className="w-10 h-10 text-emerald-400 animate-spin mx-auto" />
-              <div className="space-y-1">
-                <p className="text-base font-black text-slate-100">
-                  {t('cropDoctor.analyzing')}
-                </p>
-                <p className="text-xs text-slate-400 font-bold">
-                  Image Analysis ➔ Crop & Plant Part Identification ➔ Disease Diagnosis...
-                </p>
-              </div>
-            </div>
-          ) : report ? (
-            <div className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 shadow-2xl">
-              
-              {/* STEP 2: Non-Crop Safeguard Alert */}
-              {report.is_crop_detected === false && (
-                <div className="p-5 rounded-2xl bg-rose-950/90 border-2 border-rose-500/80 space-y-3 text-rose-200">
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle className="w-6 h-6 text-rose-400 shrink-0" />
-                    <div>
-                      <h4 className="text-sm font-black text-rose-300">
-                        {lang === 'te' ? '⚠️ పంట లేదా మొక్క గుర్తించబడలేదు' : '⚠️ Crop or Plant Not Detected'}
-                      </h4>
-                      <p className="text-xs font-bold mt-0.5 text-rose-200">
-                        {report.quality_warning || report.user_message}
-                      </p>
-                    </div>
-                  </div>
-
-                  <label className="w-full py-3 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg">
-                    <RotateCcw className="w-4 h-4" />
-                    <span>{t('cropDoctor.retakeBtn')}</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      capture="environment" 
-                      onChange={handleFileUpload} 
-                      className="hidden" 
-                    />
-                  </label>
-                </div>
-              )}
-
-              {/* Quality Alert or <75% Confidence Safety Threshold Warning */}
-              {report.is_crop_detected !== false && report.is_below_threshold && (
-                <div className="p-5 rounded-2xl bg-amber-950/80 border-2 border-amber-500/60 space-y-3 text-amber-200">
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle className="w-6 h-6 text-amber-400 shrink-0" />
-                    <div>
-                      <h4 className="text-sm font-black text-amber-300">
-                        {lang === 'te' ? '⚠️ ఫోటో స్పష్టత లేదా నమ్మకం తక్కువగా ఉంది (<75%)' : '⚠️ Low Confidence (<75%) / Image Quality Warning'}
-                      </h4>
-                      <p className="text-xs font-bold mt-0.5 text-amber-200">
-                        {report.quality_warning || report.user_message}
-                      </p>
-                    </div>
-                  </div>
-
-                  <label className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg">
-                    <RotateCcw className="w-4 h-4" />
-                    <span>{t('cropDoctor.retakeBtn')}</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      capture="environment" 
-                      onChange={handleFileUpload} 
-                      className="hidden" 
-                    />
-                  </label>
-                </div>
-              )}
-
-              {/* Identified Crop & Plant-Part Badges */}
-              {report.is_crop_detected !== false && (
-                <div className="flex flex-wrap items-center gap-2.5 p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
-                  <span className="text-xs font-black px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
-                    <Sprout className="w-4 h-4 text-emerald-400" />
-                    <span>{t('cropDoctor.cropDetected')}: <strong>{report.crop_detected}</strong></span>
-                  </span>
-
-                  <span className="text-xs font-black px-3 py-1.5 rounded-xl bg-teal-500/20 text-teal-300 border border-teal-500/30 flex items-center gap-1.5">
-                    <Tag className="w-4 h-4 text-teal-400" />
-                    <span>{t('cropDoctor.plantPartDetected')}: <strong>{report.plant_part_detected}</strong></span>
-                  </span>
-                </div>
-              )}
-
-              {/* Main Diagnostic Header */}
-              {report.is_crop_detected !== false && (
-                <div className={`p-5 rounded-2xl border flex items-center justify-between gap-3 ${
-                  report.is_below_threshold
-                    ? 'bg-amber-950/40 border-amber-500/40 text-amber-300'
-                    : (report.health_status === 'Healthy'
-                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
-                        : 'bg-rose-950/40 border-rose-500/40 text-rose-300')
-                }`}>
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{report.health_status === 'Healthy' ? '🟢' : '🔴'}</span>
-                    <div>
-                      <div className="text-xs font-black text-slate-300 flex items-center gap-2">
-                        <span>{t('cropDoctor.statusTitle')}</span>
-                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${
-                          report.health_status === 'Healthy' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
-                        }`}>
-                          {report.health_status}
-                        </span>
-                      </div>
-                      <h3 className="text-lg sm:text-xl font-black">{report.disease_name}</h3>
-                      <div className="text-xs font-extrabold mt-0.5 text-slate-400">
-                        Confidence: <span className="text-emerald-400">{(report.confidence * 100).toFixed(0)}%</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 🔊 Listen Voice Diagnosis Button */}
+              {imagePreview ? (
+                <div className="relative z-10 max-h-64 overflow-hidden rounded-2xl border border-slate-700">
+                  <img src={imagePreview} alt="Crop Preview" className="w-full h-auto object-cover" />
                   <button
-                    onClick={() => toggleAudio(getAudioScript())}
-                    className={`px-4 py-2.5 rounded-xl border text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0 ${
-                      isPlayingAudio
-                        ? 'bg-emerald-500 text-slate-950 border-emerald-400 animate-pulse'
-                        : 'bg-slate-950 border-slate-800 text-slate-200 hover:text-emerald-400'
-                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setImagePreview(null);
+                      setUploadedFile(null);
+                      setSelectedSample(null);
+                      setReport(null);
+                    }}
+                    className="absolute top-2 right-2 p-2 rounded-xl bg-slate-950/80 text-slate-300 hover:text-rose-400 z-30 cursor-pointer"
                   >
-                    <Volume2 className="w-4 h-4 text-emerald-400" />
-                    <span>{isPlayingAudio ? t('cropDoctor.pauseAudio') : t('cropDoctor.listenAudio')}</span>
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
-              )}
-
-              {/* 📊 Top 3 Predictions Breakdown */}
-              {report.is_crop_detected !== false && report.top_3_predictions && report.top_3_predictions.length > 0 && (
-                <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                  <h4 className="text-xs font-black text-teal-400 uppercase tracking-wider">
-                    {t('cropDoctor.top3Predictions')}
-                  </h4>
-                  <div className="space-y-2">
-                    {report.top_3_predictions.map((p, idx) => (
-                      <div key={idx} className="space-y-1">
-                        <div className="flex justify-between text-xs font-bold">
-                          <span className="text-slate-200">{idx + 1}. {p.disease_name}</span>
-                          <span className="text-emerald-400 font-black">{p.confidence_pct}%</span>
-                        </div>
-                        <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
-                          <div
-                            className={`h-full transition-all duration-500 ${
-                              idx === 0 ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : 'bg-slate-700'
-                            }`}
-                            style={{ width: `${Math.min(100, p.confidence_pct)}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
+              ) : (
+                <div className="space-y-3 relative z-10 py-4">
+                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                    <Camera className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-slate-100">
+                      {t('cropDoctor.takePhoto') || 'Take Photo or Upload Image'}
+                    </h3>
+                    <p className="text-xs text-slate-400 font-bold mt-1">
+                      Supports leaf, fruit, stem, flower or whole plant photos
+                    </p>
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Demo Sample Photos */}
+            {samples.length > 0 && (
+              <div className="space-y-2">
+                <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider">
+                  💡 Try Sample Crop Photos:
+                </span>
+                <div className="grid grid-cols-3 gap-2">
+                  {samples.map((s) => (
+                    <button
+                      key={s.key}
+                      onClick={() => handleSampleClick(s)}
+                      className={`p-1.5 rounded-2xl border text-center transition-all cursor-pointer ${
+                        selectedSample === s.key
+                          ? 'border-emerald-500 bg-emerald-500/20'
+                          : 'border-slate-800 bg-slate-950 hover:border-slate-700'
+                      }`}
+                    >
+                      <img src={s.url} alt={s.label} className="w-full h-16 object-cover rounded-xl" />
+                      <div className="text-[10px] font-black text-slate-300 mt-1 truncate">{s.label}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Submit Button (Touch Target >= 48px) */}
+          <button
+            onClick={() => runAnalysis(selectedSample, uploadedFile)}
+            disabled={isAnalyzing || (!imagePreview && !selectedSample)}
+            className="min-h-[52px] w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xl shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            {isAnalyzing ? (
+              <>
+                <RefreshCw className="w-5 h-5 animate-spin" />
+                <span>Analyzing Image (Stage 1 & Stage 2 AI)...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5" />
+                <span>{t('cropDoctor.checkDiseaseBtn') || 'Diagnose Crop Disease ➔'}</span>
+              </>
+            )}
+          </button>
+
+        </div>
+
+        {/* Right Column: Diagnostic Results Report */}
+        <div className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 shadow-2xl flex flex-col justify-between">
+          
+          {report ? (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              
+              {/* Report Header */}
+              <div className="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                  <div className="text-xs text-emerald-400 font-extrabold uppercase tracking-wider">
+                    Confidence: {report.confidence_score}%
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-100 mt-1">
+                    {report.disease_name}
+                  </h3>
+                </div>
+
+                <div className="text-right">
+                  {getSeverityBadge(report.severity)}
+                </div>
+              </div>
+
+              {/* Identified Crop & Plant Part Badge */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                  <div className="text-[11px] font-black text-slate-400 uppercase">Crop Identified</div>
+                  <div className="text-sm font-black text-emerald-400 mt-0.5">🌾 {report.crop_name}</div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                  <div className="text-[11px] font-black text-slate-400 uppercase">Plant Part</div>
+                  <div className="text-sm font-black text-cyan-400 mt-0.5">🍃 {report.plant_part_detected}</div>
+                </div>
+              </div>
+
+              {/* Chemical Treatment & Dosage Cards */}
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                <div className="text-xs font-black text-emerald-400 uppercase flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Immediate Chemical Treatment & Dosage</span>
+                </div>
+                <p className="text-xs sm:text-sm font-bold text-slate-200 leading-relaxed">
+                  {report.immediate_treatment}
+                </p>
+                <div className="text-xs text-amber-400 font-black pt-1">
+                  💊 Dosage: {report.chemical_dosage}
+                </div>
+              </div>
 
               {/* Observed Symptoms */}
-              {report.symptoms && report.symptoms.length > 0 && (
-                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
-                  <h4 className="text-xs font-black text-slate-300">
-                    {t('cropDoctor.observedSymptoms')}:
-                  </h4>
-                  <ul className="space-y-1 text-xs text-slate-200 font-bold list-disc list-inside">
-                    {report.symptoms.map((sym, idx) => (
-                      <li key={idx}>{sym}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                <div className="text-xs font-black text-slate-300 uppercase">Observed Symptoms:</div>
+                <p className="text-xs text-slate-300 font-bold leading-relaxed">
+                  {report.observed_symptoms}
+                </p>
+              </div>
 
-              {/* Disease Cause */}
-              {report.cause && (
-                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                  <h4 className="text-xs font-black text-amber-400">
-                    {t('cropDoctor.diseaseCause')}:
-                  </h4>
-                  <p className="text-xs text-slate-300 font-bold">
-                    {report.cause}
-                  </p>
-                </div>
-              )}
-
-              {/* Immediate Treatment Actions */}
-              {report.immediate_treatment && report.immediate_treatment.length > 0 && (
-                <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                  <h4 className="text-xs font-black text-emerald-400 uppercase tracking-wider">
-                    {t('cropDoctor.immediateTreatment')}
-                  </h4>
-                  <div className="space-y-2">
-                    {report.immediate_treatment.map((act, idx) => (
-                      <div key={idx} className="flex items-start gap-2.5 text-xs font-bold text-slate-200">
-                        <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                        <span>{act}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Prevention & Safety Tips */}
-              {report.prevention_tips && report.prevention_tips.length > 0 && (
-                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
-                  <h4 className="text-xs font-black text-teal-300">
-                    {t('cropDoctor.preventionTips')}:
-                  </h4>
-                  <ul className="space-y-1 text-xs text-slate-300 font-bold list-disc list-inside">
-                    {report.prevention_tips.map((tip, idx) => (
-                      <li key={idx}>{tip}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Price & Expert Call */}
-              {report.is_crop_detected !== false && (
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30">
-                  <div>
-                    <div className="text-xs text-slate-400 font-bold">
-                      {t('cropDoctor.cost')}
-                    </div>
-                    <div className="text-2xl font-black text-emerald-400">
-                      {report.pesticide ? `~₹${report.pesticide.estimated_cost_inr}` : '—'}
-                    </div>
-                    <div className="text-[10px] text-teal-300 font-extrabold mt-0.5">
-                      {report.dosage_note}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => alert("KVK Helpline: 1800-180-1551")}
-                      className="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-xs font-black flex items-center gap-2 cursor-pointer"
-                    >
-                      <PhoneCall className="w-4 h-4" /> 
-                      {t('cropDoctor.contactExpert')}
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* Audio Listen Button */}
+              <button
+                onClick={toggleAudio}
+                className="min-h-[48px] w-full py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-emerald-400 border border-slate-800 font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
+              >
+                <Volume2 className={`w-4 h-4 ${isPlayingAudio ? 'animate-bounce' : ''}`} />
+                <span>{isPlayingAudio ? 'Stop Audio ⏹️' : '🔊 Listen Voice Diagnosis'}</span>
+              </button>
 
             </div>
-          ) : null}
-        </div>
-
-      </div>
-
-      {/* 📜 Persistent Scan History Section */}
-      <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
-        <h3 className="text-sm font-black text-slate-100 flex items-center gap-2">
-          <History className="w-4 h-4 text-emerald-400" />
-          <span>{t('cropDoctor.scanHistoryTitle')}</span>
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {scanHistory.length > 0 ? (
-            scanHistory.map((item, idx) => (
-              <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 hover:border-slate-700 transition-all cursor-pointer">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-400">{item.scan_date}</span>
-                  <span className="text-xs font-black px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    {item.confidence_pct}% Confidence
-                  </span>
-                </div>
-                <div className="text-sm font-black text-slate-100 flex items-center gap-2">
-                  <span>🌾 {item.crop_name}</span> • <span>🌱 {item.plant_part_detected || 'Leaf'}</span> • <span className="text-emerald-400">{item.disease_name}</span>
-                </div>
-                {item.immediate_treatment && item.immediate_treatment.length > 0 && (
-                  <p className="text-xs text-slate-300 font-bold line-clamp-2">
-                    💡 {item.immediate_treatment.join(' • ')}
-                  </p>
-                )}
-              </div>
-            ))
           ) : (
-            <div className="col-span-2 text-center py-6 text-xs font-bold text-slate-500">
-              No previous scan history recorded yet.
+            <div className="my-auto text-center space-y-3 py-12">
+              <div className="w-16 h-16 rounded-2xl bg-slate-950 text-slate-500 border border-slate-800 flex items-center justify-center mx-auto text-2xl font-black">
+                🩺
+              </div>
+              <h4 className="text-base font-black text-slate-300">Ready for Crop Inspection</h4>
+              <p className="text-xs text-slate-400 font-bold max-w-xs mx-auto">
+                Upload a photo or choose a sample image to see detailed AI disease diagnosis.
+              </p>
             </div>
           )}
+
         </div>
+
       </div>
+
+      {/* History Log */}
+      {scanHistory.length > 0 && (
+        <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4">
+          <h3 className="text-sm font-black text-slate-100 flex items-center gap-2">
+            <History className="w-4 h-4 text-emerald-400" />
+            <span>Scan History Log ({scanHistory.length})</span>
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {scanHistory.slice(0, 6).map((h, idx) => (
+              <div key={idx} className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="text-xs font-black text-emerald-400">🌾 {h.crop_name} • {h.plant_part}</div>
+                <div className="text-xs font-bold text-slate-200">{h.disease_name}</div>
+                <div className="text-[10px] text-slate-400 font-bold">{h.date}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
     </div>
   );
