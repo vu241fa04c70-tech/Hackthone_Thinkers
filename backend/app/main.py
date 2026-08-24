@@ -1,4 +1,8 @@
 import uuid
+import base64
+import json
+import os
+import urllib.request
 from datetime import datetime
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -168,13 +172,97 @@ def get_samples(language: Optional[str] = "te"):
                 item["disease_name"] = "धान का झोंका रोग (Rice Blast)"
             elif "tomato" in s["id"]:
                 item["disease_name"] = "टमाटर अगेती झुलसा रोग (Early Blight)"
-        else: # English & all other languages
+        else:
             if "paddy" in s["id"]:
                 item["disease_name"] = "Paddy Blast & Sheath Blight"
             elif "tomato" in s["id"]:
                 item["disease_name"] = "Tomato Early Blight"
         localized.append(item)
     return localized
+
+
+# Dedicated Gemini 2.5 Flash Vision Crop & Disease Diagnosis Endpoint
+@app.post("/api/disease/diagnose")
+async def diagnose_crop_vision(
+    file: Optional[UploadFile] = File(None),
+    sample_key: Optional[str] = Form(None),
+    language: Optional[str] = Form("en")
+):
+    """
+    Google Lens-style Scanner powered by Gemini 2.5 Flash Vision Engine.
+    Detects crops, plants, fruits, vegetables, flowers, trees, leaves, stems, bark, and seeds.
+    Returns structured JSON with plant_name, scientific_name, plant_part, disease_name,
+    confidence_pct, severity, organic_treatment, chemical_treatment, prevention.
+    If confidence < 70%, returns low_confidence_message: 'Capture a clearer image'.
+    """
+    lang_code = (language or "en").lower()
+
+    if file:
+        content = await file.read()
+        report = vision_agent.analyze_uploaded_image(content, crop_hint="", lang=lang_code)
+    elif sample_key:
+        report = vision_agent.analyze_sample(sample_key, lang=lang_code)
+    else:
+        report = vision_agent.analyze_sample("sample_tomato_early_blight", lang=lang_code)
+
+    conf_pct = round(report.confidence * 100, 1)
+
+    # Scientific name lookup dictionary
+    scientific_names = {
+        "Tomato": "Solanum lycopersicum",
+        "Paddy": "Oryza sativa",
+        "Chilli": "Capsicum annuum",
+        "Cotton": "Gossypium hirsutum",
+        "Potato": "Solanum tuberosum",
+        "Maize": "Zea mays",
+        "Wheat": "Triticum aestivum"
+    }
+
+    sc_name = scientific_names.get(report.crop_detected, "Solanum lycopersicum")
+
+    # Map severity
+    sev_str = report.severity_level.title() if hasattr(report, 'severity_level') and report.severity_level else "Moderate"
+    if sev_str not in ["Mild", "Moderate", "Severe"]:
+        sev_str = "Moderate"
+
+    # Organic Treatment
+    organic = "Apply Neem oil (5ml/L water) or Trichoderma viride bio-fungicide once every 7 days. Remove severely infected foliage."
+
+    # Chemical Treatment
+    chem = f"Spray {report.pesticide.name if report.pesticide else 'Mancozeb 75% WP'} at {report.pesticide.dosage_per_liter if report.pesticide else '2g/L water'}."
+
+    # Prevention
+    prev = "Avoid overhead sprinkler irrigation, maintain proper plant spacing, and practice 3-year crop rotation."
+
+    is_below = report.is_below_threshold or (conf_pct < 70)
+
+    res = {
+        "plant_name": report.crop_detected,
+        "scientific_name": sc_name,
+        "plant_part": report.plant_part_detected,
+        "disease_name": report.disease_name,
+        "confidence_pct": conf_pct,
+        "severity": sev_str,
+        "organic_treatment": organic,
+        "chemical_treatment": chem,
+        "prevention": prev,
+        "is_clear": not is_below,
+        "low_confidence_message": "Capture a clearer image" if is_below else ""
+    }
+
+    if not is_below:
+        save_scan_history({
+            "scan_id": f"scan_{uuid.uuid4().hex[:6]}",
+            "scan_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "crop_name": report.crop_detected,
+            "plant_part_detected": report.plant_part_detected,
+            "disease_name": report.disease_name,
+            "confidence_pct": conf_pct,
+            "health_status": report.health_status,
+            "immediate_treatment": [organic, chem]
+        })
+
+    return res
 
 
 @app.post("/api/agents/crop-vision")
