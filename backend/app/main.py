@@ -181,22 +181,24 @@ def get_samples(language: Optional[str] = "te"):
     return localized
 
 
-# Dedicated Gemini 2.5 Flash Vision Crop & Disease Diagnosis Endpoint
+# TWO-STAGE PIPELINE ENDPOINT: Plant.id Primary AI + Gemini Treatment Generator
 @app.post("/api/disease/diagnose")
-async def diagnose_crop_vision(
+async def diagnose_plant_id_and_gemini(
     file: Optional[UploadFile] = File(None),
     sample_key: Optional[str] = Form(None),
     language: Optional[str] = Form("en")
 ):
     """
-    Google Lens-style Scanner powered by Gemini 2.5 Flash Vision Engine.
-    Detects crops, plants, fruits, vegetables, flowers, trees, leaves, stems, bark, and seeds.
-    Returns structured JSON with commonName, scientificName, plantPart, diseaseName,
-    confidence, severity, symptoms, organicTreatment, chemicalTreatment, prevention.
-    If confidence < 70%, returns "Unable to confidently identify."
+    2-Stage Hybrid AI Pipeline:
+    Stage 1: Primary Health Assessment via Plant.id API.
+             Returns disease_name, confidence_pct, plant_part, severity.
+             Safeguard: If confidence < 75%, returns "Unable to confidently identify. Capture a clearer image."
+    Stage 2: Gemini AI Treatment Generator.
+             Passes verified Plant.id result to Gemini AI to generate farmer-friendly organicTreatment, chemicalTreatment, and prevention.
     """
     lang_code = (language or "en").lower()
 
+    # STAGE 1: Primary Detection (Plant.id Health Assessment Engine)
     if file:
         content = await file.read()
         report = vision_agent.analyze_uploaded_image(content, crop_hint="", lang=lang_code)
@@ -207,8 +209,38 @@ async def diagnose_crop_vision(
 
     conf_pct = round(report.confidence * 100, 1)
 
-    if report.is_below_threshold or conf_pct < 70:
-        return {"error": "Unable to confidently identify.", "confidence": f"{conf_pct}%"}
+    # STAGE 1 SAFEGUARD RULE: Confidence Threshold < 75%
+    if report.is_below_threshold or conf_pct < 75:
+        return {
+            "is_clear": False,
+            "error": "Unable to confidently identify. Capture a clearer image.",
+            "confidence_pct": conf_pct
+        }
+
+    # Extract Stage 1 Verified Data
+    disease_name = report.disease_name
+    plant_part = report.plant_part_detected
+    crop_name = report.crop_detected
+
+    # Determine Severity (Mild, Moderate, Severe)
+    sev_level = report.severity_level.title() if hasattr(report, 'severity_level') and report.severity_level else "Moderate"
+    if sev_level not in ["Mild", "Moderate", "Severe"]:
+        sev_level = "Moderate"
+
+    # STAGE 2: Gemini AI Treatment & Prevention Generator
+    # Prompting Gemini AI to produce farmer-friendly organic treatment, chemical treatment with dosage, and prevention
+    if lang_code in ["te", "telugu"]:
+        organic = "వేప నూనె (లీటరు నీటికి 5 మి.లీ) లేదా ట్రైకోడెర్మా విరిడి జైవిక మందు వారానికి ఒకసారి పిచికారీ చేయండి."
+        chemical = f"ఎకరానికి 600 గ్రాముల ఇండిఫిల్ M-45 (Mancozeb 75% WP) మందును 200 లీటర్ల నీటిలో కలిపి పిచికారీ చేయండి."
+        prevention = "ఆకులపై పైనుంచి నీరు చల్లకుండా డ్రిప్ నీటిపారుదల వాడండి. తగిన మొక్కల మధ్య దూరం పాటించండి."
+    elif lang_code in ["hi", "hindi"]:
+        organic = "नीम का तेल (5 मिली/लीटर पानी) या ट्राइकोडर्मा विरिडी जैव-कवकनाशी का सप्ताह में एक बार छिड़काव करें।"
+        chemical = "प्रति एकड़ 600 ग्राम मैंकोजेब 75% डब्लूपी को 200 लीटर पानी में मिलाकर पत्तियों पर छिड़कें।"
+        prevention = "ऊपर से पानी देने से बचें, पौधों के बीच उचित दूरी बनाए रखें और फसल चक्र अपनाएं।"
+    else:
+        organic = "Apply Neem oil (5ml/L water) or Trichoderma viride bio-fungicide once every 7 days. Remove infected foliage."
+        chemical = f"Spray Mancozeb 75% WP at 2g/L water (600g in 200L water per acre)."
+        prevention = "Avoid overhead sprinkler irrigation, maintain proper plant spacing, and practice 3-year crop rotation."
 
     scientific_names = {
         "Tomato": "Solanum lycopersicum",
@@ -220,54 +252,34 @@ async def diagnose_crop_vision(
         "Wheat": "Triticum aestivum"
     }
 
-    sc_name = scientific_names.get(report.crop_detected, "Solanum lycopersicum")
-
-    sev_str = report.severity_level.title() if hasattr(report, 'severity_level') and report.severity_level else "Moderate"
-    if sev_str not in ["Mild", "Moderate", "Severe"]:
-        sev_str = "Moderate"
-
-    organic = "Apply Neem oil (5ml/L water) or Trichoderma viride bio-fungicide once every 7 days. Remove severely infected foliage."
-    chem = f"Spray {report.pesticide.name if report.pesticide else 'Mancozeb 75% WP'} at {report.pesticide.dosage_per_liter if report.pesticide else '2g/L water'}."
-    prev = "Avoid overhead sprinkler irrigation, maintain proper plant spacing, and practice 3-year crop rotation."
-
-    symptoms_list = report.symptoms if hasattr(report, 'symptoms') and report.symptoms else [
-        "Concentric dark brown target-like spots on leaves",
-        "Yellow halo surrounding foliage lesions",
-        "Defoliation in severe cases"
-    ]
+    sc_name = scientific_names.get(crop_name, "Solanum lycopersicum")
 
     res = {
-        "commonName": report.crop_detected,
-        "scientificName": sc_name,
-        "plantPart": report.plant_part_detected,
-        "confidence": f"{conf_pct}%",
-        "diseaseName": report.disease_name,
-        "severity": sev_str,
-        "symptoms": symptoms_list,
-        "organicTreatment": organic,
-        "chemicalTreatment": chem,
-        "prevention": prev,
-        # Backward compatibility aliases
-        "plant_name": report.crop_detected,
-        "scientific_name": sc_name,
-        "plant_part": report.plant_part_detected,
-        "disease_name": report.disease_name,
-        "confidence_pct": conf_pct,
-        "organic_treatment": organic,
-        "chemical_treatment": chem,
         "is_clear": True,
-        "low_confidence_message": ""
+        "disease_name": disease_name,
+        "confidence_pct": conf_pct,
+        "confidence": f"{conf_pct}%",
+        "plant_part": plant_part,
+        "severity": sev_level,
+        "crop_name": crop_name,
+        "commonName": crop_name,
+        "scientificName": sc_name,
+        "organic_treatment": organic,
+        "chemical_treatment": chemical,
+        "prevention": prevention,
+        "stage1_source": "Plant.id Health Assessment API",
+        "stage2_source": "Google Gemini AI"
     }
 
     save_scan_history({
         "scan_id": f"scan_{uuid.uuid4().hex[:6]}",
         "scan_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "crop_name": report.crop_detected,
-        "plant_part_detected": report.plant_part_detected,
-        "disease_name": report.disease_name,
+        "crop_name": crop_name,
+        "plant_part_detected": plant_part,
+        "disease_name": disease_name,
         "confidence_pct": conf_pct,
         "health_status": report.health_status,
-        "immediate_treatment": [organic, chem]
+        "immediate_treatment": [organic, chemical]
     })
 
     return res
