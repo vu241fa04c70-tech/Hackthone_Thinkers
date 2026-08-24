@@ -6,7 +6,7 @@ import { INDIAN_STATES } from '../utils/indianStates';
 import { speakText } from '../utils/voiceUtils';
 
 export default function LanguageSelectionScreen({ onConfirm }) {
-  const { lang, setLanguage, t } = useLanguage();
+  const { lang, setLanguage } = useLanguage();
   
   // Track whether user has tapped/selected a language card on screen
   const [isLanguageSelected, setIsLanguageSelected] = useState(false);
@@ -60,10 +60,10 @@ export default function LanguageSelectionScreen({ onConfirm }) {
     { id: 'Tomato', labelTe: 'టమాటా (Tomato)', labelHi: 'टमाटर (Tomato)', labelEn: 'Tomato' },
     { id: 'Paddy', labelTe: 'వరి (Paddy / Rice)', labelHi: 'धान (Paddy / Rice)', labelEn: 'Paddy (Rice)' },
     { id: 'Chilli', labelTe: 'మిరప (Chilli)', labelHi: 'मिर्च (Chilli)', labelEn: 'Chilli' },
-    { id: 'Cotton', labelTe: 'పత్తి (Cotton)', labelHi: 'కపాస్ (Cotton)', labelEn: 'Cotton' },
-    { id: 'Maize', labelTe: 'మొక్కజొన్న (Maize)', labelHi: 'మక్కా (Maize)', labelEn: 'Maize' },
-    { id: 'Wheat', labelTe: 'గోధుమ (Wheat)', labelHi: 'గేహూం (Wheat)', labelEn: 'Wheat' },
-    { id: 'Potato', labelTe: 'బంగాళాదుంప (Potato)', labelHi: 'ఆలూ (Potato)', labelEn: 'Potato' }
+    { id: 'Cotton', labelTe: 'పత్తి (Cotton)', labelHi: 'कपास (Cotton)', labelEn: 'Cotton' },
+    { id: 'Maize', labelTe: 'మొక్కజొన్న (Maize)', labelHi: 'मक्का (Maize)', labelEn: 'Maize' },
+    { id: 'Wheat', labelTe: 'గోధుమ (Wheat)', labelHi: 'गेहूं (Wheat)', labelEn: 'Wheat' },
+    { id: 'Potato', labelTe: 'బంగాళాదుంప (Potato)', labelHi: 'आलू (Potato)', labelEn: 'Potato' }
   ];
 
   // Handler when user taps a language card
@@ -71,6 +71,101 @@ export default function LanguageSelectionScreen({ onConfirm }) {
     setLanguage(l.code);
     setIsLanguageSelected(true);
     speakText(l.greeting || l.name, l.code);
+  };
+
+  // Helper Multilingual Dynamic Text Getters (Clean & Zero Raw Keys)
+  const getChooseTitle = () => {
+    if (!isLanguageSelected) return 'Choose Your Language';
+    switch (lang) {
+      case 'te': return 'మీ భాషను ఎంచుకోండి';
+      case 'hi': return 'अपनी भाषा चुनें';
+      case 'ta': return 'உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்';
+      case 'kn': return 'ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+      case 'ml': return 'നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക';
+      case 'mr': return 'तुमची भाषा निवडा';
+      case 'bn': return 'আপনার ভাষা নির্বাচন করুন';
+      case 'gu': return 'તમારી ભાષા પસંદ કરો';
+      case 'pa': return 'ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ';
+      default: return 'Choose Your Language';
+    }
+  };
+
+  const getChooseSub = () => {
+    if (!isLanguageSelected) return 'Select your preferred language. All features and voice assistant will adapt.';
+    switch (lang) {
+      case 'te': return 'మీకు అనుకూలమైన భాషను ఎంచుకోండి. యాప్‌లోని అన్ని వివరాలు మరియు వాయిస్ అసిస్టెంట్ ఆ భాషలో మార్చబడతాయి.';
+      case 'hi': return 'अपनी पसंदीदा भाषा चुनें। ऐप की सभी विशेषताएं और वॉयस असिस्टेंट उसी भाषा में बदल जाएंगे।';
+      case 'ta': return 'உங்கள் விருப்ப மொழியைத் தேர்ந்தெடுக்கவும். அனைத்து அம்சங்களும் குரல் உதவியாளரும் பொருந்தும்.';
+      case 'kn': return 'ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಎಲ್ಲಾ ವೈಶಿಷ್ಟ್ಯಗಳು ಆ ಭಾಷೆಗೆ ಬದಲಾಗುತ್ತವೆ.';
+      case 'bn': return 'আপনার পছন্দের ভাষা নির্বাচন করুন। সমস্ত বৈশিষ্ট্য এবং ভয়েস সহায়তা সেই ভাষায় রূপান্তরিত হবে।';
+      default: return 'Select your preferred language. All features and voice assistant will adapt.';
+    }
+  };
+
+  const getSearchPlaceholder = () => {
+    if (!isLanguageSelected) return 'Search language...';
+    switch (lang) {
+      case 'te': return 'భాషను వెతకండి...';
+      case 'hi': return 'भाषा खोजें...';
+      case 'ta': return 'மொழியைத் தேடுங்கள்...';
+      case 'kn': return 'ಭಾಷೆಯನ್ನು ಹುಡುಕಿ...';
+      default: return 'Search language...';
+    }
+  };
+
+  const getNextBtnText = () => {
+    if (!isLanguageSelected) return 'Next ➔';
+    switch (lang) {
+      case 'te': return 'ముందుకు సాగండి ➔';
+      case 'hi': return 'आगे बढ़ें ➔';
+      case 'ta': return 'அடுத்து ➔';
+      case 'kn': return 'ಮುಂದೆ ➔';
+      case 'bn': return 'পরবর্তী ➔';
+      default: return 'Next ➔';
+    }
+  };
+
+  const getFeaturesHeader = () => {
+    switch (lang) {
+      case 'te': return '🌾 కిసాన్ మిత్ర ప్రత్యేకాంశాలు';
+      case 'hi': return '🌾 किसान मित्र की मुख्य विशेषताएं';
+      case 'ta': return '🌾 கிசான் மித்ரா சிறப்பு அம்சங்கள்';
+      default: return '🌾 Kisan Mitra Localized Features';
+    }
+  };
+
+  const getOnboardingCards = () => {
+    if (lang === 'te') {
+      return [
+        { icon: Sparkles, color: 'bg-emerald-100 text-emerald-800', title: 'సాదర స్వాగతం', desc: 'భారతీయ రైతుల కోసం రూపొందించిన ఏకైక ఏఐ వ్యవసాయ సహాయక వేదిక.' },
+        { icon: Info, color: 'bg-amber-100 text-amber-800', title: 'కిసాన్ మిత్ర గురించి', desc: 'ఆధునిక ఏఐ సాంకేతికతతో స్వదేశీ భాషలలో రైతులకు తక్షణ పరిష్కారాలు.' },
+        { icon: Camera, color: 'bg-sky-100 text-sky-800', title: 'పంట వ్యాధి నిర్ధారణ', desc: 'ఆకు ఫోటో తీసి పురుగులు మరియు తెగుళ్లకు ఉచిత రసాయన మందుల సలహా.' },
+        { icon: Sun, color: 'bg-orange-100 text-orange-800', title: 'వాతావరణ సమాచారం', desc: 'రియల్-టైమ్ వాతావరణ సూచనలు మరియు వర్షపాత పిచికారీ హెచ్చరికలు.' },
+        { icon: Scroll, color: 'bg-purple-100 text-purple-800', title: 'ప్రభుత్వ పథకాలు', desc: 'పీఎం కిసాన్, రైతు భరోసా మరియు ఫసల్ బీమా ఆర్థిక సహాయం.' },
+        { icon: TrendingUp, color: 'bg-teal-100 text-teal-800', title: 'మార్కెట్ ధరలు', desc: 'లైవ్ గుంటూరు మరియు ఏపీఎంసీ క్వింటాల్ మార్కెట్ ధరలు.' },
+        { icon: Mic, color: 'bg-emerald-100 text-emerald-800', title: 'వాయిస్ సహాయకుడు', desc: 'మీ స్వంత భాషలో మాట్లాడి వ్యవసాయ సందేహాలకు సమాధానాలు పొందండి.' }
+      ];
+    } else if (lang === 'hi') {
+      return [
+        { icon: Sparkles, color: 'bg-emerald-100 text-emerald-800', title: 'हार्दिक स्वागत', desc: 'भारतीय किसानों के लिए बनाया गया AI कृषि सेवा मंच।' },
+        { icon: Info, color: 'bg-amber-100 text-amber-800', title: 'किसान मित्र के बारे में', desc: 'आपकी अपनी भाषा में फसल सुरक्षा, मंडी भाव और सरकारी योजनाएं।' },
+        { icon: Camera, color: 'bg-sky-100 text-sky-800', title: 'फसल रोग निदान', desc: 'पत्ती की फोटो लेकर कीटों और सटीक दवाइयों की जानकारी पाएं।' },
+        { icon: Sun, color: 'bg-orange-100 text-orange-800', title: 'मौसम समाचार', desc: 'सटीक बारिश का पूर्वानुमान और कीटनाशक छिड़काव चेतावनियां।' },
+        { icon: Scroll, color: 'bg-purple-100 text-purple-800', title: 'सरकारी योजनाएं', desc: 'पीएम-किसान, फसल बीमा और वित्तीय सब्सिडी सहायता।' },
+        { icon: TrendingUp, color: 'bg-teal-100 text-teal-800', title: 'मंडी भाव', desc: 'निकटतम मंडियों के थोक भाव और फसल बेचने की सही सलाह।' },
+        { icon: Mic, color: 'bg-emerald-100 text-emerald-800', title: 'वॉयस सहायक', desc: 'अपनी भाषा में बोलकर खेती के सभी सवालों के जवाब पाएं।' }
+      ];
+    } else {
+      return [
+        { icon: Sparkles, color: 'bg-emerald-100 text-emerald-800', title: 'Welcome', desc: 'Smart AI platform built for Indian Farmers.' },
+        { icon: Info, color: 'bg-amber-100 text-amber-800', title: 'About Kisan Mitra', desc: 'Get crop protection, mandi rates, and govt subsidies in your native language.' },
+        { icon: Camera, color: 'bg-sky-100 text-sky-800', title: 'Crop Disease Detection', desc: 'Upload leaf photos to identify pests and chemical dosages.' },
+        { icon: Sun, color: 'bg-orange-100 text-orange-800', title: 'Weather Updates', desc: 'Real-time rain forecasts & pesticide spray warnings.' },
+        { icon: Scroll, color: 'bg-purple-100 text-purple-800', title: 'Government Schemes', desc: 'PM-KISAN, Rythu Bharosa, and Crop Insurance assistance.' },
+        { icon: TrendingUp, color: 'bg-teal-100 text-teal-800', title: 'Market Prices', desc: 'Live wholesale mandi rates per quintal & selling advice.' },
+        { icon: Mic, color: 'bg-emerald-100 text-emerald-800', title: 'Voice Assistant', desc: 'Speak naturally to solve your farming queries.' }
+      ];
+    }
   };
 
   const handleUseSavedLocalProfile = () => {
@@ -133,79 +228,6 @@ export default function LanguageSelectionScreen({ onConfirm }) {
     if (onConfirm) onConfirm();
   };
 
-  const onboardingCardsList = [
-    {
-      icon: Sparkles,
-      color: 'bg-emerald-100 text-emerald-800',
-      title: isLanguageSelected
-        ? (t('onboarding.welcomeTitle') || (lang === 'te' ? 'స్వాగతం' : (lang === 'hi' ? 'स्वागत है' : 'Welcome')))
-        : 'Welcome',
-      desc: isLanguageSelected
-        ? (t('onboarding.welcomeDesc') || (lang === 'te' ? 'భారతీయ రైతుల కోసం రూపొందించిన స్మార్ట్ ఏఐ వేదిక.' : 'Smart AI platform built for Indian Farmers.'))
-        : 'Smart AI platform built for Indian Farmers.'
-    },
-    {
-      icon: Info,
-      color: 'bg-amber-100 text-amber-800',
-      title: isLanguageSelected
-        ? (t('onboarding.aboutTitle') || (lang === 'te' ? 'కిసాన్ మిత్ర గురించి' : (lang === 'hi' ? 'किसान मित्र के बारे में' : 'About Kisan Mitra')))
-        : 'About Kisan Mitra',
-      desc: isLanguageSelected
-        ? (t('onboarding.aboutDesc') || (lang === 'te' ? 'మీ స్వంత భాషలో పంట రక్షణ, మార్కెట్ ధరలు మరియు ప్రభుత్వ సహాయం పొందండి.' : 'Get crop protection, mandi rates, and govt subsidies in your native language.'))
-        : 'Get crop protection, mandi rates, and govt subsidies in your native language.'
-    },
-    {
-      icon: Camera,
-      color: 'bg-sky-100 text-sky-800',
-      title: isLanguageSelected
-        ? (t('onboarding.doctorTitle') || (lang === 'te' ? 'పంట వ్యాధి గుర్తింపు' : (lang === 'hi' ? 'फसल रोग निदान' : 'Crop Disease Detection')))
-        : 'Crop Disease Detection',
-      desc: isLanguageSelected
-        ? (t('onboarding.doctorDesc') || (lang === 'te' ? 'ఆకు ఫోటో తీసి పురుగులు మరియు తెగుళ్లకు ఉచిత రసాయన సలహా పొందండి.' : 'Upload leaf photos to identify pests and chemical dosages.'))
-        : 'Upload leaf photos to identify pests and chemical dosages.'
-    },
-    {
-      icon: Sun,
-      color: 'bg-orange-100 text-orange-800',
-      title: isLanguageSelected
-        ? (t('onboarding.weatherTitle') || (lang === 'te' ? 'ఈనాటి వాతావరణం' : (lang === 'hi' ? 'मौसम सलाह' : 'Weather Updates')))
-        : 'Weather Updates',
-      desc: isLanguageSelected
-        ? (t('onboarding.weatherDesc') || (lang === 'te' ? 'వర్షపాత సమయాలు మరియు మందుల పిచికారీ హెచ్చరికలు.' : 'Real-time rain forecasts & pesticide spray warnings.'))
-        : 'Real-time rain forecasts & pesticide spray warnings.'
-    },
-    {
-      icon: Scroll,
-      color: 'bg-purple-100 text-purple-800',
-      title: isLanguageSelected
-        ? (t('onboarding.schemesTitle') || (lang === 'te' ? 'ప్రభుత్వ పథకాలు' : (lang === 'hi' ? 'सरकारी योजनाएं' : 'Government Schemes')))
-        : 'Government Schemes',
-      desc: isLanguageSelected
-        ? (t('onboarding.schemesDesc') || (lang === 'te' ? 'పీఎం కిసాన్, రైతు భరోసా మరియు ఫసల్ బీమా ఆర్థిక సహాయం.' : 'PM-KISAN, Rythu Bharosa, and Crop Insurance assistance.'))
-        : 'PM-KISAN, Rythu Bharosa, and Crop Insurance assistance.'
-    },
-    {
-      icon: TrendingUp,
-      color: 'bg-teal-100 text-teal-800',
-      title: isLanguageSelected
-        ? (t('onboarding.marketTitle') || (lang === 'te' ? 'మండీ ధరలు' : (lang === 'hi' ? 'मंडी भाव' : 'Market Prices')))
-        : 'Market Prices',
-      desc: isLanguageSelected
-        ? (t('onboarding.marketDesc') || (lang === 'te' ? 'లైవ్ గుంటూరు మరియు ఏపీఎంసీ క్వింటాల్ మార్కెట్ ధరలు.' : 'Live wholesale mandi rates per quintal & selling advice.'))
-        : 'Live wholesale mandi rates per quintal & selling advice.'
-    },
-    {
-      icon: Mic,
-      color: 'bg-emerald-100 text-emerald-800',
-      title: isLanguageSelected
-        ? (t('onboarding.voiceTitle') || (lang === 'te' ? 'వాయిస్ సహాయకుడు' : (lang === 'hi' ? 'वॉइस सहायक' : 'Voice Assistant')))
-        : 'Voice Assistant',
-      desc: isLanguageSelected
-        ? (t('onboarding.voiceDesc') || (lang === 'te' ? 'మాట్లాడి మీ వ్యవసాయ ప్రశ్నలన్నీ నేరుగా అడగండి.' : 'Speak naturally to solve your farming queries.'))
-        : 'Speak naturally to solve your farming queries.'
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-[#FAF8F3] text-[#2C3333] font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#2D6A4F] selection:text-white flex flex-col justify-between p-4 sm:p-6 lg:p-8">
       
@@ -217,7 +239,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
           </div>
           <div>
             <h1 className="text-lg font-black tracking-tight text-[#2D6A4F]">
-              {isLanguageSelected ? (t('onboarding.appName') || 'కిసాన్ మిత్ర') : 'Kisan Mitra'}
+              {lang === 'te' ? 'కిసాన్ మిత్ర' : (lang === 'hi' ? 'किसान मित्र' : 'Kisan Mitra')}
             </h1>
             <p className="text-[11px] text-slate-500 font-semibold">
               22 Official Scheduled Languages of India
@@ -231,7 +253,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
             className="px-4 py-2 rounded-full bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center gap-1.5 border border-slate-200 shadow-sm cursor-pointer transition-all"
           >
             <ChevronLeft className="w-4 h-4 text-[#2D6A4F]" />
-            <span>{isLanguageSelected ? (lang === 'te' ? 'వెనుకకు (భాష)' : (lang === 'hi' ? 'पीछे (भाषा)' : 'Back to Language')) : 'Back'}</span>
+            <span>{lang === 'te' ? 'వెనుకకు (భాష)' : (lang === 'hi' ? 'पीछे (भाषा)' : 'Back to Language')}</span>
           </button>
         )}
       </div>
@@ -243,15 +265,13 @@ export default function LanguageSelectionScreen({ onConfirm }) {
         {step === 1 && (
           <div className="space-y-8 animate-in fade-in duration-300">
             
-            {/* Title & Neutral English / Localized Subtitle */}
+            {/* Title & Subtitle */}
             <div className="text-center space-y-3 max-w-2xl mx-auto">
               <h2 className="text-3xl sm:text-5xl font-black text-[#2C3333] tracking-tight">
-                {isLanguageSelected ? (t('onboarding.chooseTitle') || 'మీ భాషను ఎంచుకోండి') : 'Choose Your Language'}
+                {getChooseTitle()}
               </h2>
               <p className="text-sm sm:text-base text-slate-600 font-semibold">
-                {isLanguageSelected 
-                  ? (t('onboarding.chooseSub') || 'మీ భాషను ఎంచుకోండి. యాప్ సమాచారం మొత్తం ఆ భాషలోకి మారుతుంది.') 
-                  : 'Select your preferred language. All features and voice assistant will adapt.'}
+                {getChooseSub()}
               </p>
 
               {/* Language Search Input */}
@@ -260,7 +280,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                   type="text"
                   value={langSearchQuery}
                   onChange={(e) => setLangSearchQuery(e.target.value)}
-                  placeholder={isLanguageSelected ? (t('onboarding.searchPlaceholder') || 'భాషను వెతకండి...') : 'Search language...'}
+                  placeholder={getSearchPlaceholder()}
                   className="w-full bg-white border border-slate-200 rounded-full px-5 py-3 pl-11 text-sm font-bold text-[#2C3333] placeholder-slate-400 focus:outline-none focus:border-[#2D6A4F] shadow-sm transition-all"
                 />
                 <Search className="w-4 h-4 text-slate-400 absolute left-4 top-5" />
@@ -321,7 +341,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 onClick={() => setStep(2)}
                 className="min-h-[52px] px-10 py-3.5 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-extrabold text-sm sm:text-base inline-flex items-center gap-3 shadow-md transition-all hover:scale-105 cursor-pointer"
               >
-                <span>{isLanguageSelected ? (t('onboarding.nextBtn') || 'ముందుకు సాగండి ➔') : 'Next ➔'}</span>
+                <span>{getNextBtnText()}</span>
                 <ArrowRight className="w-5 h-5 text-white" />
               </button>
             </div>
@@ -330,11 +350,11 @@ export default function LanguageSelectionScreen({ onConfirm }) {
             {isLanguageSelected && (
               <div className="space-y-4 pt-4 border-t border-emerald-100 animate-in slide-in-from-bottom-4 duration-400">
                 <div className="text-center text-xs font-black text-[#2D6A4F] uppercase tracking-wider">
-                  🌾 {t('onboarding.featuresHeader') || (lang === 'te' ? 'కిసాన్ మిత్ర ప్రత్యేకాంశాలు' : 'Kisan Mitra Localized Features')}
+                  {getFeaturesHeader()}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {onboardingCardsList.map((card, idx) => {
+                  {getOnboardingCards().map((card, idx) => {
                     const Icon = card.icon;
                     return (
                       <div key={idx} className="p-4 rounded-2xl bg-white border border-emerald-100 space-y-2 shadow-sm">
@@ -366,7 +386,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
               <div className="p-6 rounded-3xl bg-emerald-50 border border-emerald-200 space-y-3 shadow-sm">
                 <div className="flex items-center justify-between">
                   <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200">
-                    👨‍🌾 {isLanguageSelected ? (lang === 'te' ? 'పూర్వపు సేవ్‌ చేసిన రైతు ఖాతా' : 'Saved Account Found') : 'Saved Account Found'}
+                    👨‍🌾 {lang === 'te' ? 'పూర్వపు సేవ్‌ చేసిన రైతు ఖాతా' : (lang === 'hi' ? 'सहेजा गया किसान खाता' : 'Saved Account Found')}
                   </span>
                   <CheckCircle2 className="w-5 h-5 text-[#2D6A4F]" />
                 </div>
@@ -384,7 +404,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                   onClick={handleUseSavedLocalProfile}
                   className="w-full py-3.5 px-6 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all hover:scale-[1.01]"
                 >
-                  <span>{isLanguageSelected ? (lang === 'te' ? `${savedLocalProfile.farmer_name} గా కొనసాగండి ➔` : `Continue as ${savedLocalProfile.farmer_name} ➔`) : `Continue as ${savedLocalProfile.farmer_name} ➔`}</span>
+                  <span>{lang === 'te' ? `${savedLocalProfile.farmer_name} గా కొనసాగండి ➔` : (lang === 'hi' ? `${savedLocalProfile.farmer_name} के रूप में जारी रखें ➔` : `Continue as ${savedLocalProfile.farmer_name} ➔`)}</span>
                 </button>
               </div>
             )}
@@ -400,7 +420,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 }`}
               >
                 <UserCheck className="w-4 h-4" />
-                <span>{isLanguageSelected ? (lang === 'te' ? 'రైతు ఖాతాలోకి ప్రవేశించండి' : (lang === 'hi' ? 'किसान लॉगिन' : 'Select Existing Farmer')) : 'Select Existing Farmer'}</span>
+                <span>{lang === 'te' ? 'రైతు ఖాతాలోకి ప్రవేశించండి' : (lang === 'hi' ? 'किसान लॉगिन' : 'Select Existing Farmer')}</span>
               </button>
 
               <button
@@ -412,7 +432,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 }`}
               >
                 <UserPlus className="w-4 h-4" />
-                <span>{isLanguageSelected ? (lang === 'te' ? 'క్రొత్త రైతు ఖాతా సృష్టించండి' : (lang === 'hi' ? 'नया किसान खाता' : 'Create New Farmer Account')) : 'Create New Farmer Account'}</span>
+                <span>{lang === 'te' ? 'క్రొత్త రైతు ఖాతా సృష్టించండి' : (lang === 'hi' ? 'नया किसान खाता' : 'Create New Farmer Account')}</span>
               </button>
             </div>
 
@@ -421,7 +441,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
               <form onSubmit={handleSignIn} className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 space-y-6 shadow-sm">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    {isLanguageSelected ? (lang === 'te' ? 'రైతు పేరును ఎంచుకోండి:' : 'Select Farmer Account:') : 'Select Farmer Account:'}
+                    {lang === 'te' ? 'రైతు పేరును ఎంచుకోండి:' : (lang === 'hi' ? 'किसान खाता चुनें:' : 'Select Farmer Account:')}
                   </label>
 
                   {registeredFarmers.length > 0 ? (
@@ -438,7 +458,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                     </select>
                   ) : (
                     <p className="text-xs text-slate-500 font-semibold">
-                      {isLanguageSelected ? (lang === 'te' ? 'డేటాబేస్‌లో ఖాతాలు లేవు. దయచేసి క్రొత్త ఖాతాని సృష్టించండి.' : 'No registered farmers found. Please create a new account below.') : 'No registered farmers found.'}
+                      {lang === 'te' ? 'డేటాబేస్‌లో ఖాతాలు లేవు. దయచేసి క్రొత్త ఖాతాని సృష్టించండి.' : 'No registered farmers found. Please create a new account below.'}
                     </p>
                   )}
                 </div>
@@ -449,7 +469,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                   className="w-full py-4 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 transition-all cursor-pointer"
                 >
                   <LogIn className="w-4 h-4 text-white" />
-                  <span>{isLanguageSelected ? (lang === 'te' ? 'యాప్‌లోకి ప్రవేశించండి ➔' : 'Sign In & Launch App ➔') : 'Sign In & Launch App ➔'}</span>
+                  <span>{lang === 'te' ? 'యాప్‌లోకి ప్రవేశించండి ➔' : (lang === 'hi' ? 'ऐप खोलें ➔' : 'Sign In & Launch App ➔')}</span>
                 </button>
               </form>
             )}
@@ -461,13 +481,13 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 {/* Farmer Name */}
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700">
-                    {isLanguageSelected ? (lang === 'te' ? 'రైతు పేరు:' : (lang === 'hi' ? 'किसान का नाम:' : 'Farmer Full Name:')) : 'Farmer Full Name:'}
+                    {lang === 'te' ? 'రైతు పేరు:' : (lang === 'hi' ? 'किसान का नाम:' : 'Farmer Full Name:')}
                   </label>
                   <input
                     type="text"
                     value={formData.farmer_name}
                     onChange={(e) => setFormData({ ...formData, farmer_name: e.target.value })}
-                    placeholder={isLanguageSelected ? (lang === 'te' ? 'ఉదా: రమేష్ కుమార్' : 'e.g. Ramesh Kumar') : 'e.g. Ramesh Kumar'}
+                    placeholder={lang === 'te' ? 'ఉదా: రమేష్ కుమార్' : 'e.g. Ramesh Kumar'}
                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F]"
                     required
                   />
@@ -476,9 +496,9 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 {/* State Selection Dropdown (Alphabetical 36 States & UTs) */}
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
-                    <span>{isLanguageSelected ? (lang === 'te' ? 'రాష్ట్రం (భారతదేశం):' : (lang === 'hi' ? 'राज्य (भारत):' : 'State Name (India):')) : 'State Name (India):'}</span>
+                    <span>{lang === 'te' ? 'రాష్ట్రం (భారతదేశం):' : (lang === 'hi' ? 'राज्य (भारत):' : 'State Name (India):')}</span>
                     <span className="text-[10px] text-[#2D6A4F] font-bold">
-                      {isLanguageSelected ? (lang === 'te' ? 'అక్షరక్రమంలో (36 రాష్ట్రాలు & కేంద్రపాలిత ప్రాంతాలు)' : 'Alphabetical (36 States & UTs)') : 'Alphabetical (36 States & UTs)'}
+                      {lang === 'te' ? 'అక్షరక్రమంలో (36 రాష్ట్రాలు & కేంద్రపాలిత ప్రాంతాలు)' : 'Alphabetical (36 States & UTs)'}
                     </span>
                   </label>
                   
@@ -500,7 +520,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">
-                      {isLanguageSelected ? (lang === 'te' ? 'జిల్లా:' : (lang === 'hi' ? 'जिला:' : 'District Name:')) : 'District Name:'}
+                      {lang === 'te' ? 'జిల్లా:' : (lang === 'hi' ? 'जिला:' : 'District Name:')}
                     </label>
                     <input
                       type="text"
@@ -514,7 +534,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
 
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">
-                      {isLanguageSelected ? (lang === 'te' ? 'గ్రామం:' : (lang === 'hi' ? 'गांव:' : 'Village / Town:')) : 'Village / Town:'}
+                      {lang === 'te' ? 'గ్రామం:' : (lang === 'hi' ? 'गांव:' : 'Village / Town:')}
                     </label>
                     <input
                       type="text"
@@ -531,7 +551,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">
-                      {isLanguageSelected ? (lang === 'te' ? 'ముఖ్యమైన సాగు పంట:' : (lang === 'hi' ? 'मुख्य फसल:' : 'Main Crop Grown:')) : 'Main Crop Grown:'}
+                      {lang === 'te' ? 'ముఖ్యమైన సాగు పంట:' : (lang === 'hi' ? 'मुख्य फसल:' : 'Main Crop Grown:')}
                     </label>
                     <select
                       value={formData.main_crop}
@@ -548,7 +568,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
 
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">
-                      {isLanguageSelected ? (lang === 'te' ? 'సాగు భూమి (ఎకరాలు):' : (lang === 'hi' ? 'जमीन (एकड़):' : 'Land Acreage (Acres):')) : 'Land Acreage (Acres):'}
+                      {lang === 'te' ? 'సాగు భూమి (ఎకరాలు):' : (lang === 'hi' ? 'जमीन (एकड़):' : 'Land Acreage (Acres):')}
                     </label>
                     <input
                       type="number"
@@ -566,7 +586,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                   className="w-full py-4 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
                 >
                   <UserPlus className="w-4 h-4 text-white" />
-                  <span>{isLanguageSelected ? (lang === 'te' ? 'ఖాతా సృష్టించి యాప్‌లోకి ప్రవేశించండి ➔' : (lang === 'hi' ? 'खाता बनाएं और ऐप खोलें ➔' : 'Create Account & Launch App ➔')) : 'Create Account & Launch App ➔'}</span>
+                  <span>{lang === 'te' ? 'ఖాతా సృష్టించి యాప్‌లోకి ప్రవేశించండి ➔' : (lang === 'hi' ? 'खाता बनाएं और ऐप खोलें ➔' : 'Create Account & Launch App ➔')}</span>
                 </button>
               </form>
             )}
