@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sun, CloudRain, Wind, Droplets, Volume2, AlertTriangle, Thermometer, ShieldAlert, Calendar, RefreshCw, MapPin, Search } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { getLocalizedLocationName } from '../localization/locationTranslator';
+import { translateWeatherTerm, translateRainLabel, translateHumidityLabel, translateMmRainLabel } from '../localization/weatherTranslator';
 import { speakText, stopSpeech } from '../utils/voiceUtils';
 
 export default function WeatherScreen() {
@@ -93,12 +94,12 @@ export default function WeatherScreen() {
   ];
 
   const hourlyForecast = [
-    { time: '06:00 AM', temp: `${Math.round((weatherData?.current_temp_c || 28) - 3)}°C`, rain: '15%', condition: '☁️ Partly Cloudy' },
-    { time: '09:00 AM', temp: `${Math.round((weatherData?.current_temp_c || 28) - 1)}°C`, rain: '25%', condition: '⛅ Sunny Intervals' },
-    { time: '12:00 PM', temp: `${Math.round((weatherData?.current_temp_c || 28) + 2)}°C`, rain: `${Math.round(weatherData?.rain_probability_pct || 60)}%`, condition: '🌦️ Light Showers' },
-    { time: '03:00 PM', temp: `${Math.round(weatherData?.current_temp_c || 28)}°C`, rain: `${Math.round((weatherData?.rain_probability_pct || 60) + 15)}%`, condition: '🌧️ Heavy Rain Warning' },
-    { time: '06:00 PM', temp: `${Math.round((weatherData?.current_temp_c || 28) - 2)}°C`, rain: '50%', condition: '⛈️ Thunderstorms' },
-    { time: '09:00 PM', temp: `${Math.round((weatherData?.current_temp_c || 28) - 4)}°C`, rain: '20%', condition: '☁️ Overcast' }
+    { time: '06:00 AM', temp: `${Math.round((weatherData?.current_temp_c || 28) - 3)}°C`, rain: '15%', condition: translateWeatherTerm('Partly Cloudy', lang) },
+    { time: '09:00 AM', temp: `${Math.round((weatherData?.current_temp_c || 28) - 1)}°C`, rain: '25%', condition: translateWeatherTerm('Sunny Intervals', lang) },
+    { time: '12:00 PM', temp: `${Math.round((weatherData?.current_temp_c || 28) + 2)}°C`, rain: `${Math.round(weatherData?.rain_probability_pct || 60)}%`, condition: translateWeatherTerm('Light Showers', lang) },
+    { time: '03:00 PM', temp: `${Math.round(weatherData?.current_temp_c || 28)}°C`, rain: `${Math.round((weatherData?.rain_probability_pct || 60) + 15)}%`, condition: translateWeatherTerm('Heavy Rain Warning', lang) },
+    { time: '06:00 PM', temp: `${Math.round((weatherData?.current_temp_c || 28) - 2)}°C`, rain: '50%', condition: translateWeatherTerm('Thunderstorms', lang) },
+    { time: '09:00 PM', temp: `${Math.round((weatherData?.current_temp_c || 28) - 4)}°C`, rain: '20%', condition: translateWeatherTerm('Overcast', lang) }
   ];
 
   const weeklyForecast = weatherData?.forecast_7d || [];
@@ -150,7 +151,7 @@ export default function WeatherScreen() {
           </button>
         </form>
 
-        {/* Popular Farming Hub Chips (FULLY LOCALIZED) */}
+        {/* Popular Farming Hub Chips */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1">
           <span className="text-[11px] font-bold text-slate-500 shrink-0">
             {lang === 'te' ? 'ముఖ్య నగరాలు:' : (lang === 'hi' ? 'प्रमुख शहर:' : 'Popular Hubs:')}
@@ -282,10 +283,10 @@ export default function WeatherScreen() {
 
       </div>
 
-      {/* Hourly Forecast Timeline */}
+      {/* Hourly Forecast Timeline (FULLY LOCALIZED CARDS) */}
       <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
         <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
-          🕒 <span>{lang === 'te' ? 'నేటి గంటల వారీ వాతావరణ అంచనా' : 'Hourly Weather Forecast Timeline'}</span>
+          🕒 <span>{lang === 'te' ? 'నేటి గంటల వారీ వాతావరణ అంచనా' : (lang === 'hi' ? 'आज का प्रति घंटा मौसम पूर्वानुमान' : 'Hourly Weather Forecast Timeline')}</span>
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
@@ -293,26 +294,32 @@ export default function WeatherScreen() {
             <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-1.5 hover:border-emerald-300 transition-all">
               <div className="text-[11px] font-bold text-slate-500">{item.time}</div>
               <div className="text-lg font-black text-[#2C3333]">{item.temp}</div>
-              <div className="text-[11px] font-bold text-[#2D6A4F]">🌧️ {item.rain} Rain</div>
+              <div className="text-[11px] font-bold text-[#2D6A4F]">🌧️ {item.rain} {translateRainLabel(lang)}</div>
               <div className="text-[10px] text-slate-600 font-semibold truncate">{item.condition}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 7-Day Live Satellite Weather Forecast */}
+      {/* 7-Day Live Satellite Weather Forecast (FULLY LOCALIZED CARDS) */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
         <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
           <Calendar className="w-4 h-4 text-[#2D6A4F]" />
-          <span>{lang === 'te' ? 'వారపు సాటిలైట్ వాతావరణ అంచనా (7-Day Satellite Forecast)' : '7-Day Live Satellite Weather Forecast'}</span>
+          <span>{lang === 'te' ? 'వారపు సాటిలైట్ వాతావరణ అంచనా' : (lang === 'hi' ? '7-दिवसीय उपग्रह पूर्वानुमान' : '7-Day Live Satellite Weather Forecast')}</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {weeklyForecast.map((item, index) => {
-            const dayName = item.day || `Day ${index + 1}`;
+            const rawDay = item.day || `Day ${index + 1}`;
+            const localizedDay = translateWeatherTerm(rawDay, lang);
+            
+            const rawCond = item.condition || 'Sunny';
+            const localizedCond = translateWeatherTerm(rawCond, lang);
+
             const maxT = item.temp_max || 32;
             const minT = item.temp_min || 23;
-            const cond = item.condition || 'Sunny';
+            const humidityVal = item.humidity || 75;
+            const rainMmVal = item.rainfall_mm !== undefined ? item.rainfall_mm : 0;
 
             return (
               <div
@@ -320,15 +327,15 @@ export default function WeatherScreen() {
                 className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between hover:border-emerald-300 transition-all"
               >
                 <div className="space-y-1">
-                  <div className="text-sm font-black text-[#2C3333]">{dayName}</div>
-                  <div className="text-xs text-slate-500 font-semibold">{cond}</div>
-                  <div className="text-xs text-[#2D6A4F] font-bold">💧 {item.humidity || 75}% Humidity</div>
+                  <div className="text-sm font-black text-[#2C3333]">{localizedDay}</div>
+                  <div className="text-xs text-slate-600 font-bold">{localizedCond}</div>
+                  <div className="text-xs text-[#2D6A4F] font-bold">💧 {humidityVal}% {translateHumidityLabel(lang)}</div>
                 </div>
 
                 <div className="text-right">
                   <div className="text-base font-extrabold text-[#2C3333]">{maxT}°C / {minT}°C</div>
                   <div className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full mt-1 inline-block">
-                    🌧️ {item.rainfall_mm !== undefined ? `${item.rainfall_mm} mm` : '0 mm'}
+                    🌧️ {translateMmRainLabel(rainMmVal, lang)}
                   </div>
                 </div>
               </div>
