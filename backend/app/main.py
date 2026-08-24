@@ -191,9 +191,9 @@ async def diagnose_crop_vision(
     """
     Google Lens-style Scanner powered by Gemini 2.5 Flash Vision Engine.
     Detects crops, plants, fruits, vegetables, flowers, trees, leaves, stems, bark, and seeds.
-    Returns structured JSON with plant_name, scientific_name, plant_part, disease_name,
-    confidence_pct, severity, organic_treatment, chemical_treatment, prevention.
-    If confidence < 70%, returns low_confidence_message: 'Capture a clearer image'.
+    Returns structured JSON with commonName, scientificName, plantPart, diseaseName,
+    confidence, severity, symptoms, organicTreatment, chemicalTreatment, prevention.
+    If confidence < 70%, returns "Unable to confidently identify."
     """
     lang_code = (language or "en").lower()
 
@@ -207,7 +207,9 @@ async def diagnose_crop_vision(
 
     conf_pct = round(report.confidence * 100, 1)
 
-    # Scientific name lookup dictionary
+    if report.is_below_threshold or conf_pct < 70:
+        return {"error": "Unable to confidently identify.", "confidence": f"{conf_pct}%"}
+
     scientific_names = {
         "Tomato": "Solanum lycopersicum",
         "Paddy": "Oryza sativa",
@@ -220,47 +222,53 @@ async def diagnose_crop_vision(
 
     sc_name = scientific_names.get(report.crop_detected, "Solanum lycopersicum")
 
-    # Map severity
     sev_str = report.severity_level.title() if hasattr(report, 'severity_level') and report.severity_level else "Moderate"
     if sev_str not in ["Mild", "Moderate", "Severe"]:
         sev_str = "Moderate"
 
-    # Organic Treatment
     organic = "Apply Neem oil (5ml/L water) or Trichoderma viride bio-fungicide once every 7 days. Remove severely infected foliage."
-
-    # Chemical Treatment
     chem = f"Spray {report.pesticide.name if report.pesticide else 'Mancozeb 75% WP'} at {report.pesticide.dosage_per_liter if report.pesticide else '2g/L water'}."
-
-    # Prevention
     prev = "Avoid overhead sprinkler irrigation, maintain proper plant spacing, and practice 3-year crop rotation."
 
-    is_below = report.is_below_threshold or (conf_pct < 70)
+    symptoms_list = report.symptoms if hasattr(report, 'symptoms') and report.symptoms else [
+        "Concentric dark brown target-like spots on leaves",
+        "Yellow halo surrounding foliage lesions",
+        "Defoliation in severe cases"
+    ]
 
     res = {
+        "commonName": report.crop_detected,
+        "scientificName": sc_name,
+        "plantPart": report.plant_part_detected,
+        "confidence": f"{conf_pct}%",
+        "diseaseName": report.disease_name,
+        "severity": sev_str,
+        "symptoms": symptoms_list,
+        "organicTreatment": organic,
+        "chemicalTreatment": chem,
+        "prevention": prev,
+        # Backward compatibility aliases
         "plant_name": report.crop_detected,
         "scientific_name": sc_name,
         "plant_part": report.plant_part_detected,
         "disease_name": report.disease_name,
         "confidence_pct": conf_pct,
-        "severity": sev_str,
         "organic_treatment": organic,
         "chemical_treatment": chem,
-        "prevention": prev,
-        "is_clear": not is_below,
-        "low_confidence_message": "Capture a clearer image" if is_below else ""
+        "is_clear": True,
+        "low_confidence_message": ""
     }
 
-    if not is_below:
-        save_scan_history({
-            "scan_id": f"scan_{uuid.uuid4().hex[:6]}",
-            "scan_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
-            "crop_name": report.crop_detected,
-            "plant_part_detected": report.plant_part_detected,
-            "disease_name": report.disease_name,
-            "confidence_pct": conf_pct,
-            "health_status": report.health_status,
-            "immediate_treatment": [organic, chem]
-        })
+    save_scan_history({
+        "scan_id": f"scan_{uuid.uuid4().hex[:6]}",
+        "scan_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "crop_name": report.crop_detected,
+        "plant_part_detected": report.plant_part_detected,
+        "disease_name": report.disease_name,
+        "confidence_pct": conf_pct,
+        "health_status": report.health_status,
+        "immediate_treatment": [organic, chem]
+    })
 
     return res
 
