@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus, ShieldCheck } from 'lucide-react';
+import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus, ShieldCheck, LogOut } from 'lucide-react';
 import { useLanguage } from './localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from './localization/languageMap';
 
+import WelcomeRoleScreen from './components/WelcomeRoleScreen';
 import LanguageSelectionScreen from './components/LanguageSelectionScreen';
 import KisanHomeGrid from './components/KisanHomeGrid';
 import FarmCopilot from './components/FarmCopilot';
@@ -16,6 +17,9 @@ import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   const { lang, setLanguage, t, isRTL } = useLanguage();
+
+  // Mode: 'welcome' | 'farmer' | 'admin'
+  const [currentMode, setCurrentMode] = useState('welcome');
 
   const [farmerProfile, setFarmerProfile] = useState(() => {
     const saved = localStorage.getItem('kisan_farmer_profile');
@@ -74,6 +78,55 @@ export default function App() {
     }
   };
 
+  // Render 1: Welcome Role Screen
+  if (currentMode === 'welcome') {
+    return (
+      <WelcomeRoleScreen
+        onSelectFarmer={() => setCurrentMode('farmer')}
+        onSelectAdmin={() => setCurrentMode('admin')}
+      />
+    );
+  }
+
+  // Render 2: Admin Dashboard (Password Verified)
+  if (currentMode === 'admin') {
+    return (
+      <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
+        <header className="border-b border-cyan-500/30 bg-slate-950/90 backdrop-blur-xl sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-cyan-500/20 text-xl">
+                🏛️
+              </div>
+              <div>
+                <h1 className="text-lg sm:text-xl font-black text-cyan-400 flex items-center gap-2">
+                  Kisan Mitra Admin Portal
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-black">
+                    Government Session
+                  </span>
+                </h1>
+                <p className="text-[11px] text-slate-400 font-bold">Authorized Admin Control Panel</p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setCurrentMode('welcome')}
+              className="px-4 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-black text-xs flex items-center gap-2 cursor-pointer border border-slate-700"
+            >
+              <LogOut className="w-4 h-4 text-cyan-400" />
+              <span>Exit Admin Portal</span>
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <AdminDashboard onLogout={() => setCurrentMode('welcome')} />
+        </main>
+      </div>
+    );
+  }
+
+  // Render 3: Farmer Setup / Language Screen if profile not set
   if (!hasSelectedLang || !farmerProfile) {
     return (
       <LanguageSelectionScreen
@@ -92,7 +145,6 @@ export default function App() {
       case 'calendar': return t('nav.calendar');
       case 'copilot': return t('nav.copilot');
       case 'profile': return t('nav.profile');
-      case 'admin': return lang === 'te' ? '🏛️ అడ్మిన్' : (lang === 'hi' ? '🏛️ एडमिन' : '🏛️ Admin Portal');
       default: return id;
     }
   };
@@ -106,7 +158,6 @@ export default function App() {
     { id: 'calendar', icon: Calendar },
     { id: 'copilot', icon: Bot },
     { id: 'profile', icon: UserCheck },
-    { id: 'admin', icon: ShieldCheck },
   ];
 
   return (
@@ -134,7 +185,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Multilingual Selector (23 Languages) & Account Creation Button */}
+          {/* Multilingual Selector & Navigation Buttons */}
           <div className="flex items-center gap-2">
             {/* 🌐 23 Languages Selector Dropdown */}
             <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-lg shadow-emerald-500/10">
@@ -152,6 +203,15 @@ export default function App() {
                 ))}
               </select>
             </div>
+
+            {/* 🏠 Switch Portal Button */}
+            <button
+              onClick={() => setCurrentMode('welcome')}
+              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0"
+              title="Return to Welcome Screen"
+            >
+              <span>🏠 Exit</span>
+            </button>
 
             {/* ➕ Create Account / Switch User Button */}
             <button
@@ -189,9 +249,7 @@ export default function App() {
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all shrink-0 cursor-pointer ${
                     isActive
                       ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-lg shadow-emerald-500/20 scale-[1.02]'
-                      : (tab.id === 'admin'
-                          ? 'text-cyan-400 hover:text-cyan-200 bg-cyan-950/30 border border-cyan-500/30'
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60')
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-emerald-400'}`} />
@@ -231,7 +289,6 @@ export default function App() {
             }}
           />
         )}
-        {activeTab === 'admin' && <AdminDashboard />}
       </main>
 
       {/* Footer */}

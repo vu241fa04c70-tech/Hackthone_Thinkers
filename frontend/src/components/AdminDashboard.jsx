@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Trash2, Edit3, Save, ShieldAlert, CheckCircle, RefreshCw, Layers, TrendingUp, Users, AlertOctagon, ExternalLink, Globe } from 'lucide-react';
+import { PlusCircle, Trash2, Edit3, Save, ShieldAlert, CheckCircle, RefreshCw, Layers, TrendingUp, Users, AlertOctagon, ExternalLink, Globe, LogOut, Lock } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ onLogout }) {
   const { lang } = useLanguage();
   const [activeTab, setActiveTab] = useState('schemes');
   const [schemes, setSchemes] = useState([]);
@@ -176,8 +176,11 @@ export default function AdminDashboard() {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">🏛️</span>
-            <h2 className="text-xl sm:text-2xl font-black text-emerald-400">
+            <h2 className="text-xl sm:text-2xl font-black text-emerald-400 flex items-center gap-2">
               Government Agriculture & Admin Control Portal
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-black">
+                Authenticated Admin Session
+              </span>
             </h2>
           </div>
           <p className="text-xs text-slate-300 font-bold mt-1 max-w-2xl">
@@ -193,6 +196,17 @@ export default function AdminDashboard() {
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             <span>Refresh Data</span>
           </button>
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="px-4 py-2.5 rounded-2xl bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-black text-xs flex items-center gap-2 cursor-pointer transition-all"
+              title="Logout Admin Session"
+            >
+              <LogOut className="w-4 h-4 text-rose-400" />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
       </div>
 
