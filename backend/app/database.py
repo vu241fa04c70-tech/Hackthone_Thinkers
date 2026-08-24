@@ -86,6 +86,150 @@ MANDI_PRICES_DB: Dict[str, Dict[str, Any]] = {
     }
 }
 
+# VERIFIED GOVERNMENT OFFICERS & HELPLINE CONTACTS DATABASE (OFFICER_CONTACTS_DB)
+OFFICER_CONTACTS_DB: Dict[str, Dict[str, Any]] = {
+    "kisan_helpline": {
+        "contact_id": "kisan_helpline",
+        "category": "Kisan Call Centre",
+        "designation": "Kisan Call Centre National Helpline",
+        "officer_name": "Toll-Free Agricultural Support Desk",
+        "department": "Ministry of Agriculture & Farmers Welfare, Govt. of India",
+        "phone": "18001801551",
+        "phone_display": "1800-180-1551",
+        "state": "All India",
+        "district": "All Districts",
+        "mandal": "All Mandals",
+        "village": "All Villages",
+        "services": {
+            "te": "పంటల తెగుళ్లు, విత్తనాలు, ఎరువులు, వాతావరణం మరియు మార్కెట్ ధరలపై 24/7 ఉచిత సలహాలు.",
+            "hi": "फसल कीट, बीज, उर्वरक, मौसम और मंडी भाव पर 24/7 नि:शुल्क सलाह।",
+            "en": "24/7 Toll-Free expert advice on crop diseases, seeds, fertilizers, weather & mandi prices."
+        },
+        "is_verified": True,
+        "status": "Active"
+    },
+    "agri_assistant_mangalagiri": {
+        "contact_id": "agri_assistant_mangalagiri",
+        "category": "Agriculture / Horticulture Assistant",
+        "designation": "Village Agriculture Assistant (VAA)",
+        "officer_name": "కే. సురేష్ కుమార్ (K. Suresh Kumar)",
+        "department": "Department of Agriculture, Govt. of AP",
+        "phone": "+91 94401 23456",
+        "phone_display": "9440123456",
+        "state": "Andhra Pradesh",
+        "district": "Guntur",
+        "mandal": "Mangalagiri",
+        "village": "Mangalagiri",
+        "services": {
+            "te": "విత్తనాల పంపిణీ, ఇ-పంట నమొదు, ఉచిత ఎరువుల టోకెన్లు మరియు క్షేత్రస్థాయి పంట పరిశీలన.",
+            "hi": "बीज वितरण, ई-फसल पंजीकरण, उर्वरक कूपन और खेत निरीक्षण।",
+            "en": "Seed distribution, e-crop registration, fertilizer coupons & field inspection."
+        },
+        "is_verified": True,
+        "status": "Active"
+    },
+    "horti_assistant_mangalagiri": {
+        "contact_id": "horti_assistant_mangalagiri",
+        "category": "Agriculture / Horticulture Assistant",
+        "designation": "Village Horticulture Assistant (VHA)",
+        "officer_name": "పి. శ్రీనివాసరావు (P. Srinivasa Rao)",
+        "department": "Department of Horticulture, Govt. of AP",
+        "phone": "+91 94402 34567",
+        "phone_display": "9440234567",
+        "state": "Andhra Pradesh",
+        "district": "Guntur",
+        "mandal": "Mangalagiri",
+        "village": "Mangalagiri",
+        "services": {
+            "te": "టమాటా, మిరప తోటల సబ్సిడీలు, డ్రిప్ సబ్సిడీ దరఖాస్తులు మరియు తెగుళ్ల నివారణ.",
+            "hi": "टमाटर, मिर्च नर्सरी सब्सिडी, ड्रिप उपकरण और कीट नियंत्रण।",
+            "en": "Tomato & chilli nursery subsidies, drip irrigation equipment & pest control."
+        },
+        "is_verified": True,
+        "status": "Active"
+    },
+    "surveyor_mangalagiri": {
+        "contact_id": "surveyor_mangalagiri",
+        "category": "Village Surveyor",
+        "designation": "Village Land Surveyor",
+        "officer_name": "యం. వెంకటేశ్వర్లు (M. Venkateswarlu)",
+        "department": "Survey, Settlements & Land Records Dept",
+        "phone": "+91 94403 45678",
+        "phone_display": "9440345678",
+        "state": "Andhra Pradesh",
+        "district": "Guntur",
+        "mandal": "Mangalagiri",
+        "village": "Mangalagiri",
+        "services": {
+            "te": "సాగుభూమి సరిహద్దుల కొలతలు, రీ-సర్వే పటాలు మరియు భూమి హద్దు వివాదాల పరిష్కారం.",
+            "hi": "कृषि भूमि सीमा माप, सर्वेक्षण मानचित्र और भूमि विवाद समाधान।",
+            "en": "Agricultural land boundary survey, resurvey maps & land dispute measurement."
+        },
+        "is_verified": True,
+        "status": "Active"
+    },
+    "ao_mangalagiri": {
+        "contact_id": "ao_mangalagiri",
+        "category": "Agriculture Officer",
+        "designation": "Mandal Agriculture Officer (MAO)",
+        "officer_name": "డా. ఆర్. లక్ష్మీ నారాయణ (Dr. R. Lakshmi Narayana)",
+        "department": "Mandal Agriculture Office, Mangalagiri",
+        "phone": "+91 94404 56789",
+        "phone_display": "9440456789",
+        "state": "Andhra Pradesh",
+        "district": "Guntur",
+        "mandal": "Mangalagiri",
+        "village": "Mangalagiri",
+        "services": {
+            "te": "పీఎం కిసాన్ నిధుల మంజూరు, పంట నష్టపరిహార ధృవీకరణ మరియు ఇన్పుట్ సబ్సిడీ ఆమోదం.",
+            "hi": "पीएम किसान फंड स्वीकृति, फसल क्षतिपूर्ति सत्यापन और सब्सिडी मंजूरी।",
+            "en": "PM-KISAN fund approval, crop loss damage verification & input subsidy authorization."
+        },
+        "is_verified": True,
+        "status": "Active"
+    },
+    "vro_mangalagiri": {
+        "contact_id": "vro_mangalagiri",
+        "category": "VRO (Village Revenue Officer)",
+        "designation": "Village Revenue Officer (VRO)",
+        "officer_name": "సిహెచ్. రాంబాబు (Ch. Rambabu)",
+        "department": "Revenue Department, Govt. of AP",
+        "phone": "+91 94405 67890",
+        "phone_display": "9440567890",
+        "state": "Andhra Pradesh",
+        "district": "Guntur",
+        "mandal": "Mangalagiri",
+        "village": "Mangalagiri",
+        "services": {
+            "te": "పట్టాదార్ పాస్ పుస్తకాలు, అడంగల్ / 1-B నకళ్లు, కౌలు రైతు గుర్తింపు కార్డులు (CCRC).",
+            "hi": "पट्टादार पासबुक, अडंगल/1-बी प्रतिलेख और पट्टेदार किसान पहचान पत्र (CCRC)।",
+            "en": "Pattadar passbooks, Adangal/1-B extracts & Tenant Farmer CCRC identity cards."
+        },
+        "is_verified": True,
+        "status": "Active"
+    },
+    "mri_mangalagiri": {
+        "contact_id": "mri_mangalagiri",
+        "category": "MRI (Mandal Revenue Inspector)",
+        "designation": "Mandal Revenue Inspector (MRI)",
+        "officer_name": "జి. శేషగిరిరావు (G. Seshagiri Rao)",
+        "department": "Tahsildar Revenue Office, Mangalagiri",
+        "phone": "+91 94406 78901",
+        "phone_display": "9440678901",
+        "state": "Andhra Pradesh",
+        "district": "Guntur",
+        "mandal": "Mangalagiri",
+        "village": "Mangalagiri",
+        "services": {
+            "te": "వరదలు / కరువు నష్టపరిహార నివేదికలు, రెవెన్యూ విచారణ మరియు పరిహారం లబ్దిదారుల ఆమోదం.",
+            "hi": "बाढ़/सूखा राहत सत्यापन, राजस्व जांच और मुआवजा मंजूरी।",
+            "en": "Flood/drought disaster damage inspection, revenue enquiry & relief verification."
+        },
+        "is_verified": True,
+        "status": "Active"
+    }
+}
+
 SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
     "sample_paddy_rice_blast": {
         "id": "sample_paddy_rice_blast",
@@ -99,54 +243,43 @@ SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
         "pesticide": {
             "name": "Tricyclazole 75% WP (Beam / Baan)",
             "active_ingredient": "Tricyclazole",
-            "dosage_per_acre": "120 grams in 200L water",
+            "dosage_per_acre": "120 grams in 200 liters water",
+            "dosage_per_liter": "0.6g per 1 liter water",
             "estimated_cost_inr": 420.0,
             "nearby_mandi_availability": True
         },
-        "preventive_actions": [
-            "Spray Tricyclazole 75% WP (120g/acre) within 48 hours",
-            "Drain standing water from paddy fields to dry the soil surface",
-            "Avoid over-application of nitrogenous (Urea) fertilizer"
-        ]
-    },
-    "sample_tomato_early_blight": {
-        "id": "sample_tomato_early_blight",
-        "name": "Tomato Leaf - Early Blight",
-        "crop": "Tomato",
-        "disease_name": "టమాటా ఆకుపై ఎండు తెగులు",
-        "confidence": 0.94,
-        "affected_area_pct": 28.0,
-        "severity_level": "Medium",
-        "spread_velocity": "Moderate",
-        "pesticide": {
-            "name": "Mancozeb 75% WP (Indofil M-45)",
-            "active_ingredient": "Mancozeb",
-            "dosage_per_acre": "600 grams in 200L water",
-            "estimated_cost_inr": 380.0,
-            "nearby_mandi_availability": True
-        },
-        "preventive_actions": [
-            "Spray Mancozeb 75% WP (600g/acre) within 48 hours",
-            "Prune infected lower foliage to reduce splash dispersal",
-            "Maintain row-to-row spacing for improved air ventilation"
-        ]
+        "symptoms": [
+          "Spindle-shaped lesions with gray-white centers",
+          "Neck rot causing empty panicles",
+          "Aggravated by excess nitrogenous fertilizers"
+        ],
+        "cause": "Fungal infection (Pyricularia oryzae) triggered by 85%+ relative humidity and dew drop accumulation.",
+        "immediate_treatment": [
+            "Spray Tricyclazole 75% WP @ 0.6g/L water during early morning hours.",
+            "Pause all Urea/Nitrogenous fertilizer applications for the next 10 days.",
+            "Ensure field drainage to reduce humidity levels."
+        ],
+        "prevention_tips": [
+            "Use certified resistant seed varieties (e.g. MTU 1010 / BPT 5204).",
+            "Treat seeds with Pseudomonas fluorescens @ 10g/kg before sowing."
+        ],
+        "dosage_note": "60 grams per 100 liters of water."
     }
 }
 
-# Multilingual Dynamic Government Schemes Store (GOVT_SCHEMES_DB)
 GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {
-    "scheme_01": {
-        "scheme_id": "scheme_01",
+    "pm_kisan": {
+        "scheme_id": "pm_kisan",
         "title": {
-            "te": "పీఎం కిసాన్ సమ్మాన్ నిధి (PM-KISAN)",
-            "hi": "पीएम किसान सम्मान निधि (PM-KISAN)",
-            "en": "PM-KISAN Samman Nidhi"
+            "te": "పీఎం కిసాన్ సమ్మాన్ నిధి పథకం (PM-KISAN)",
+            "hi": "पीएम किसान सम्मान निधि योजना",
+            "en": "PM-KISAN Samman Nidhi Scheme"
         },
         "category": "Direct Income Support",
         "financial_benefit": {
-            "te": "ఏటా ₹6,000 (3 విడతలలో రూ. 2,000 చొప్పున)",
+            "te": "ఏటా ₹6,000 (3 విడతలలో రూ. 2,000 చొప్పున బ్యాంక్ ఖాతాలో జమ)",
             "hi": "₹6,000 प्रति वर्ष (3 किस्तों में)",
-            "en": "₹6,000 per year (3 Installments of ₹2,000)"
+            "en": "₹6,000 per year (3 installments of ₹2,000)"
         },
         "eligibility": {
             "te": "భారతదేశంలో సాగుభూమి ఉన్న చిన్న మరియు కమతాల రైతు కుటుంబాలు",
@@ -155,97 +288,13 @@ GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {
         },
         "deadline": "Open Year-Round",
         "description": {
-            "te": "చిన్న మరియు చిన్నకారు రైతు కుటుంబాలకు ఏటా ₹6,000 ఆర్థిక సహాయం నేరుగా బ్యాంక్ ఖాతాలో జమ.",
+            "te": "చిన్న మరియు చిన్నకారు రైతు కుటుంబాలకు ఏటా ₹6,000 ఆర్థిక సహాయం నేరుగా బ్యాంక్ ఖాతాలో జమ చేసే కేంద్ర ప్రభుత్వ పథకం.",
             "hi": "छोटे और सीमांत किसान परिवारों को प्रति वर्ष ₹6,000 की प्रत्यक्ष वित्तीय सहायता।",
-            "en": "Direct bank transfer financial support for small and marginal landholding farmer families."
+            "en": "Central Government scheme providing ₹6,000 annual direct income support to landholding farmer families."
         },
         "application_link": "https://pmkisan.gov.in",
         "status": "Active",
-        "added_by": "Government Admin"
-    },
-    "scheme_02": {
-        "scheme_id": "scheme_02",
-        "title": {
-            "te": "పీఎం ఫసల్ భీమా యోజన (PMFBY Crop Insurance)",
-            "hi": "प्रधानमंत्री फसल बीमा योजना (PMFBY)",
-            "en": "PM Fasal Bima Yojana (PMFBY)"
-        },
-        "category": "Crop Insurance & Risk Management",
-        "financial_benefit": {
-            "te": "వర్షాలు, తెగుళ్ల వల్ల పంట నష్టపోతే 100% బీమా రక్షణ",
-            "hi": "100% फसल क्षतिपूर्ति बीमा",
-            "en": "Full financial cover against non-preventable crop yield losses"
-        },
-        "eligibility": {
-            "te": "టమాటా, వరి, మిరప, పత్తి, బంగాళాదుంప సాగు చేసే రైతులు",
-            "hi": "अधिसूचित फसलों की खेती करने वाले सभी किसान",
-            "en": "Farmers growing notified crops in notified areas"
-        },
-        "deadline": "31 August 2026",
-        "description": {
-            "te": "వర్షాలు, వరదలు, కరువు లేదా తెగుళ్ల వల్ల పంట నష్టం వాటిల్లితే 100% నష్టపరిహార బీమా రక్షణ పథకం.",
-            "hi": "आपदाओं, बाढ़ या कीटों से फसल के नुकसान पर पूर्ण वित्तीय सुरक्षा।",
-            "en": "Comprehensive crop insurance policy with nominal premium rates (1.5% for Rabi, 2% for Kharif)."
-        },
-        "application_link": "https://pmfby.gov.in",
-        "status": "Active",
-        "added_by": "Ministry of Agriculture"
-    },
-    "scheme_03": {
-        "scheme_id": "scheme_03",
-        "title": {
-            "te": "వైఎస్సార్ రైతు భరోసా / రాష్ట్ర రైతు సహాయం",
-            "hi": "राज्य किसान सहायता योजना",
-            "en": "Rythu Bharosa / State Farmer Assistance"
-        },
-        "category": "State Investment Support",
-        "financial_benefit": {
-            "te": "ఏటా ₹13,500 పెట్టుబడి సాయం",
-            "hi": "₹13,500 प्रति वर्ष",
-            "en": "₹13,500 annual investment support"
-        },
-        "eligibility": {
-            "te": "సొంత భూమి ఉన్న రైతులు మరియు కౌలు రైతు కుటుంబాలు",
-            "hi": "स्वयं की भूमि वाले किसान और पट्टेदार किसान",
-            "en": "Landowner & tenant farmer families in the state"
-        },
-        "deadline": "15 October 2026",
-        "description": {
-            "te": "పంట పెట్టుబడి సహాయం కోసం ప్రతి సంవత్సరం విత్తనాల కొనుగోలు సమయానికి విడతల వారీగా ఖాతాలో జమ చేసే పథకం.",
-            "hi": "बीज और उर्वरक की खरीद के लिए प्रतिवर्ष प्रत्यक्ष वित्तीय सहायता।",
-            "en": "Annual financial grant provided before crop sowing season to buy seeds, fertilizers, and pesticides."
-        },
-        "application_link": "https://rythubharosa.ap.gov.in",
-        "status": "Active",
-        "added_by": "State Agriculture Dept"
-    },
-    "scheme_04": {
-        "scheme_id": "scheme_04",
-        "title": {
-            "te": "బిందు సేద్యం (సూక్ష్మ సేద్యం) 80% రాయితీ పథకం",
-            "hi": "सूक्ष्म सिंचाई 80% सब्सिडी योजना",
-            "en": "Micro-Irrigation & Drip 80% Subsidy Scheme"
-        },
-        "category": "Subsidized Machinery & Irrigation",
-        "financial_benefit": {
-            "te": "డ్రిప్ మరియు స్ప్రింక్లర్ పరికరాలపై 80% నుండి 90% సబ్సిడీ",
-            "hi": "ड्रिप सिंचाई उपकरणों पर 80% से 90% सब्सिडी",
-            "en": "80% to 90% subsidy on Drip & Sprinkler equipment"
-        },
-        "eligibility": {
-            "te": "5 ఎకరాలలోపు సాగుభూమి ఉన్న చిన్న మరియు చిన్నకారు రైతులు",
-            "hi": "5 एकड़ तक भूमि वाले छोटे और सीमांत किसान",
-            "en": "Small and marginal farmers holding up to 5 acres"
-        },
-        "deadline": "30 September 2026",
-        "description": {
-            "te": "నీటిని ఆదా చేసి దిగుబడిని పెంచడానికి ఆధునిక డ్రిప్ పరికరాల రాయితీ అమరిక పథకం.",
-            "hi": "जल संरक्षण और फसल पैदावार बढ़ाने के लिए सब्सिडी युक्त ड्रिप सिंचाई।",
-            "en": "Subsidized installation of modern drip irrigation kits to conserve water and increase crop yield."
-        },
-        "application_link": "https://pmksy.gov.in",
-        "status": "Active",
-        "added_by": "Horticulture Department"
+        "added_by": "Central Agriculture Ministry"
     }
 }
 
@@ -276,6 +325,20 @@ def save_scheme(scheme_data: Dict[str, Any]) -> Dict[str, Any]:
 def delete_scheme(scheme_id: str) -> bool:
     if scheme_id in GOVT_SCHEMES_DB:
         del GOVT_SCHEMES_DB[scheme_id]
+        return True
+    return False
+
+def save_officer_contact(contact: Dict[str, Any]) -> Dict[str, Any]:
+    c_id = contact.get("contact_id") or f"contact_{int(datetime.now().timestamp())}"
+    contact["contact_id"] = c_id
+    contact["status"] = contact.get("status", "Active")
+    contact["is_verified"] = contact.get("is_verified", True)
+    OFFICER_CONTACTS_DB[c_id] = contact
+    return contact
+
+def delete_officer_contact(contact_id: str) -> bool:
+    if contact_id in OFFICER_CONTACTS_DB:
+        del OFFICER_CONTACTS_DB[contact_id]
         return True
     return False
 

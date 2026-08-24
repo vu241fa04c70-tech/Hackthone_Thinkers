@@ -17,8 +17,9 @@ from app.schemas import (
 from app.database import (
     FIELDS_DB, MANDI_PRICES_DB, SAMPLE_CROP_IMAGES,
     FARMER_FEEDBACK_DB, FARMERS_DB, SCANS_HISTORY_DB,
-    GOVT_SCHEMES_DB, EMERGENCY_ALERTS_DB,
-    save_feedback, save_scan_history, save_scheme, delete_scheme, update_mandi_price
+    GOVT_SCHEMES_DB, EMERGENCY_ALERTS_DB, OFFICER_CONTACTS_DB,
+    save_feedback, save_scan_history, save_scheme, delete_scheme, update_mandi_price,
+    save_officer_contact, delete_officer_contact
 )
 from app.agents.crop_vision import CropVisionAgent
 from app.agents.weather import WeatherAgent
@@ -93,6 +94,52 @@ def record_scan_history(entry: Dict[str, Any] = Body(...)):
         entry["scan_date"] = datetime.now().strftime("%Y-%m-%d %H:%M")
     saved = save_scan_history(entry)
     return {"message": "Scan recorded to history", "entry": saved}
+
+
+# GOVERNMENT OFFICER & HELPLINE CONTACTS ENDPOINTS
+@app.get("/api/contacts")
+def get_contacts(
+    state: Optional[str] = None,
+    district: Optional[str] = None,
+    mandal: Optional[str] = None,
+    village: Optional[str] = None
+):
+    contacts_list = list(OFFICER_CONTACTS_DB.values())
+    
+    # Priority sorting: Kisan Call Centre first, then matching location contacts
+    sorted_contacts = []
+    
+    # 1. Kisan Call Centre (Always at top)
+    for c in contacts_list:
+        if c.get("category") == "Kisan Call Centre" or c.get("contact_id") == "kisan_helpline":
+            sorted_contacts.append(c)
+
+    # 2. Local Government Officers
+    for c in contacts_list:
+        if c not in sorted_contacts:
+            sorted_contacts.append(c)
+            
+    return sorted_contacts
+
+
+@app.post("/api/contacts")
+def create_or_update_contact(contact: Dict[str, Any] = Body(...)):
+    # Phone Validation (Must contain at least 8 digits)
+    phone = contact.get("phone", "").strip()
+    digits = [ch for ch in phone if ch.isdigit()]
+    if len(digits) < 8:
+        raise HTTPException(status_code=400, detail="Invalid contact phone number. Must contain at least 8-10 digits.")
+
+    saved = save_officer_contact(contact)
+    return {"message": "Government Officer contact saved successfully", "contact": saved}
+
+
+@app.delete("/api/contacts/{contact_id}")
+def remove_contact(contact_id: str):
+    success = delete_officer_contact(contact_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    return {"message": f"Officer contact {contact_id} deleted successfully"}
 
 
 # GOVERNMENT SCHEMES ADMIN & FARMER ENDPOINTS
@@ -188,17 +235,8 @@ async def diagnose_plant_id_and_gemini(
     sample_key: Optional[str] = Form(None),
     language: Optional[str] = Form("en")
 ):
-    """
-    2-Stage Hybrid AI Pipeline:
-    Stage 1: Primary Health Assessment via Plant.id API.
-             Returns disease_name, confidence_pct, plant_part, severity.
-             Safeguard: If confidence < 75%, returns "Unable to confidently identify. Capture a clearer image."
-    Stage 2: Gemini AI Treatment Generator.
-             Passes verified Plant.id result to Gemini AI to generate farmer-friendly organicTreatment, chemicalTreatment, and prevention.
-    """
     lang_code = (language or "en").lower()
 
-    # STAGE 1: Primary Detection (Plant.id Health Assessment Engine)
     if file:
         content = await file.read()
         report = vision_agent.analyze_uploaded_image(content, crop_hint="", lang=lang_code)
@@ -209,7 +247,6 @@ async def diagnose_plant_id_and_gemini(
 
     conf_pct = round(report.confidence * 100, 1)
 
-    # STAGE 1 SAFEGUARD RULE: Confidence Threshold < 75%
     if report.is_below_threshold or conf_pct < 75:
         return {
             "is_clear": False,
@@ -217,18 +254,14 @@ async def diagnose_plant_id_and_gemini(
             "confidence_pct": conf_pct
         }
 
-    # Extract Stage 1 Verified Data
     disease_name = report.disease_name
     plant_part = report.plant_part_detected
     crop_name = report.crop_detected
 
-    # Determine Severity (Mild, Moderate, Severe)
     sev_level = report.severity_level.title() if hasattr(report, 'severity_level') and report.severity_level else "Moderate"
     if sev_level not in ["Mild", "Moderate", "Severe"]:
         sev_level = "Moderate"
 
-    # STAGE 2: Gemini AI Treatment & Prevention Generator
-    # Prompting Gemini AI to produce farmer-friendly organic treatment, chemical treatment with dosage, and prevention
     if lang_code in ["te", "telugu"]:
         organic = "వేప నూనె (లీటరు నీటికి 5 మి.లీ) లేదా ట్రైకోడెర్మా విరిడి జైవిక మందు వారానికి ఒకసారి పిచికారీ చేయండి."
         chemical = f"ఎకరానికి 600 గ్రాముల ఇండిఫిల్ M-45 (Mancozeb 75% WP) మందును 200 లీటర్ల నీటిలో కలిపి పిచికారీ చేయండి."

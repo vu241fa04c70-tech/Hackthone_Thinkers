@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Send, Bot, User, Volume2, Sparkles, AlertCircle, StopCircle } from 'lucide-react';
+import { Mic, Send, Bot, User, Volume2, Sparkles, AlertCircle, StopCircle, PhoneCall } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { speakText, stopSpeech } from '../utils/voiceUtils';
 
@@ -10,10 +10,10 @@ export default function FarmCopilot({ activeField }) {
       id: 1,
       sender: 'bot',
       text: lang === 'te' 
-        ? 'నమస్కారం! నేను మీ కిసాన్ AI సహాయకుడిని. మీ పంటల ఎరువులు, వర్షపాతం లేదా మార్కెట్ ధరల గురించి ఏమైనా అడగండి.' 
+        ? 'నమస్కారం! నేను మీ కిసాన్ AI సహాయకుడిని. మీ పంటల ఎరువులు, మార్కెట్ ధరలు లేదా స్థానిక వ్యవసాయ అధికారుల నంబర్ల గురించి నన్ను ఏమైనా అడగండి.' 
         : (lang === 'hi' 
-          ? 'नमस्ते! मैं आपका किसान AI सहायक हूँ। अपनी फसल, खाद, बारिश या मंडी भाव के बारे में कुछ भी पूछें।' 
-          : 'Namaskaram! I am your Kisan AI Copilot. Ask me anything about fertilizers, rain warnings, or mandi prices.')
+          ? 'नमस्ते! मैं आपका किसान AI सहायक हूँ। अपनी फसल, खाद, मंडी भाव या कृषि अधिकारियों के नंबर के बारे में कुछ भी पूछें।' 
+          : 'Namaskaram! I am your Kisan AI Copilot. Ask me about fertilizers, mandi prices, or local agriculture officer phone numbers.')
     }
   ]);
   const [inputText, setInputText] = useState('');
@@ -31,9 +31,10 @@ export default function FarmCopilot({ activeField }) {
   }, [messages, isTyping]);
 
   const quickQuestions = [
-    lang === 'te' ? 'టమాటా పైరుకి ఈ రోజు మందు కొట్టవచ్చా?' : (lang === 'hi' ? 'क्या आज टमाटर पर छिड़काव कर सकते हैं?' : 'Can I spray pesticides today?'),
-    lang === 'te' ? 'గుంటూరు మండీలో ప్రస్తుత టమాటా ధర ఎంత?' : (lang === 'hi' ? 'गुंटूर मंडी में टमाटर का क्या भाव है?' : 'What is the current Mandi price?'),
-    lang === 'te' ? 'వరి పంటకి ఎంత యూరియా ఎరువు వేయాలి?' : (lang === 'hi' ? 'धान की फसल में कितना यूरिया डालें?' : 'How much Urea fertilizer per acre?')
+    lang === 'te' ? '📞 నా వ్యవసాయ అధికారి ఫోన్ నంబర్ ఎంత?' : (lang === 'hi' ? '📞 कृषि अधिकारी का नंबर?' : '📞 Agriculture Officer phone number?'),
+    lang === 'te' ? '📞 కిసాన్ కాల్ సెంటర్ నంబర్ (1800-180-1551)' : (lang === 'hi' ? '📞 किसान कॉल सेंटर 1800-180-1551' : '📞 Kisan Call Centre 1800-180-1551'),
+    lang === 'te' ? '📜 VRO రెవెన్యూ అధికారి నంబర్ ఎంత?' : (lang === 'hi' ? '📜 VRO पटवारी का नंबर?' : '📜 VRO Revenue officer number?'),
+    lang === 'te' ? 'గుంటూరు మండీలో ప్రస్తుత టమాటా ధర ఎంత?' : (lang === 'hi' ? 'गुंटूर मंडी में टमाटर का क्या भाव है?' : 'What is the current Mandi price?')
   ];
 
   const handleSend = (textToSend) => {
@@ -46,7 +47,7 @@ export default function FarmCopilot({ activeField }) {
 
     setIsTyping(true);
 
-    fetch('/api/chat', {
+    fetch('/api/copilot/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, language: lang })
@@ -54,14 +55,14 @@ export default function FarmCopilot({ activeField }) {
       .then(res => res.json())
       .then(data => {
         setIsTyping(false);
-        const botMsgText = data.response || (lang === 'te' ? 'మీ ప్రశ్న పరిశీలించబడింది.' : 'Your query has been processed.');
+        const botMsgText = data.answer || data.response || (lang === 'te' ? 'మీ ప్రశ్న పరిశీలించబడింది.' : 'Your query has been processed.');
         setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: botMsgText }]);
       })
       .catch(() => {
         setIsTyping(false);
         const fallbackText = lang === 'te' 
-          ? 'క్షమించండి, సర్వర్ కనెక్ట్ కాలేదు. కానీ ఈ రోజు మధ్యాహ్నం వర్షం సూచన ఉంది.' 
-          : 'Rain is forecast for 2 PM today. Please pause spraying.';
+          ? '📞 **కిసాన్ కాల్ సెంటర్ జాతీయ టోల్ ఫ్రీ నంబర్: 1800-180-1551**\n\nమీ గ్రామ వ్యవసాయ సహాయకుడు: కే. సురేష్ కుమార్ (📞 +91 94401 23456).' 
+          : '📞 **Kisan Call Centre Toll-Free Helpline: 1800-180-1551**\n\nVillage Agriculture Assistant: K. Suresh Kumar (📞 +91 94401 23456).';
         setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: fallbackText }]);
       });
   };
@@ -125,8 +126,8 @@ export default function FarmCopilot({ activeField }) {
         </div>
         <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-3xl">
           {lang === 'hi' 
-            ? 'अपनी मातृभाषा में बोलकर या लिखकर खेती से जुड़ा कोई भी सवाल पूछें।' 
-            : (lang === 'te' ? 'మీ స్వంత భాషలో మాట్లాడి లేదా రాసి వ్యవసాయ సందేహాలను నివృత్తి చేసుకోండి.' : 'Ask any farming question in your native language by voice or text.')}
+            ? 'अपनी मातृभाषा में बोलकर या लिखकर खेती, बीमारी, या सरकारी अधिकारियों के फोन नंबर पूछें।' 
+            : (lang === 'te' ? 'మీ స్వంత భాషలో మాట్లాడి వ్యవసాయం, ఎరువులు లేదా అధికారుల ఫోన్ నంబర్లు అడిగి తెలుసుకోండి.' : 'Ask farming queries or get agriculture officer phone numbers by voice or text.')}
         </p>
       </div>
 
@@ -141,7 +142,6 @@ export default function FarmCopilot({ activeField }) {
               key={msg.id}
               className={`flex items-start gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
             >
-              {/* Avatar Icon */}
               <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 border ${
                 msg.sender === 'user'
                   ? 'bg-[#2D6A4F] text-white border-[#2D6A4F]'
@@ -150,22 +150,31 @@ export default function FarmCopilot({ activeField }) {
                 {msg.sender === 'user' ? '👨‍🌾' : '🤖'}
               </div>
 
-              {/* Message Bubble */}
               <div className={`max-w-[80%] p-4 rounded-3xl space-y-2 shadow-sm ${
                 msg.sender === 'user'
                   ? 'bg-emerald-100/90 text-emerald-950 rounded-tr-none font-bold text-xs sm:text-sm border border-emerald-200'
                   : 'bg-white text-slate-800 rounded-tl-none font-semibold text-xs sm:text-sm border border-slate-200'
               }`}>
-                <p className="leading-relaxed">{msg.text}</p>
+                <div className="leading-relaxed whitespace-pre-line">{msg.text}</div>
 
                 {msg.sender === 'bot' && (
-                  <button
-                    onClick={() => toggleSpeech(msg)}
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2D6A4F] hover:underline cursor-pointer pt-1"
-                  >
-                    <Volume2 className={`w-3.5 h-3.5 ${playingAudioId === msg.id ? 'animate-bounce text-rose-600' : ''}`} />
-                    <span>{playingAudioId === msg.id ? (lang === 'te' ? 'ఆపండి' : 'Stop') : (lang === 'te' ? '🔊 వాయిస్ వినండి' : '🔊 Listen')}</span>
-                  </button>
+                  <div className="flex items-center gap-3 pt-1 border-t border-slate-100">
+                    <button
+                      onClick={() => toggleSpeech(msg)}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2D6A4F] hover:underline cursor-pointer"
+                    >
+                      <Volume2 className={`w-3.5 h-3.5 ${playingAudioId === msg.id ? 'animate-bounce text-rose-600' : ''}`} />
+                      <span>{playingAudioId === msg.id ? (lang === 'te' ? 'ఆపండి' : 'Stop') : (lang === 'te' ? '🔊 వాయిస్ వినండి' : '🔊 Listen')}</span>
+                    </button>
+
+                    <a
+                      href="tel:18001801551"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2D6A4F] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 hover:bg-emerald-100"
+                    >
+                      <PhoneCall className="w-3 h-3 text-[#2D6A4F]" />
+                      <span>1800-180-1551</span>
+                    </a>
+                  </div>
                 )}
               </div>
             </div>
@@ -189,15 +198,13 @@ export default function FarmCopilot({ activeField }) {
               onClick={() => handleSend(q)}
               className="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-[#2D6A4F] border border-slate-200 text-xs font-semibold shrink-0 transition-all cursor-pointer"
             >
-              💡 {q}
+              {q}
             </button>
           ))}
         </div>
 
         {/* Input Bar */}
         <div className="p-4 bg-white border-t border-emerald-100 flex items-center gap-2">
-          
-          {/* Prominent Mic Button */}
           <button
             onClick={toggleMic}
             className={`min-h-[48px] px-4 rounded-full font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 ${
@@ -211,17 +218,15 @@ export default function FarmCopilot({ activeField }) {
             <span className="hidden sm:inline">{isListening ? (lang === 'te' ? 'వింటున్నాను...' : 'Listening...') : (lang === 'te' ? 'మాట్లాడండి' : 'Voice')}</span>
           </button>
 
-          {/* Text Input */}
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder={lang === 'hi' ? 'अपना प्रश्न यहां लिखें या बोलें...' : (lang === 'te' ? 'మీ సందేహాన్ని ఇక్కడ రాయండి లేదా మాట్లాడండి...' : 'Type or speak your farming question...')}
+            placeholder={lang === 'hi' ? 'अधिकारियों का नंबर या प्रश्न पूछें...' : (lang === 'te' ? 'అధికారుల ఫోన్ నంబర్లు లేదా సందేహాలు అడగండి...' : 'Ask for officer numbers or farming queries...')}
             className="flex-1 min-h-[48px] bg-slate-50 border border-slate-200 rounded-full px-4 text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#2D6A4F] transition-all"
           />
 
-          {/* Send Button */}
           <button
             onClick={() => handleSend()}
             disabled={!inputText.trim()}

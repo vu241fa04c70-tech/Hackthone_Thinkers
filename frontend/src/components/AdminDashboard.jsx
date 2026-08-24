@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Trash2, Edit3, Save, ShieldAlert, CheckCircle, RefreshCw, Layers, TrendingUp, Users, AlertOctagon, ExternalLink, Globe, LogOut, Lock } from 'lucide-react';
+import { PlusCircle, Trash2, Edit3, Save, ShieldAlert, CheckCircle, RefreshCw, Layers, TrendingUp, Users, AlertOctagon, ExternalLink, Globe, LogOut, Lock, PhoneCall, Building } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 
 export default function AdminDashboard({ onLogout }) {
@@ -8,6 +8,7 @@ export default function AdminDashboard({ onLogout }) {
   const [schemes, setSchemes] = useState([]);
   const [mandiData, setMandiData] = useState({});
   const [farmers, setFarmers] = useState([]);
+  const [officerContacts, setOfficerContacts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -40,6 +41,21 @@ export default function AdminDashboard({ onLogout }) {
     message: 'తదుపరి 48 గంటల్లో భారీ వర్షాలు కురిసే అవకాశం ఉంది. పంటలకు క్రిమిసంహారకాల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి.'
   });
 
+  // Officer Contact Form State
+  const [contactForm, setContactForm] = useState({
+    category: 'Agriculture / Horticulture Assistant',
+    designation: 'Village Agriculture Assistant (VAA)',
+    officer_name: '',
+    department: 'Department of Agriculture',
+    phone: '',
+    state: 'Andhra Pradesh',
+    district: 'Guntur',
+    mandal: 'Mangalagiri',
+    village: 'Mangalagiri',
+    services_en: '',
+    services_te: ''
+  });
+
   const fetchAllData = () => {
     setIsLoading(true);
     fetch('/api/schemes')
@@ -55,6 +71,11 @@ export default function AdminDashboard({ onLogout }) {
     fetch('/api/farmers')
       .then(res => res.json())
       .then(data => setFarmers(data || []))
+      .catch(() => {});
+
+    fetch('/api/contacts')
+      .then(res => res.json())
+      .then(data => setOfficerContacts(data || []))
       .catch(() => {})
       .finally(() => setIsLoading(false));
   };
@@ -132,6 +153,87 @@ export default function AdminDashboard({ onLogout }) {
     }
   };
 
+  const handleAddOfficerContact = async (e) => {
+    e.preventDefault();
+    if (!contactForm.officer_name || !contactForm.phone) {
+      setErrorMsg('Please enter officer name and contact phone number.');
+      return;
+    }
+
+    // Phone Number Validation (At least 8-10 digits)
+    const digits = contactForm.phone.replace(/[^0-9]/g, '');
+    if (digits.length < 8) {
+      setErrorMsg('Invalid phone number. Must contain at least 8 to 10 digits.');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    const payload = {
+      contact_id: `contact_${Date.now()}`,
+      category: contactForm.category,
+      designation: contactForm.designation,
+      officer_name: contactForm.officer_name,
+      department: contactForm.department,
+      phone: contactForm.phone,
+      phone_display: contactForm.phone,
+      state: contactForm.state,
+      district: contactForm.district,
+      mandal: contactForm.mandal,
+      village: contactForm.village,
+      services: {
+        te: contactForm.services_te || contactForm.services_en,
+        en: contactForm.services_en
+      },
+      is_verified: True,
+      status: 'Active'
+    };
+
+    try {
+      const res = await fetch('/api/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Failed to save officer contact');
+      setSuccessMsg(`Government Officer contact for ${contactForm.officer_name} saved successfully!`);
+      setContactForm({
+        category: 'Agriculture / Horticulture Assistant',
+        designation: 'Village Agriculture Assistant (VAA)',
+        officer_name: '',
+        department: 'Department of Agriculture',
+        phone: '',
+        state: 'Andhra Pradesh',
+        district: 'Guntur',
+        mandal: 'Mangalagiri',
+        village: 'Mangalagiri',
+        services_en: '',
+        services_te: ''
+      });
+      fetchAllData();
+    } catch (err) {
+      setErrorMsg('Failed to save officer contact to server.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteContact = async (contactId) => {
+    if (!window.confirm('Are you sure you want to delete this officer contact?')) return;
+    setIsLoading(true);
+    try {
+      await fetch(`/api/contacts/${contactId}`, { method: 'DELETE' });
+      setSuccessMsg('Officer contact deleted successfully.');
+      fetchAllData();
+    } catch (err) {
+      setErrorMsg('Failed to delete contact.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleUpdateMandiPrice = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -183,7 +285,7 @@ export default function AdminDashboard({ onLogout }) {
             🏛️ Government Official Control Dashboard
           </h2>
           <p className="text-xs text-slate-500 font-bold mt-0.5">
-            Add official schemes, update live Mandi prices, and broadcast weather warnings to farmers.
+            Manage officer contacts, government schemes, Mandi prices & emergency weather alerts.
           </p>
         </div>
 
@@ -213,6 +315,18 @@ export default function AdminDashboard({ onLogout }) {
 
       {/* Control Tabs Bar */}
       <div className="flex space-x-2 border-b border-emerald-100 pb-3 overflow-x-auto no-scrollbar">
+        <button
+          onClick={() => setActiveTab('contacts')}
+          className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
+            activeTab === 'contacts'
+              ? 'bg-[#2D6A4F] text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
+          }`}
+        >
+          <PhoneCall className="w-4 h-4" />
+          <span>Officer Contacts Manager ({officerContacts.length})</span>
+        </button>
+
         <button
           onClick={() => setActiveTab('schemes')}
           className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
@@ -248,25 +362,172 @@ export default function AdminDashboard({ onLogout }) {
           <Users className="w-4 h-4" />
           <span>Registered Farmers Log ({farmers.length})</span>
         </button>
-
-        <button
-          onClick={() => setActiveTab('alerts')}
-          className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
-            activeTab === 'alerts'
-              ? 'bg-[#2D6A4F] text-white shadow-sm'
-              : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
-          }`}
-        >
-          <ShieldAlert className="w-4 h-4" />
-          <span>Broadcast Weather Warning</span>
-        </button>
       </div>
+
+      {/* TAB: OFFICER CONTACTS MANAGER */}
+      {activeTab === 'contacts' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Add New Officer Form */}
+          <div className="lg:col-span-1 bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
+              <PlusCircle className="w-4 h-4 text-[#2D6A4F]" />
+              <span>Add / Update Government Officer</span>
+            </h3>
+
+            <form onSubmit={handleAddOfficerContact} className="space-y-3">
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Category:</label>
+                <select
+                  value={contactForm.category}
+                  onChange={(e) => setContactForm({ ...contactForm, category: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1 cursor-pointer"
+                >
+                  <option value="Agriculture / Horticulture Assistant">Agriculture / Horticulture Assistant</option>
+                  <option value="Village Surveyor">Village Surveyor</option>
+                  <option value="Agriculture Officer">Agriculture Officer</option>
+                  <option value="VRO (Village Revenue Officer)">VRO (Village Revenue Officer)</option>
+                  <option value="MRI (Mandal Revenue Inspector)">MRI (Mandal Revenue Inspector)</option>
+                  <option value="Kisan Call Centre">Kisan Call Centre</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Officer Designation:</label>
+                <input
+                  type="text"
+                  value={contactForm.designation}
+                  onChange={(e) => setContactForm({ ...contactForm, designation: e.target.value })}
+                  placeholder="e.g. Village Agriculture Assistant (VAA)"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Officer Name:</label>
+                <input
+                  type="text"
+                  value={contactForm.officer_name}
+                  onChange={(e) => setContactForm({ ...contactForm, officer_name: e.target.value })}
+                  placeholder="e.g. K. Suresh Kumar"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Department:</label>
+                <input
+                  type="text"
+                  value={contactForm.department}
+                  onChange={(e) => setContactForm({ ...contactForm, department: e.target.value })}
+                  placeholder="e.g. Department of Agriculture, Govt. of AP"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Official Phone Number:</label>
+                <input
+                  type="text"
+                  value={contactForm.phone}
+                  onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                  placeholder="e.g. +91 94401 23456 or 18001801551"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] font-bold text-slate-700">District:</label>
+                  <input
+                    type="text"
+                    value={contactForm.district}
+                    onChange={(e) => setContactForm({ ...contactForm, district: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-[#2C3333]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-700">Village/Mandal:</label>
+                  <input
+                    type="text"
+                    value={contactForm.village}
+                    onChange={(e) => setContactForm({ ...contactForm, village: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-[#2C3333]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Help Provided / Services (English):</label>
+                <textarea
+                  rows={2}
+                  value={contactForm.services_en}
+                  onChange={(e) => setContactForm({ ...contactForm, services_en: e.target.value })}
+                  placeholder="e.g. Seed distribution, e-crop registration & fertilizer coupons"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700">Help Provided / Services (Telugu):</label>
+                <textarea
+                  rows={2}
+                  value={contactForm.services_te}
+                  onChange={(e) => setContactForm({ ...contactForm, services_te: e.target.value })}
+                  placeholder="ఉదా: విత్తనాల పంపిణీ, ఇ-పంట నమొదు మరియు ఎరువుల టోకెన్లు"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save Officer Contact</span>
+              </button>
+            </form>
+          </div>
+
+          {/* Active Contacts Directory List */}
+          <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+            <h3 className="text-sm font-bold text-[#2C3333]">Verified Government Contacts Directory ({officerContacts.length})</h3>
+
+            <div className="space-y-3">
+              {officerContacts.map((c) => (
+                <div key={c.contact_id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      {c.category}
+                    </span>
+                    <h4 className="text-base font-bold text-[#2C3333]">👤 {c.officer_name} ({c.designation})</h4>
+                    <p className="text-xs text-[#2D6A4F] font-bold">📞 {c.phone_display || c.phone}</p>
+                    <p className="text-xs text-slate-500 font-semibold">📍 {c.village}, {c.mandal}, {c.district}, {c.state}</p>
+                  </div>
+
+                  <button
+                    onClick={() => handleDeleteContact(c.contact_id)}
+                    className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer transition-all shrink-0"
+                    title="Delete Contact"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      )}
 
       {/* Tab 1: Government Schemes Manager */}
       {activeTab === 'schemes' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Add New Scheme Form */}
           <div className="lg:col-span-1 bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
             <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
               <PlusCircle className="w-4 h-4 text-[#2D6A4F]" />
@@ -298,20 +559,6 @@ export default function AdminDashboard({ onLogout }) {
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-slate-700">Category:</label>
-                <select
-                  value={newScheme.category}
-                  onChange={(e) => setNewScheme({ ...newScheme, category: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1 cursor-pointer"
-                >
-                  <option value="Direct Income Support">Direct Income Support</option>
-                  <option value="Crop Insurance & Risk Management">Crop Insurance & Risk Management</option>
-                  <option value="Subsidized Machinery & Irrigation">Subsidized Machinery & Irrigation</option>
-                  <option value="State Investment Support">State Investment Support</option>
-                </select>
-              </div>
-
-              <div>
                 <label className="text-[11px] font-bold text-slate-700">Financial Benefit Amount:</label>
                 <input
                   type="text"
@@ -320,39 +567,6 @@ export default function AdminDashboard({ onLogout }) {
                   placeholder="e.g. ₹6,000 per year (3 installments)"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
                   required
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-700">Eligibility Criteria:</label>
-                <input
-                  type="text"
-                  value={newScheme.eligibility}
-                  onChange={(e) => setNewScheme({ ...newScheme, eligibility: e.target.value })}
-                  placeholder="e.g. Small & marginal farmers holding <5 acres"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-700">Scheme Description:</label>
-                <textarea
-                  rows={2}
-                  value={newScheme.description}
-                  onChange={(e) => setNewScheme({ ...newScheme, description: e.target.value })}
-                  placeholder="Details about scheme benefits..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-700">Official Portal Link:</label>
-                <input
-                  type="text"
-                  value={newScheme.application_link}
-                  onChange={(e) => setNewScheme({ ...newScheme, application_link: e.target.value })}
-                  placeholder="https://pmkisan.gov.in"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
                 />
               </div>
 
@@ -367,15 +581,12 @@ export default function AdminDashboard({ onLogout }) {
             </form>
           </div>
 
-          {/* Active Schemes List */}
           <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
             <h3 className="text-sm font-bold text-[#2C3333]">Active Published Schemes ({schemes.length})</h3>
-
             <div className="space-y-3">
               {schemes.map((s) => {
                 const titleStr = typeof s.title === 'object' ? (s.title.te || s.title.en) : s.title;
                 const benefitStr = typeof s.financial_benefit === 'object' ? (s.financial_benefit.te || s.financial_benefit.en) : s.financial_benefit;
-
                 return (
                   <div key={s.scheme_id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-4">
                     <div className="space-y-1">
@@ -389,7 +600,6 @@ export default function AdminDashboard({ onLogout }) {
                     <button
                       onClick={() => handleDeleteScheme(s.scheme_id)}
                       className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer transition-all shrink-0"
-                      title="Delete Scheme"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -398,7 +608,6 @@ export default function AdminDashboard({ onLogout }) {
               })}
             </div>
           </div>
-
         </div>
       )}
 
@@ -407,19 +616,17 @@ export default function AdminDashboard({ onLogout }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
             <h3 className="text-sm font-bold text-[#2C3333]">Update Live Wholesale Mandi Rates</h3>
-
             <form onSubmit={handleUpdateMandiPrice} className="space-y-3">
               <div>
                 <label className="text-[11px] font-bold text-slate-700">Select Crop:</label>
                 <select
                   value={priceForm.crop}
                   onChange={(e) => setPriceForm({ ...priceForm, crop: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1 cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333] cursor-pointer"
                 >
                   <option value="Tomato">🍅 Tomato (టమాటా)</option>
                   <option value="Paddy">🌾 Paddy (వరి)</option>
                   <option value="Chilli">🌶️ Chilli (మిరప)</option>
-                  <option value="Cotton">☁️ Cotton (పత్తి)</option>
                 </select>
               </div>
 
@@ -429,18 +636,8 @@ export default function AdminDashboard({ onLogout }) {
                   type="number"
                   value={priceForm.current_price}
                   onChange={(e) => setPriceForm({ ...priceForm, current_price: parseFloat(e.target.value) })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333]"
                   required
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-700">Mandi Yard Name:</label>
-                <input
-                  type="text"
-                  value={priceForm.nearest_mandi}
-                  onChange={(e) => setPriceForm({ ...priceForm, nearest_mandi: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
                 />
               </div>
 
@@ -466,9 +663,6 @@ export default function AdminDashboard({ onLogout }) {
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-extrabold text-[#2D6A4F]">₹{cData.current_price} / qtl</div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                      Trend: {cData.trend}
-                    </span>
                   </div>
                 </div>
               ))}
@@ -490,59 +684,6 @@ export default function AdminDashboard({ onLogout }) {
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Tab 4: Broadcast Alert */}
-      {activeTab === 'alerts' && (
-        <div className="max-w-2xl bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
-          <h3 className="text-sm font-bold text-amber-800 flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-amber-700" />
-            <span>Broadcast Emergency Weather Advisory</span>
-          </h3>
-
-          <form onSubmit={handleBroadcastAlert} className="space-y-4">
-            <div>
-              <label className="text-[11px] font-bold text-slate-700">Alert Title:</label>
-              <input
-                type="text"
-                value={alertForm.alert_title}
-                onChange={(e) => setAlertForm({ ...alertForm, alert_title: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-[11px] font-bold text-slate-700">Target Districts:</label>
-              <input
-                type="text"
-                value={alertForm.district}
-                onChange={(e) => setAlertForm({ ...alertForm, district: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
-              />
-            </div>
-
-            <div>
-              <label className="text-[11px] font-bold text-slate-700">Advisory Message for Farmers:</label>
-              <textarea
-                rows={3}
-                value={alertForm.message}
-                onChange={(e) => setAlertForm({ ...alertForm, message: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] mt-1"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3.5 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-            >
-              <ShieldAlert className="w-4 h-4" />
-              <span>Broadcast Alert to All Farmers</span>
-            </button>
-          </form>
         </div>
       )}
 

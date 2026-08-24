@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus, ShieldCheck, LogOut } from 'lucide-react';
+import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus, ShieldCheck, LogOut, PhoneCall } from 'lucide-react';
 import { useLanguage } from './localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from './localization/languageMap';
 
@@ -14,6 +14,7 @@ import FarmingCalendarScreen from './components/FarmingCalendarScreen';
 import WeatherScreen from './components/WeatherScreen';
 import FarmProfiles from './components/FarmProfiles';
 import AdminDashboard from './components/AdminDashboard';
+import FarmerSupportScreen from './components/FarmerSupportScreen';
 
 export default function App() {
   const { lang, setLanguage, t, isRTL } = useLanguage();
@@ -99,26 +100,25 @@ export default function App() {
         <header className="border-b border-emerald-100 bg-white/90 backdrop-blur-md sticky top-0 z-40 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-xl shadow-sm">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center text-xl font-black shadow-sm">
                 🏛️
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-black text-[#2D6A4F] flex items-center gap-2">
-                  Kisan Mitra Admin Portal
-                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 font-extrabold">
-                    Government Session
-                  </span>
+                <h1 className="text-lg font-black tracking-tight text-[#2D6A4F]">
+                  Admin Control Portal
                 </h1>
-                <p className="text-[11px] text-slate-500 font-semibold">Authorized Admin Control Panel</p>
+                <p className="text-[11px] text-slate-500 font-semibold">
+                  Government Official Management Console
+                </p>
               </div>
             </div>
 
             <button
               onClick={() => setCurrentMode('welcome')}
-              className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 cursor-pointer border border-slate-200 transition-all shadow-sm"
+              className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 border border-slate-200 cursor-pointer transition-all shadow-sm shrink-0"
             >
               <LogOut className="w-4 h-4 text-[#2D6A4F]" />
-              <span>{lang === 'hi' ? '🏠 वापस' : (lang === 'te' ? '🏠 వెనుకకు' : 'Exit Admin Portal')}</span>
+              <span>Exit Admin Portal</span>
             </button>
           </div>
         </header>
@@ -130,7 +130,19 @@ export default function App() {
     );
   }
 
-  // STEP 4: Full Farmer Application Main App (Warm Cream & Sage Green Light Design)
+  // STEP 4: Main Farmer Application
+  const tabs = [
+    { id: 'home', icon: Home },
+    { id: 'doctor', icon: Camera },
+    { id: 'weather', icon: Sun },
+    { id: 'market', icon: TrendingUp },
+    { id: 'schemes', icon: Scroll },
+    { id: 'support', icon: PhoneCall },
+    { id: 'calendar', icon: Calendar },
+    { id: 'copilot', icon: Bot },
+    { id: 'profile', icon: UserCheck }
+  ];
+
   const getTabLabel = (id) => {
     switch (id) {
       case 'home': return t('nav.home');
@@ -138,6 +150,7 @@ export default function App() {
       case 'weather': return t('nav.weather');
       case 'market': return t('nav.market');
       case 'schemes': return t('nav.schemes');
+      case 'support': return lang === 'te' ? '📞 రైతు సహాయం & అధికారులు' : (lang === 'hi' ? '📞 किसान सहायता एवं अधिकारी' : '📞 Farmer Support & Contacts');
       case 'calendar': return t('nav.calendar');
       case 'copilot': return t('nav.copilot');
       case 'profile': return t('nav.profile');
@@ -145,27 +158,15 @@ export default function App() {
     }
   };
 
-  const tabs = [
-    { id: 'home', icon: Home },
-    { id: 'doctor', icon: Camera },
-    { id: 'weather', icon: Sun },
-    { id: 'market', icon: TrendingUp },
-    { id: 'schemes', icon: Scroll },
-    { id: 'calendar', icon: Calendar },
-    { id: 'copilot', icon: Bot },
-    { id: 'profile', icon: UserCheck },
-  ];
-
   return (
-    <div className={`min-h-screen bg-[#FAF8F3] text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#2D6A4F] selection:text-white transition-all ${isRTL ? 'text-right' : 'text-left'}`}>
+    <div className={`min-h-screen bg-[#FAF8F3] text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
       
-      {/* Light Header Bar */}
+      {/* Top Main Navigation Header */}
       <header className="border-b border-emerald-100 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           
-          {/* Logo & Current User Info */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black shadow-sm text-xl border border-emerald-200">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center text-xl font-black shadow-sm">
               🌾
             </div>
             <div>
@@ -266,6 +267,7 @@ export default function App() {
         {activeTab === 'weather' && <WeatherScreen />}
         {activeTab === 'market' && <MarketIntelligence activeField={activeField} />}
         {activeTab === 'schemes' && <GovtSchemesScreen />}
+        {activeTab === 'support' && <FarmerSupportScreen />}
         {activeTab === 'calendar' && <FarmingCalendarScreen />}
         {activeTab === 'copilot' && <FarmCopilot activeField={activeField} />}
         {activeTab === 'profile' && (
