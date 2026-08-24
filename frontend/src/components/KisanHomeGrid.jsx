@@ -35,208 +35,235 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
     );
   };
 
-  const mainFeatureCards = [
+  const orbitalFeatures = [
     {
       id: 'doctor',
-      title: lang === 'te' ? '📷 పంట & వ్యాధి గుర్తింపు AI లెన్స్' : (lang === 'hi' ? '📷 फसल रोग पहचान लेंस' : '📷 Crop Disease Lens'),
-      subtitle: lang === 'te' ? 'ఆకు, పండు, కాండం లేదా పూల ఫోటో తీసి పంట వ్యాధులను తక్షణమే గుర్తించండి.' : 'Upload photo of leaf, fruit, stem or flower to diagnose crop diseases instantly.',
-      btnText: lang === 'te' ? 'పంట వ్యాధి స్కాన్ చేయండి ➔' : 'Scan Crop Disease ➔',
+      title: lang === 'hi' ? '📷 फसल एवं रोग निदान (AI लेंस)' : (lang === 'te' ? '📷 పంట వ్యాధి గుర్తింపు AI లెన్స్' : '📷 Crop Disease Lens'),
+      subtitle: lang === 'hi' ? 'पौधे की फोटो लें और रोग व दवाई का सुझाव पाएं।' : (lang === 'te' ? 'ఆకు, పండు లేదా పూల ఫోటో తీసి పంట వ్యాధులను తక్షణమే గుర్తించండి.' : 'Diagnose plant diseases instantly by uploading leaf or fruit photos.'),
+      btnText: lang === 'hi' ? 'फसल जांचें ➔' : (lang === 'te' ? 'పంట వ్యాధి స్కాన్ చేయండి ➔' : 'Scan Crop Disease ➔'),
       icon: Camera,
-      badge: lang === 'te' ? 'వ్యాధి AI స్కాన్' : 'Vision AI Engine',
-      gradient: 'from-emerald-950/90 via-slate-900 to-teal-950/90 border-emerald-500/50 hover:border-emerald-400',
-      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
-      iconBg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+      badge: lang === 'hi' ? 'फसल जांच' : (lang === 'te' ? 'వ్యాధి AI స్కాన్' : 'Vision AI'),
+      circleBg: 'bg-emerald-100 text-emerald-800 border-emerald-200'
     },
     {
       id: 'weather',
-      title: lang === 'te' ? '🌦️ ఈనాటి వాతావరణ హెచ్చరికలు' : (lang === 'hi' ? '🌦️ मौसम सलाह' : '🌦️ Live Weather Advisory'),
-      subtitle: lang === 'te' ? 'ఈ రోజు మధ్యాహ్నం వర్షం పడే అవకాశం ఉంది. మందుల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి.' : 'Rain expected today. Pause spraying pesticides & irrigation.',
-      btnText: lang === 'te' ? 'వాతావరణ వివరాలు చూడండి ➔' : 'View Weather Details ➔',
+      title: lang === 'hi' ? '🌦️ लाइव मौसम सलाह' : (lang === 'te' ? '🌦️ ఈనాటి వాతావరణ హెచ్చరికలు' : '🌦️ Weather Advisory'),
+      subtitle: lang === 'hi' ? 'आज बारिश का अनुमान। छिड़काव और सिंचाई रोक दें।' : (lang === 'te' ? 'ఈ రోజు మధ్యాహ్నం వర్షం పడే అవకాశం ఉంది. మందుల పిచికారీ నిలిపివేయండి.' : 'Rain expected today. Hold spraying pesticides and irrigation.'),
+      btnText: lang === 'hi' ? 'मौसम देखें ➔' : (lang === 'te' ? 'వాతావరణ వివరాలు చూడండి ➔' : 'View Weather ➔'),
       icon: Sun,
-      badge: lang === 'te' ? 'వర్షపాత హెచ్చరిక' : 'Weather Alert',
-      gradient: 'from-amber-950/90 via-slate-900 to-orange-950/90 border-amber-500/50 hover:border-amber-400',
-      badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
-      iconBg: 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+      badge: lang === 'hi' ? 'मौसम सलाह' : (lang === 'te' ? 'వర్షపాత హెచ్చరిక' : 'Weather Alert'),
+      circleBg: 'bg-amber-100 text-amber-800 border-amber-200'
     },
     {
       id: 'market',
-      title: lang === 'te' ? '💰 రూపాయికి సరైన మార్కెట్ ధరలు' : (lang === 'hi' ? '💰 लाइव मंडी भाव' : '💰 Live Mandi Prices'),
-      subtitle: lang === 'te' ? 'గుంటూరు & విజయవాడ యార్డ్‌లలో ప్రస్తుత క్వింటాల్ ధరలు.' : 'Live market prices per quintal for Tomato, Paddy, Chilli & Cotton.',
-      btnText: lang === 'te' ? 'ధరల వివరాలు చూడండి ➔' : 'Check Market Prices ➔',
+      title: lang === 'hi' ? '💰 लाइव मंडी भाव' : (lang === 'te' ? '💰 రూపాయికి సరైన మార్కెట్ ధరలు' : '💰 Live Mandi Prices'),
+      subtitle: lang === 'hi' ? 'गुंटूर एवं निकटतम मंडियों के प्रति क्विंटल थोक भाव।' : (lang === 'te' ? 'గుంటూరు & విజయవాడ యార్డ్‌లలో ప్రస్తుత క్వింటాల్ ధరలు.' : 'Live market rates per quintal for Tomato, Paddy, Chilli & Cotton.'),
+      btnText: lang === 'hi' ? 'मंडी भाव देखें ➔' : (lang === 'te' ? 'ధరల వివరాలు చూడండి ➔' : 'Check Prices ➔'),
       icon: TrendingUp,
-      badge: lang === 'te' ? 'మండీ రేట్లు' : 'Mandi Trends',
-      gradient: 'from-cyan-950/90 via-slate-900 to-blue-950/90 border-cyan-500/50 hover:border-cyan-400',
-      badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
-      iconBg: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40'
+      badge: lang === 'hi' ? 'मंडी भाव' : (lang === 'te' ? 'మండీ రేట్లు' : 'Mandi Rates'),
+      circleBg: 'bg-sky-100 text-sky-800 border-sky-200'
     },
     {
       id: 'schemes',
-      title: lang === 'te' ? '🏛️ ప్రభుత్వ పథకాలు & రాయితీలు' : (lang === 'hi' ? '🏛️ सरकारी योजनाएं' : '🏛️ Government Schemes'),
-      subtitle: lang === 'te' ? 'పిఎం కిసాన్, రైతు భరోసా మరియు ఉచిత పంట భీమా పధకాలు.' : 'PM-KISAN, Rythu Bharosa, and Crop Insurance Subsidies.',
-      btnText: lang === 'te' ? 'పథకాలు చూడండి ➔' : 'View Govt Schemes ➔',
+      title: lang === 'hi' ? '🏛️ सरकारी योजनाएं' : (lang === 'te' ? '🏛️ ప్రభుత్వ పథకాలు & రాయితీలు' : '🏛️ Government Schemes'),
+      subtitle: lang === 'hi' ? 'पीएम-किसान, फसल बीमा और वित्तीय सब्सिडी।' : (lang === 'te' ? 'పిఎం కిసాన్, రైతు భరోసా మరియు ఉచిత పంట భీమా పధకాలు.' : 'PM-KISAN, Rythu Bharosa, and Crop Insurance Subsidies.'),
+      btnText: lang === 'hi' ? 'योजनाएं देखें ➔' : (lang === 'te' ? 'పథకాలు చూడండి ➔' : 'View Schemes ➔'),
       icon: Scroll,
-      badge: lang === 'te' ? 'రాయితీలు' : 'Govt Benefits',
-      gradient: 'from-purple-950/90 via-slate-900 to-indigo-950/90 border-purple-500/50 hover:border-purple-400',
-      badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
-      iconBg: 'bg-purple-500/20 text-purple-400 border-purple-500/40'
+      badge: lang === 'hi' ? 'सब्सिडी' : (lang === 'te' ? 'రాయితీలు' : 'Govt Subsidy'),
+      circleBg: 'bg-purple-100 text-purple-800 border-purple-200'
     }
   ];
 
   return (
     <div className="space-y-8 font-['Plus_Jakarta_Sans',sans-serif]">
       
-      {/* 🌟 1. HERO FARMER AUDIO BRIEFING BANNER */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 border-2 border-emerald-500/50 p-6 sm:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-          <Sparkles className="w-48 h-48 text-emerald-400" />
-        </div>
+      {/* 🌟 1. HERO ORBITAL FARMER FRIEND BANNER */}
+      <div className="relative overflow-hidden rounded-3xl bg-white border border-emerald-100 p-6 sm:p-8 shadow-sm">
+        
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+          
+          {/* Left Text Greeting */}
+          <div className="space-y-3 flex-1 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-[#2D6A4F] border border-emerald-200 text-xs font-bold">
+              <Sparkles className="w-3.5 h-3.5 text-[#2D6A4F]" />
+              <span>{lang === 'hi' ? 'आज का किसान AI समाचार' : (lang === 'te' ? 'ఈనాటి రైతు AI సమాచారం' : 'Daily Farmer AI Advisory')}</span>
+            </div>
 
-        <div className="relative z-10 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#2C3333] tracking-tight">
+              {t('home.greetingPrefix') || (lang === 'hi' ? 'नमस्ते' : (lang === 'te' ? 'నమస్కారం' : 'Namaskaram'))} <span className="text-[#2D6A4F]">{farmerName}</span> {t('home.greetingSuffix') || (lang === 'te' ? 'గారూ!' : 'ji!')} 🌅
+            </h2>
+
+            <p className="text-xs sm:text-sm text-slate-600 font-semibold">
+              📍 {village}, {district} • 🌾 {lang === 'te' ? 'సాగు పంట' : 'Crop'}: <span className="text-[#2D6A4F] font-bold">{cropName}</span>
+            </p>
+
+            {/* Prominent Audio Briefing Button */}
+            <div className="pt-2">
+              <button
+                onClick={toggleBriefing}
+                className={`w-full sm:w-auto min-h-[48px] px-6 py-3 rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-3 cursor-pointer shadow-sm transition-all duration-200 ${
+                  isPlayingBriefing
+                    ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-200 animate-pulse'
+                    : 'bg-[#2D6A4F] hover:bg-[#1B4332] text-white shadow-emerald-100 hover:scale-105'
+                }`}
+              >
+                <Volume2 className={`w-5 h-5 ${isPlayingBriefing ? 'animate-bounce' : ''}`} />
+                <span>
+                  {isPlayingBriefing
+                    ? (lang === 'hi' ? 'रोकें ⏹️' : (lang === 'te' ? 'ఆపండి ⏹️' : 'Stop Audio ⏹️'))
+                    : (lang === 'hi' ? '🔊 सुबह का समाचार सुनें' : (lang === 'te' ? '🔊 ఉదయం సలహా వినండి' : '🔊 Listen Morning Audio'))}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Right Central Circular Farmer Illustration Feature Badge */}
+          <div className="relative flex items-center justify-center shrink-0 w-56 h-56 sm:w-64 sm:h-64">
             
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-black">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>{lang === 'te' ? 'ఈనాటి రైతు AI సమాచారం' : (lang === 'hi' ? 'आज का किसान AI समाचार' : 'Daily Farmer AI Advisory')}</span>
-              </div>
+            {/* Outer Soft Orbit Rings */}
+            <div className="absolute inset-0 rounded-full border-2 border-dashed border-emerald-200 animate-spin-slow" style={{ animationDuration: '40s' }} />
+            <div className="absolute inset-3 rounded-full bg-emerald-50/60 border border-emerald-100" />
 
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
-                {t('home.greetingPrefix') || (lang === 'te' ? 'నమస్కారం' : 'Namaskaram')} <span className="text-emerald-400">{farmerName}</span> {t('home.greetingSuffix') || (lang === 'te' ? 'గారూ!' : '')} 🌅
-              </h2>
-
-              <p className="text-xs sm:text-sm text-slate-300 font-bold">
-                📍 {village}, {district} • 🌾 {lang === 'te' ? 'సాగు పంట' : 'Crop'}: <span className="text-emerald-400 font-black">{cropName}</span>
-              </p>
+            {/* Center Circular Farmer Badge */}
+            <div className="relative z-10 w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-gradient-to-tr from-emerald-100 via-teal-50 to-amber-50 border-4 border-white shadow-md flex flex-col items-center justify-center text-center p-3">
+              <span className="text-4xl sm:text-5xl mb-1">👨‍🌾</span>
+              <span className="text-xs font-black text-[#2D6A4F] tracking-tight">Kisan Mitra</span>
+              <span className="text-[10px] text-slate-500 font-bold">{lang === 'hi' ? "किसान मित्र" : "Farmer's Friend"}</span>
             </div>
 
-            {/* Prominent Voice Briefing Button */}
-            <button
-              onClick={toggleBriefing}
-              className={`min-h-[52px] px-6 py-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-3 cursor-pointer shadow-xl transition-all duration-300 shrink-0 ${
-                isPlayingBriefing
-                  ? 'bg-rose-500 hover:bg-rose-600 text-slate-950 shadow-rose-500/30 animate-pulse'
-                  : 'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-emerald-500/30 hover:scale-105'
-              }`}
-            >
-              <Volume2 className={`w-5 h-5 ${isPlayingBriefing ? 'animate-bounce' : ''}`} />
-              <span>
-                {isPlayingBriefing
-                  ? (lang === 'te' ? 'ఆపండి ⏹️' : 'Stop Audio ⏹️')
-                  : (lang === 'te' ? '🔊 ఉదయం సలహా వినండి' : '🔊 Listen Morning Briefing')}
-              </span>
-            </button>
-
-          </div>
-
-          {/* Quick Weather & Mandi Summary Strip */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center gap-3">
-              <Sun className="w-6 h-6 text-amber-400 shrink-0" />
-              <div>
-                <div className="text-xs font-black text-slate-200">🌦️ {lang === 'te' ? 'వాతావరణ హెచ్చరిక' : 'Weather Advisory Today'}</div>
-                <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? 'మధ్యాహ్నం 2 గంటలకు వర్షం. మందు కొట్టడం ఆపండి.' : 'Rain expected at 2 PM. Hold pesticide spray.'}</div>
-              </div>
+            {/* Orbiting Satellite Pastel Icon Badges */}
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-emerald-100 border-2 border-white shadow-sm flex items-center justify-center text-emerald-800" title="Vision AI">
+              <Camera className="w-5 h-5" />
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center gap-3">
-              <TrendingUp className="w-6 h-6 text-emerald-400 shrink-0" />
-              <div>
-                <div className="text-xs font-black text-slate-200">💰 {cropName} {lang === 'te' ? 'మండీ ధర' : 'Mandi Rate'}</div>
-                <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? '₹2,600 / క్వింటాల్ • 3 రోజులు ఆగితే ధర పెరుగుతుంది.' : '₹2,600 / Quintal • Price expected +₹200 in 3 days.'}</div>
-              </div>
+            <div className="absolute top-1/2 -right-1 -translate-y-1/2 w-10 h-10 rounded-full bg-amber-100 border-2 border-white shadow-sm flex items-center justify-center text-amber-800" title="Weather Advisory">
+              <Sun className="w-5 h-5" />
             </div>
+
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-sky-100 border-2 border-white shadow-sm flex items-center justify-center text-sky-800" title="Mandi Prices">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+
+            <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-10 h-10 rounded-full bg-purple-100 border-2 border-white shadow-sm flex items-center justify-center text-purple-800" title="Voice AI">
+              <Mic className="w-5 h-5" />
+            </div>
+
           </div>
 
         </div>
+
+        {/* Quick Weather & Mandi Summary Strip */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 mt-6 border-t border-emerald-100">
+          <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/60 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+              <Sun className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-800">🌦️ {lang === 'hi' ? 'मौसम सलाह आज' : (lang === 'te' ? 'వాతావరణ హెచ్చరిక' : 'Weather Advisory Today')}</div>
+              <div className="text-[11px] text-slate-600 font-semibold">{lang === 'hi' ? 'दोपहर 2 बजे बारिश। छिड़काव रोक दें।' : (lang === 'te' ? 'మధ్యాహ్నం 2 గంటలకు వర్షం. మందు కొట్టడం ఆపండి.' : 'Rain expected at 2 PM. Hold pesticide spray.')}</div>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/60 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-800">💰 {cropName} {lang === 'hi' ? 'मंडी भाव' : (lang === 'te' ? 'మండీ ధర' : 'Mandi Rate')}</div>
+              <div className="text-[11px] text-slate-600 font-semibold">{lang === 'hi' ? '₹2,600 / क्विंटल • 3 दिन बाद बेचें।' : (lang === 'te' ? '₹2,600 / క్వింటాల్ • 3 రోజులు ఆగితే ధర పెరుగుతుంది.' : '₹2,600 / Quintal • Hold 3 days for higher price.')}</div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      {/* 🚀 2. QUICK SHORTCUTS BAR FOR COMMON TASKS */}
+      {/* 🚀 2. QUICK SHORTCUTS BAR */}
       <div className="space-y-3">
-        <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2">
-          <Zap className="w-4 h-4 text-emerald-400" />
-          <span>{lang === 'te' ? 'తక్షణ సేవలు & షార్ట్‌కట్‌లు' : (lang === 'hi' ? 'त्वरित सेवाएँ' : 'Quick Actions & Shortcuts')}</span>
+        <h3 className="text-xs font-bold uppercase text-slate-500 tracking-wider flex items-center gap-2">
+          <Zap className="w-4 h-4 text-[#2D6A4F]" />
+          <span>{lang === 'hi' ? 'त्वरित सेवाएँ' : (lang === 'te' ? 'తక్షణ సేవలు & షార్ట్‌కట్‌లు' : 'Quick Actions & Shortcuts')}</span>
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <button
             onClick={() => onSelectAction('doctor')}
-            className="min-h-[56px] p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800 text-left transition-all cursor-pointer flex items-center gap-3 group shadow-lg"
+            className="min-h-[52px] p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex items-center gap-3 group shadow-sm"
           >
-            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 group-hover:scale-110 transition-transform">
-              <Camera className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Camera className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-black text-slate-100">{lang === 'te' ? 'పంట స్కాన్' : 'Scan Crop'}</div>
-              <div className="text-[10px] text-slate-400 font-bold">{lang === 'te' ? 'ఫోటో AI లెన్స్' : 'Photo Lens AI'}</div>
+              <div className="text-xs font-bold text-[#2C3333]">{lang === 'hi' ? 'फसल जांच' : (lang === 'te' ? 'పంట స్కాన్' : 'Scan Crop')}</div>
+              <div className="text-[10px] text-slate-500 font-semibold">{lang === 'hi' ? 'गूगल लेंस AI' : (lang === 'te' ? 'ఫోటో AI లెన్స్' : 'Photo Lens AI')}</div>
             </div>
           </button>
 
           <button
             onClick={() => onSelectAction('copilot')}
-            className="min-h-[56px] p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-800 text-left transition-all cursor-pointer flex items-center gap-3 group shadow-lg"
+            className="min-h-[52px] p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex items-center gap-3 group shadow-sm"
           >
-            <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 group-hover:scale-110 transition-transform">
-              <Mic className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Mic className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-black text-slate-100">{lang === 'te' ? 'వాయిస్ ప్రశ్న' : 'Voice Query'}</div>
-              <div className="text-[10px] text-slate-400 font-bold">{lang === 'te' ? 'AI తో మాట్లాడండి' : 'Talk to Kisan AI'}</div>
+              <div className="text-xs font-bold text-[#2C3333]">{lang === 'hi' ? 'वॉयस प्रश्न' : (lang === 'te' ? 'వాయిస్ ప్రశ్న' : 'Voice Query')}</div>
+              <div className="text-[10px] text-slate-500 font-semibold">{lang === 'hi' ? 'AI से बात करें' : (lang === 'te' ? 'AI తో మాట్లాడండి' : 'Talk to Kisan AI')}</div>
             </div>
           </button>
 
           <button
             onClick={() => onSelectAction('market')}
-            className="min-h-[56px] p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 hover:bg-slate-800 text-left transition-all cursor-pointer flex items-center gap-3 group shadow-lg"
+            className="min-h-[52px] p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex items-center gap-3 group shadow-sm"
           >
-            <div className="p-2 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30 group-hover:scale-110 transition-transform">
-              <TrendingUp className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <TrendingUp className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-black text-slate-100">{lang === 'te' ? 'మండీ ధరలు' : 'Mandi Rate'}</div>
-              <div className="text-[10px] text-slate-400 font-bold">{lang === 'te' ? 'ఈనాటి ధరలు' : "Today's Prices"}</div>
+              <div className="text-xs font-bold text-[#2C3333]">{lang === 'hi' ? 'मंडी भाव' : (lang === 'te' ? 'మండీ ధరలు' : 'Mandi Rate')}</div>
+              <div className="text-[10px] text-slate-500 font-semibold">{lang === 'hi' ? 'आज का भाव' : (lang === 'te' ? 'ఈనాటి ధరలు' : "Today's Prices")}</div>
             </div>
           </button>
 
           <button
             onClick={() => onSelectAction('calendar')}
-            className="min-h-[56px] p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-purple-500/50 hover:bg-slate-800 text-left transition-all cursor-pointer flex items-center gap-3 group shadow-lg"
+            className="min-h-[52px] p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex items-center gap-3 group shadow-sm"
           >
-            <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 group-hover:scale-110 transition-transform">
-              <Calendar className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Calendar className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-black text-slate-100">{lang === 'te' ? 'క్యాలెండర్' : 'Calendar'}</div>
-              <div className="text-[10px] text-slate-400 font-bold">{lang === 'te' ? 'విత్తనాల షెడ్యూల్' : 'Sowing Schedule'}</div>
+              <div className="text-xs font-bold text-[#2C3333]">{lang === 'hi' ? 'कैलेंडर' : (lang === 'te' ? 'క్యాలెండర్' : 'Calendar')}</div>
+              <div className="text-[10px] text-slate-500 font-semibold">{lang === 'hi' ? 'बुवाई सूची' : (lang === 'te' ? 'విత్తనాల షెడ్యూల్' : 'Sowing Schedule')}</div>
             </div>
           </button>
         </div>
       </div>
 
-      {/* 🌾 3. MAIN VISUAL FEATURE CARDS GRID */}
+      {/* 🌾 3. MAIN FEATURE CARDS GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {mainFeatureCards.map((card) => {
+        {orbitalFeatures.map((card) => {
           const Icon = card.icon;
           return (
             <div
               key={card.id}
               onClick={() => onSelectAction(card.id)}
-              className={`p-6 sm:p-8 rounded-3xl border-2 bg-gradient-to-br ${card.gradient} transition-all duration-300 shadow-2xl flex flex-col justify-between cursor-pointer group hover:scale-[1.02] active:scale-[0.98] space-y-6 relative overflow-hidden`}
+              className="p-6 rounded-3xl bg-white border border-emerald-100 hover:border-emerald-300 transition-all duration-200 shadow-sm flex flex-col justify-between cursor-pointer group hover:shadow-md space-y-6"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className={`w-14 h-14 rounded-2xl ${card.iconBg} border flex items-center justify-center text-xl font-black shadow-lg group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-7 h-7" />
+                  <div className={`w-12 h-12 rounded-full ${card.circleBg} border flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                    <Icon className="w-6 h-6" />
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase border ${card.badgeColor}`}>
+                  <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
                     {card.badge}
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-black text-slate-100 tracking-tight leading-snug">
+                  <h3 className="text-lg font-bold text-[#2C3333] leading-snug">
                     {card.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-300 font-bold mt-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 font-semibold mt-2 leading-relaxed">
                     {card.subtitle}
                   </p>
                 </div>
@@ -244,10 +271,10 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
 
               {/* Action Button */}
               <button
-                className="w-full py-3.5 px-4 rounded-2xl bg-slate-950/90 border border-slate-800 group-hover:border-slate-600 text-slate-100 font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all group-hover:bg-slate-900"
+                className="w-full py-3 px-4 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all"
               >
                 <span>{card.btnText}</span>
-                <ArrowRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           );

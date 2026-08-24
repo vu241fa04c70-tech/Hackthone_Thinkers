@@ -20,14 +20,12 @@ export default function GovtSchemesScreen() {
       .catch(() => {});
   }, []);
 
-  // Robust Field Resolver for Dictionary Objects or English Fallback Strings
   const resolveLocalized = (val) => {
     if (!val) return '';
     if (typeof val === 'object') {
       return val[lang] || val.te || val.en || '';
     }
     if (typeof val === 'string') {
-      // Known string translations for 100% language purity
       if (val.includes('6,000')) {
         return lang === 'te' 
           ? 'ఏటా ₹6,000 (3 విడతలలో రూ. 2,000 చొప్పున బ్యాంక్ ఖాతాలో జమ)' 
@@ -179,28 +177,28 @@ export default function GovtSchemesScreen() {
     <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-purple-950 via-slate-900 to-indigo-950 p-6 sm:p-8 rounded-3xl border border-purple-500/40 shadow-2xl space-y-2">
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 shadow-sm space-y-2">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🏛️</span>
-          <h2 className="text-xl sm:text-2xl font-black text-purple-400">
+          <h2 className="text-xl sm:text-2xl font-black text-[#2C3333]">
             {t('schemes.bannerTitle') || (lang === 'te' ? 'అధికారిక ప్రభుత్వ పథకాలు & రాయితీలు' : 'Official Government Schemes & Subsidies')}
           </h2>
         </div>
-        <p className="text-xs sm:text-sm text-slate-300 font-bold max-w-3xl">
+        <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-3xl">
           {t('schemes.bannerSubtitle') || (lang === 'te' ? 'కేంద్ర మరియు రాష్ట్ర ప్రభుత్వాల ఆర్థిక సహాయం, పంట బీమా మరియు యంత్రాల సబ్సిడీ పథకాల పూర్తి సమాచారం.' : 'Discover central and state government financial assistance, crop insurance, and subsidized machinery schemes.')}
         </p>
       </div>
 
       {/* Category Filter Pills */}
-      <div className="flex space-x-2 border-b border-slate-800 pb-3 overflow-x-auto no-scrollbar">
+      <div className="flex space-x-2 border-b border-emerald-100 pb-3 overflow-x-auto no-scrollbar">
         {categories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
-            className={`min-h-[44px] px-4 py-2 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
+            className={`min-h-[40px] px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
               selectedCategory === cat.id
-                ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-slate-950 shadow-lg shadow-purple-500/20 scale-[1.02]'
-                : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+                ? 'bg-[#2D6A4F] text-white shadow-sm scale-[1.02]'
+                : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -221,25 +219,25 @@ export default function GovtSchemesScreen() {
           return (
             <div
               key={s.scheme_id}
-              className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4 shadow-2xl flex flex-col justify-between hover:border-purple-500/40 transition-all group"
+              className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 space-y-4 shadow-sm flex flex-col justify-between hover:border-emerald-300 transition-all group"
             >
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-purple-100 text-purple-800 border border-purple-200">
                       {getLocalizedCategoryTag(s.category)}
                     </span>
-                    <h3 className="text-xl font-black text-slate-100 mt-2 group-hover:text-purple-300 transition-colors">
+                    <h3 className="text-xl font-black text-[#2C3333] mt-2 group-hover:text-[#2D6A4F] transition-colors">
                       {titleStr}
                     </h3>
                   </div>
 
                   <button
                     onClick={() => toggleAudio(s)}
-                    className={`p-2.5 rounded-2xl border font-black text-xs flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
+                    className={`p-2.5 rounded-full border font-bold text-xs flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
                       isPlaying
-                        ? 'bg-rose-500 text-slate-950 border-rose-500 animate-pulse'
-                        : 'bg-slate-950 text-emerald-400 border-slate-800 hover:border-emerald-500/40'
+                        ? 'bg-rose-500 text-white border-rose-500 animate-pulse'
+                        : 'bg-emerald-50 text-[#2D6A4F] border-emerald-200 hover:bg-emerald-100'
                     }`}
                     title="Listen Scheme Audio"
                   >
@@ -247,22 +245,22 @@ export default function GovtSchemesScreen() {
                   </button>
                 </div>
 
-                {/* Financial Benefit Tag (100% Localized) */}
-                <div className="p-4 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 space-y-1">
-                  <div className="text-[11px] font-black text-emerald-400 uppercase">
+                {/* Financial Benefit Tag */}
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1">
+                  <div className="text-[11px] font-bold text-[#2D6A4F] uppercase">
                     {lang === 'te' ? 'ఆర్థిక లబ్ధి (ఆదాయ సాయం)' : (lang === 'hi' ? 'वित्तीय लाभ' : 'Financial Benefit')}
                   </div>
-                  <div className="text-base sm:text-lg font-black text-emerald-300">💰 {benefitStr}</div>
+                  <div className="text-base sm:text-lg font-extrabold text-[#2D6A4F]">💰 {benefitStr}</div>
                 </div>
 
-                {/* Description (100% Localized) */}
-                <p className="text-xs sm:text-sm text-slate-300 font-bold leading-relaxed">
+                {/* Description */}
+                <p className="text-xs sm:text-sm text-slate-600 font-semibold leading-relaxed">
                   {descStr}
                 </p>
 
-                {/* Eligibility (100% Localized) */}
-                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-300">
-                  🎯 <span className="text-slate-400 font-black">{lang === 'te' ? 'అర్హత నిబంధనలు:' : (lang === 'hi' ? 'पात्रता:' : 'Eligibility:')}</span> {eligStr}
+                {/* Eligibility */}
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
+                  🎯 <span className="text-slate-500 font-bold">{lang === 'te' ? 'అర్హత నిబంధనలు:' : (lang === 'hi' ? 'पात्रता:' : 'Eligibility:')}</span> {eligStr}
                 </div>
               </div>
 
@@ -272,10 +270,10 @@ export default function GovtSchemesScreen() {
                   href={s.application_link}
                   target="_blank"
                   rel="noreferrer"
-                  className="min-h-[48px] w-full mt-4 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-cyan-400 border border-slate-800 hover:border-cyan-500/40 font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md"
+                  className="min-h-[48px] w-full mt-4 py-3 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm"
                 >
                   <span>{lang === 'te' ? 'అధికారిక పోర్టల్‌లో దరఖాస్తు చేసుకోండి ➔' : (lang === 'hi' ? 'आधिकारिक पोर्टल पर आवेदन करें ➔' : 'Apply on Official Portal ➔')}</span>
-                  <ExternalLink className="w-4 h-4 text-cyan-400" />
+                  <ExternalLink className="w-4 h-4 text-white" />
                 </a>
               )}
             </div>

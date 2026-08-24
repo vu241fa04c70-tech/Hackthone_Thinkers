@@ -13,7 +13,6 @@ export default function WeatherScreen() {
     humidity: '74%',
     wind: '16 km/h',
     rainProb: '85%',
-    uvIndex: lang === 'te' ? 'సాధారణం (5)' : (lang === 'hi' ? 'सामान्य (5)' : 'Moderate (5)'),
     alert: lang === 'te'
       ? 'ఈ రోజు మధ్యాహ్నం 2 గంటల నుండి సాయంత్రం 6 గంటల మధ్య గుంటూరు మరియు పరిసర ప్రాంతాలలో 85% వర్షపాతం కురిసే అవకాశం ఉంది. పంటలకు క్రిమిసంహారకాల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి.'
       : (lang === 'hi'
@@ -87,12 +86,12 @@ export default function WeatherScreen() {
     <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-orange-950 p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-black text-amber-400 flex items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-black text-[#2C3333] flex items-center gap-2">
             🌤️ {lang === 'te' ? 'వ్యవసాయ వాతావరణ సమాచారం & సలహాలు' : (lang === 'hi' ? 'कृषि मौसम सलाह' : 'Live Agricultural Weather Advisory')}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 font-bold mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 font-semibold mt-1">
             {lang === 'te' 
               ? 'వర్షపాత హెచ్చరికలు, తేమ శాతం మరియు పంట సంరక్షణ కోసం రియల్-టైమ్ సమాచారం.' 
               : (lang === 'hi' ? 'फसल सुरक्षा के लिए वास्तविक समय वर्षा चेतावनी और आर्द्रता सलाह।' : 'Real-time rainfall warnings, humidity, and microclimate advice for crop protection.')}
@@ -101,10 +100,10 @@ export default function WeatherScreen() {
 
         <button
           onClick={toggleAudio}
-          className={`min-h-[48px] px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all shrink-0 ${
+          className={`min-h-[44px] px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all shrink-0 ${
             isPlayingAudio
-              ? 'bg-rose-500 text-slate-950 shadow-rose-500/20 animate-pulse'
-              : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/20'
+              ? 'bg-rose-500 text-white shadow-rose-200 animate-pulse'
+              : 'bg-[#2D6A4F] hover:bg-[#1B4332] text-white shadow-emerald-100'
           }`}
         >
           <Volume2 className={`w-4 h-4 ${isPlayingAudio ? 'animate-bounce' : ''}`} />
@@ -113,12 +112,12 @@ export default function WeatherScreen() {
       </div>
 
       {/* Emergency Alert Warning Banner */}
-      <div className="p-5 rounded-3xl bg-amber-950/80 border-2 border-amber-500/60 text-amber-200 space-y-2 shadow-xl animate-in fade-in duration-300">
-        <div className="flex items-center gap-2 text-sm font-black text-amber-400 uppercase tracking-wider">
-          <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 animate-bounce" />
+      <div className="p-5 rounded-3xl bg-amber-50 border border-amber-200 text-amber-900 space-y-2 shadow-sm">
+        <div className="flex items-center gap-2 text-xs font-bold text-amber-800 uppercase tracking-wider">
+          <ShieldAlert className="w-5 h-5 text-amber-700 shrink-0 animate-bounce" />
           <span>⚠️ {lang === 'te' ? 'రైతులకు వాతావరణ హెచ్చరిక' : (lang === 'hi' ? 'किसानों के लिए मौसम चेतावनी' : 'Weather Alert for Farmers')}</span>
         </div>
-        <p className="text-xs sm:text-sm font-bold text-slate-200 leading-relaxed">
+        <p className="text-xs sm:text-sm font-semibold text-amber-950 leading-relaxed">
           {weatherData.alert}
         </p>
       </div>
@@ -127,51 +126,59 @@ export default function WeatherScreen() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         
         {/* Stat Card 1: Temperature */}
-        <div className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-2 shadow-xl">
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-black">
-            <Thermometer className="w-4 h-4 text-amber-400" />
+        <div className="bg-white p-5 rounded-3xl border border-emerald-100 space-y-2 shadow-sm">
+          <div className="flex items-center gap-2 text-slate-600 text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+              <Thermometer className="w-4 h-4" />
+            </div>
             <span>{lang === 'te' ? 'ఉష్ణోగ్రత' : (lang === 'hi' ? 'तापमान' : 'Temperature')}</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-amber-400">{weatherData.temp}</div>
-          <div className="text-[11px] text-slate-400 font-bold">{weatherData.condition}</div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#2C3333]">{weatherData.temp}</div>
+          <div className="text-[11px] text-slate-500 font-semibold">{weatherData.condition}</div>
         </div>
 
         {/* Stat Card 2: Rain Probability */}
-        <div className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-2 shadow-xl">
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-black">
-            <CloudRain className="w-4 h-4 text-cyan-400" />
+        <div className="bg-white p-5 rounded-3xl border border-emerald-100 space-y-2 shadow-sm">
+          <div className="flex items-center gap-2 text-slate-600 text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center shrink-0">
+              <CloudRain className="w-4 h-4" />
+            </div>
             <span>{lang === 'te' ? 'వర్షం అవకాశం' : (lang === 'hi' ? 'बारिश की संभावना' : 'Rain Probability')}</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-cyan-400">{weatherData.rainProb}</div>
-          <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? 'మధ్యాహ్నం 2 గంటలకు వర్షం' : (lang === 'hi' ? 'दोपहर 2 बजे बारिश' : 'Rain at 2 PM')}</div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-sky-700">{weatherData.rainProb}</div>
+          <div className="text-[11px] text-slate-500 font-semibold">{lang === 'te' ? 'మధ్యాహ్నం 2 గంటలకు వర్షం' : (lang === 'hi' ? 'दोपहर 2 बजे बारिश' : 'Rain at 2 PM')}</div>
         </div>
 
         {/* Stat Card 3: Humidity */}
-        <div className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-2 shadow-xl">
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-black">
-            <Droplets className="w-4 h-4 text-emerald-400" />
+        <div className="bg-white p-5 rounded-3xl border border-emerald-100 space-y-2 shadow-sm">
+          <div className="flex items-center gap-2 text-slate-600 text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+              <Droplets className="w-4 h-4" />
+            </div>
             <span>{lang === 'te' ? 'తేమ శాతం' : (lang === 'hi' ? 'आर्द्रता' : 'Humidity')}</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-emerald-400">{weatherData.humidity}</div>
-          <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? 'అధిక తేమ' : (lang === 'hi' ? 'उच्च नमी' : 'High Moisture')}</div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-emerald-700">{weatherData.humidity}</div>
+          <div className="text-[11px] text-slate-500 font-semibold">{lang === 'te' ? 'అధిక తేమ' : (lang === 'hi' ? 'उच्च नमी' : 'High Moisture')}</div>
         </div>
 
         {/* Stat Card 4: Wind Speed */}
-        <div className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-2 shadow-xl">
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-black">
-            <Wind className="w-4 h-4 text-purple-400" />
+        <div className="bg-white p-5 rounded-3xl border border-emerald-100 space-y-2 shadow-sm">
+          <div className="flex items-center gap-2 text-slate-600 text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center shrink-0">
+              <Wind className="w-4 h-4" />
+            </div>
             <span>{lang === 'te' ? 'గాలి వేగం' : (lang === 'hi' ? 'हवा की गति' : 'Wind Speed')}</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-purple-400">{weatherData.wind}</div>
-          <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? 'నైరుతి దిశ గాలి' : (lang === 'hi' ? 'दक्षिण-पश्चिम हवा' : 'South-West Wind')}</div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-purple-700">{weatherData.wind}</div>
+          <div className="text-[11px] text-slate-500 font-semibold">{lang === 'te' ? 'నైరుతి దిశ గాలి' : (lang === 'hi' ? 'दक्षिण-पश्चिम हवा' : 'South-West Wind')}</div>
         </div>
 
       </div>
 
       {/* 6-Day Weather Forecast Cards */}
-      <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-2xl">
-        <h3 className="text-sm font-black text-slate-100 flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-amber-400" />
+      <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+        <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-[#2D6A4F]" />
           <span>{lang === 'te' ? '📅 వారపు వాతావరణ మరియు విత్తనాల సూచన' : (lang === 'hi' ? 'साप्ताहिक मौसम पूर्वानुमान' : 'Weekly Microclimate Sowing & Rain Forecast')}</span>
         </h3>
 
@@ -179,12 +186,12 @@ export default function WeatherScreen() {
           {weeklyForecast.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-center space-y-2 hover:border-amber-500/40 transition-all">
-                <div className="text-xs font-black text-slate-300">{item.day}</div>
-                <Icon className="w-7 h-7 text-amber-400 mx-auto" />
-                <div className="text-xs font-black text-slate-100">{item.temp}</div>
-                <div className="text-[10px] text-cyan-400 font-extrabold">🌧️ {item.rain}</div>
-                <div className="text-[10px] text-slate-400 font-bold">{item.desc}</div>
+              <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-2 hover:border-emerald-300 transition-all">
+                <div className="text-xs font-bold text-slate-700">{item.day}</div>
+                <Icon className="w-7 h-7 text-[#2D6A4F] mx-auto" />
+                <div className="text-xs font-bold text-[#2C3333]">{item.temp}</div>
+                <div className="text-[10px] text-sky-700 font-extrabold">🌧️ {item.rain}</div>
+                <div className="text-[10px] text-slate-500 font-semibold">{item.desc}</div>
               </div>
             );
           })}

@@ -59,7 +59,6 @@ export default function App() {
     setCurrentMode('farmer');
   };
 
-  // Format farmer display name according to active language
   const getFormattedFarmerHeader = () => {
     if (!farmerProfile) return '';
     const rawName = farmerProfile.farmer_name || 'Ramesh';
@@ -96,29 +95,29 @@ export default function App() {
   // STEP 3: Admin Dashboard (Password Authenticated)
   if (currentMode === 'admin') {
     return (
-      <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
-        <header className="border-b border-cyan-500/30 bg-slate-950/90 backdrop-blur-xl sticky top-0 z-40">
+      <div className={`min-h-screen bg-[#FAF8F3] text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
+        <header className="border-b border-emerald-100 bg-white/90 backdrop-blur-md sticky top-0 z-40 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-cyan-500/20 text-xl">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-xl shadow-sm">
                 🏛️
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-black text-cyan-400 flex items-center gap-2">
+                <h1 className="text-lg sm:text-xl font-black text-[#2D6A4F] flex items-center gap-2">
                   Kisan Mitra Admin Portal
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-black">
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 font-extrabold">
                     Government Session
                   </span>
                 </h1>
-                <p className="text-[11px] text-slate-400 font-bold">Authorized Admin Control Panel</p>
+                <p className="text-[11px] text-slate-500 font-semibold">Authorized Admin Control Panel</p>
               </div>
             </div>
 
             <button
               onClick={() => setCurrentMode('welcome')}
-              className="px-4 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-black text-xs flex items-center gap-2 cursor-pointer border border-slate-700"
+              className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 cursor-pointer border border-slate-200 transition-all shadow-sm"
             >
-              <LogOut className="w-4 h-4 text-cyan-400" />
+              <LogOut className="w-4 h-4 text-[#2D6A4F]" />
               <span>{lang === 'hi' ? '🏠 वापस' : (lang === 'te' ? '🏠 వెనుకకు' : 'Exit Admin Portal')}</span>
             </button>
           </div>
@@ -131,7 +130,7 @@ export default function App() {
     );
   }
 
-  // STEP 4: Full Farmer Application Main App
+  // STEP 4: Full Farmer Application Main App (Warm Cream & Sage Green Light Design)
   const getTabLabel = (id) => {
     switch (id) {
       case 'home': return t('nav.home');
@@ -158,25 +157,25 @@ export default function App() {
   ];
 
   return (
-    <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950 transition-all ${isRTL ? 'text-right' : 'text-left'}`}>
+    <div className={`min-h-screen bg-[#FAF8F3] text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#2D6A4F] selection:text-white transition-all ${isRTL ? 'text-right' : 'text-left'}`}>
       
-      {/* Top Header Bar */}
-      <header className="border-b border-emerald-500/30 bg-slate-950/90 backdrop-blur-xl sticky top-0 z-40">
+      {/* Light Header Bar */}
+      <header className="border-b border-emerald-100 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           
           {/* Logo & Current User Info */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 text-xl">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black shadow-sm text-xl border border-emerald-200">
               🌾
             </div>
             <div>
-              <h1 className="text-lg sm:text-xl font-black tracking-tight text-emerald-400 flex items-center gap-2">
+              <h1 className="text-lg sm:text-xl font-black tracking-tight text-[#2D6A4F] flex items-center gap-2">
                 {t('nav.appName')}
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-extrabold">
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#2D6A4F] border border-emerald-200 font-extrabold">
                   {t('nav.tagline')}
                 </span>
               </h1>
-              <p className="text-[11px] text-slate-300 font-bold hidden sm:block">
+              <p className="text-[11px] text-slate-500 font-semibold hidden sm:block">
                 {getFormattedFarmerHeader()}
               </p>
             </div>
@@ -184,17 +183,17 @@ export default function App() {
 
           {/* Multilingual Selector & Navigation Buttons */}
           <div className="flex items-center gap-2">
-            {/* 🌐 23 Languages Selector Dropdown */}
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-lg shadow-emerald-500/10">
-              <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+            {/* 🌐 Languages Selector Dropdown */}
+            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 shadow-sm">
+              <Globe className="w-4 h-4 text-[#2D6A4F] shrink-0" />
               <select
                 value={lang}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[190px]"
+                className="bg-transparent text-xs font-bold text-[#2D6A4F] focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[190px]"
                 title="Choose Language (22 Scheduled Languages of India)"
               >
                 {Object.values(SUPPORTED_LANGUAGES).map((l) => (
-                  <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100 font-bold">
+                  <option key={l.code} value={l.code} className="bg-white text-slate-800 font-semibold">
                     {l.flag} {l.name} ({l.subName}) {l.isRTL ? '• RTL' : ''}
                   </option>
                 ))}
@@ -204,7 +203,7 @@ export default function App() {
             {/* 🏠 Switch Portal Button */}
             <button
               onClick={() => setCurrentMode('welcome')}
-              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm shrink-0"
               title="Return to Welcome Screen"
             >
               <span>{lang === 'hi' ? '🏠 वापस' : (lang === 'te' ? '🏠 వెనుకకు' : '🏠 Exit')}</span>
@@ -218,10 +217,10 @@ export default function App() {
                 setFarmerProfile(null);
                 setCurrentMode('lang_select');
               }}
-              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#2D6A4F] border border-emerald-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm shrink-0"
               title="Create New Account / Switch User"
             >
-              <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
+              <UserPlus className="w-3.5 h-3.5 text-[#2D6A4F]" />
               <span className="hidden sm:inline">
                 {lang === 'hi' ? '➕ नया खाता' : (lang === 'te' ? '➕ కొత్త ఖాతా' : '➕ Account')}
               </span>
@@ -231,8 +230,8 @@ export default function App() {
         </div>
       </header>
 
-      {/* Navigation Tabs Bar */}
-      <div className="border-b border-slate-800/80 bg-slate-950/40">
+      {/* Navigation Pill Tabs Bar */}
+      <div className="border-b border-emerald-100 bg-white/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto py-2.5 no-scrollbar">
             {tabs.map((tab) => {
@@ -243,13 +242,13 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all shrink-0 cursor-pointer ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
                     isActive
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-lg shadow-emerald-500/20 scale-[1.02]'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                      ? 'bg-[#2D6A4F] text-white shadow-md scale-[1.02]'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-emerald-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#2D6A4F]'}`} />
                   <span>{labelText}</span>
                 </button>
               );
@@ -289,7 +288,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
+      <footer className="border-t border-emerald-100 py-5 bg-white text-center text-xs text-slate-500 font-semibold">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>🌾 {t('nav.appName')} • {lang === 'hi' ? 'शासकीय एवं प्रशासनिक पोर्टल सक्रिय' : (lang === 'te' ? 'ప్రభుత్వ సేవలు మరియు అడ్మిన్ నిర్వహణ సక్రియంగా ఉంది' : 'Government & Admin Management Active')}</span>
           <span>{lang === 'hi' ? 'बहुभाषी वॉयस AI और कंप्यूटर विजन सिस्टम' : (lang === 'te' ? 'బహుభాషా వాయిస్ AI మరియు కంప్యూటర్ విజన్ సాధనం' : 'Multilingual Speech Recognition & Text-to-Speech (STT & TTS)')}</span>

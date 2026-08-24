@@ -9,7 +9,6 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
   const [inputPassword, setInputPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  // Saved Farmer Profile check for quick 1-click continue
   const savedFarmer = (() => {
     try {
       const p = localStorage.getItem('kisan_farmer_profile');
@@ -19,7 +18,6 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
     }
   })();
 
-  // Password Setup / Verification Logic for Admin Access
   const savedPassword = localStorage.getItem('kisan_admin_password');
   const isFirstTimeSetup = !savedPassword;
 
@@ -101,40 +99,38 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
   ];
 
   return (
-    <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col justify-between font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950 p-4 sm:p-6 lg:p-8 ${isRTL ? 'text-right' : 'text-left'}`}>
+    <div className={`min-h-screen bg-[#FAF8F3] text-[#2C3333] flex flex-col justify-between font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#2D6A4F] selection:text-white p-4 sm:p-6 lg:p-8 ${isRTL ? 'text-right' : 'text-left'}`}>
       
-      {/* Top Header Bar with Discrete Admin Button */}
+      {/* Top Bar with Discrete Admin Access Link */}
       <div className="max-w-6xl w-full mx-auto flex items-center justify-between pb-4">
-        {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-lg text-lg">
+          <div className="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center font-black text-lg shadow-sm">
             🌾
           </div>
-          <span className="text-base font-black text-emerald-400 tracking-tight">Kisan Mitra</span>
+          <span className="text-base font-black text-[#2D6A4F] tracking-tight">Kisan Mitra</span>
         </div>
 
-        {/* Right Actions: Language Selector + Discrete Admin Login Button */}
         <div className="flex items-center gap-3">
-          {/* Discrete Admin Link (Only for Admins) */}
+          {/* Discrete Admin Access Button */}
           <button
             onClick={handleAdminClick}
-            className="px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-cyan-300 border border-slate-800 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shadow-md"
+            className="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm"
             title="Authorized Government Admin Portal Only"
           >
-            <Lock className="w-3.5 h-3.5 text-cyan-400" />
+            <Lock className="w-3.5 h-3.5 text-[#2D6A4F]" />
             <span>{lang === 'hi' ? '🔐 एडमिन एक्सेस' : (lang === 'te' ? '🔐 అడ్మిన్ ప్రవేశం' : '🔐 Admin Access')}</span>
           </button>
 
           {/* 🌐 Multilingual Dropdown */}
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-xl">
-            <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-full px-3.5 py-1.5 shadow-sm">
+            <Globe className="w-4 h-4 text-[#2D6A4F] shrink-0" />
             <select
               value={lang}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer"
+              className="bg-transparent text-xs font-bold text-[#2D6A4F] focus:outline-none cursor-pointer"
             >
               {Object.values(SUPPORTED_LANGUAGES).map((l) => (
-                <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100 font-bold">
+                <option key={l.code} value={l.code} className="bg-white text-slate-800 font-semibold">
                   {l.flag} {l.name} ({l.subName})
                 </option>
               ))}
@@ -143,37 +139,35 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
         </div>
       </div>
 
-      {/* Hero Welcome Banner (Clean & Focused on Farmers) */}
+      {/* Hero Welcome Banner */}
       <div className="max-w-4xl mx-auto text-center space-y-5 my-auto pt-4 pb-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-black shadow-lg">
-          <Sparkles className="w-4 h-4 text-emerald-400" />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-[#2D6A4F] border border-emerald-200 text-xs font-extrabold shadow-sm">
+          <Sparkles className="w-4 h-4 text-[#2D6A4F]" />
           <span>{lang === 'hi' ? 'डिजिटल किसान सेवा ऐप' : (lang === 'te' ? 'డిజిటల్ రైతు యాప్' : 'Digital Agriculture Platform for Farmers')}</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-100 leading-tight">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#2C3333] leading-tight">
           {getTitle()}
         </h1>
 
-        <p className="text-sm sm:text-base text-slate-300 font-bold max-w-2xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-600 font-semibold max-w-2xl mx-auto leading-relaxed">
           {getSubtitle()}
         </p>
 
         {/* Primary Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 max-w-md mx-auto">
-          {/* Saved Farmer Quick Login Button */}
           {savedFarmer && (
             <button
               onClick={onSelectFarmer}
-              className="w-full sm:w-auto min-h-[52px] px-8 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border-2 border-emerald-500/50 font-black text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xl transition-all hover:scale-105"
+              className="w-full sm:w-auto min-h-[52px] px-8 py-3.5 rounded-full bg-white hover:bg-emerald-50 text-[#2D6A4F] border-2 border-emerald-200 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all hover:scale-105"
             >
               <span>👨‍🌾 {savedFarmer.farmer_name || 'Ramesh'} {lang === 'hi' ? 'के रूप में जारी रखें ➔' : (lang === 'te' ? 'గా కొనసాగండి ➔' : 'Continue ➔')}</span>
             </button>
           )}
 
-          {/* Enter Farmer App Main Button */}
           <button
             onClick={onSelectFarmer}
-            className="w-full sm:w-auto min-h-[52px] px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-2xl shadow-emerald-500/30 cursor-pointer transition-all hover:scale-105"
+            className="w-full sm:w-auto min-h-[52px] px-8 py-3.5 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all hover:scale-105"
           >
             <span>{getFarmerBtnText()}</span>
           </button>
@@ -183,28 +177,28 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
       {/* Farmer Feature Highlights Grid */}
       <div className="max-w-5xl w-full mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 my-auto pt-4">
         {farmerFeatures.map((feat, idx) => (
-          <div key={idx} className="bg-slate-900/90 p-5 sm:p-6 rounded-3xl border border-slate-800 hover:border-emerald-500/40 transition-all space-y-2 shadow-xl">
-            <h3 className="text-base font-black text-slate-100">{feat.title}</h3>
-            <p className="text-xs text-slate-300 font-bold leading-relaxed">{feat.desc}</p>
+          <div key={idx} className="bg-white p-5 sm:p-6 rounded-3xl border border-emerald-100 hover:border-emerald-300 transition-all space-y-2 shadow-sm">
+            <h3 className="text-base font-bold text-[#2C3333]">{feat.title}</h3>
+            <p className="text-xs text-slate-600 font-semibold leading-relaxed">{feat.desc}</p>
           </div>
         ))}
       </div>
 
       {/* Secret Admin Password Modal */}
       {showPasswordModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-xl animate-in zoom-in-95 duration-200">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xl font-black">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-[#2D6A4F] border border-emerald-200 flex items-center justify-center text-xl font-black">
                 🔒
               </div>
               <div>
-                <h3 className="text-lg font-black text-slate-100">
+                <h3 className="text-lg font-bold text-[#2C3333]">
                   {isFirstTimeSetup 
                     ? (lang === 'hi' ? 'एडमिन पासवर्ड बनाएं' : (lang === 'te' ? 'అడ్మిన్ పాస్‌వర్డ్ సృష్టించండి' : 'Create Admin Security Password'))
                     : (lang === 'hi' ? 'एडमिन लॉगिन पासवर्ड' : (lang === 'te' ? 'అడ్మిన్ లాగిన్ పాస్‌వర్డ్' : 'Enter Admin Password'))}
                 </h3>
-                <p className="text-xs text-slate-400 font-bold">
+                <p className="text-xs text-slate-500 font-semibold">
                   {isFirstTimeSetup
                     ? (lang === 'hi' ? 'एडमिन पोर्टल सुरक्षित रखने के लिए अपना गुप्त पासवर्ड सेट करें।' : (lang === 'te' ? 'అడ్మిన్ పోర్టల్ కోసం మీ రహస్య పాస్‌వర్డ్ సెట్ చేయండి.' : 'Set your secret password to protect the Admin Portal.'))
                     : (lang === 'hi' ? 'सरकारी एडमिन पोर्टल खोलने के लिए अपना पासवर्ड दर्ज करें।' : (lang === 'te' ? 'అడ్మిన్ పోర్టల్ తెరవడానికి మీ పాస్‌వర్డ్ నమోదు చేయండి.' : 'Enter your secret password to unlock government features.'))}
@@ -214,7 +208,7 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
 
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-black text-slate-300 uppercase tracking-wider">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   {lang === 'hi' ? 'एडमिन सुरक्षा पासवर्ड' : (lang === 'te' ? 'రహస్య పాస్‌వర్డ్' : 'Admin Password')}
                 </label>
                 <div className="relative">
@@ -226,13 +220,13 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
                       setPasswordError('');
                     }}
                     placeholder={isFirstTimeSetup ? 'e.g. admin123' : '••••••••'}
-                    className="w-full min-h-[48px] bg-slate-950 border border-slate-800 rounded-2xl px-4 text-sm font-black text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-all"
+                    className="w-full min-h-[48px] bg-slate-50 border border-slate-200 rounded-2xl px-4 text-sm font-bold text-[#2C3333] placeholder-slate-400 focus:outline-none focus:border-[#2D6A4F] transition-all"
                     autoFocus
                   />
-                  <Key className="w-4 h-4 text-slate-500 absolute right-4 top-4" />
+                  <Key className="w-4 h-4 text-slate-400 absolute right-4 top-4" />
                 </div>
                 {passwordError && (
-                  <p className="text-xs font-black text-rose-400 animate-bounce pt-1">
+                  <p className="text-xs font-bold text-rose-600 animate-bounce pt-1">
                     ⚠️ {passwordError}
                   </p>
                 )}
@@ -242,13 +236,13 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
                 <button
                   type="button"
                   onClick={() => setShowPasswordModal(false)}
-                  className="flex-1 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-slate-400 font-black text-xs border border-slate-800 transition-all cursor-pointer"
+                  className="flex-1 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs border border-slate-200 transition-all cursor-pointer"
                 >
                   {lang === 'hi' ? 'रद्द करें' : (lang === 'te' ? 'రద్దు చేయండి' : 'Cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs transition-all cursor-pointer shadow-lg shadow-cyan-500/20"
+                  className="flex-1 py-3 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs transition-all cursor-pointer shadow-md"
                 >
                   {isFirstTimeSetup 
                     ? (lang === 'hi' ? 'सहेजें और खोलें ➔' : (lang === 'te' ? 'పాస్‌వర్డ్ సేవ్ చేయండి ➔' : 'Save & Login ➔'))
@@ -261,7 +255,7 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
       )}
 
       {/* Footer */}
-      <div className="text-center text-[11px] text-slate-500 font-bold py-2">
+      <div className="text-center text-[11px] text-slate-500 font-semibold py-2">
         <span>🌾 Kisan Mitra Multilingual AI Ecosystem • Built for Indian Agriculture</span>
       </div>
 

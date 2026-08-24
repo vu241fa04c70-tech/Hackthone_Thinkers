@@ -77,41 +77,6 @@ export default function FarmingCalendarScreen() {
           completed: false
         }
       ];
-    } else if (lang === 'ta') {
-      return [
-        {
-          id: 1,
-          week: 'வாரம் 1 - 2 (நில தயாரிப்பு)',
-          title: 'மண் உழுதல் மற்றும் இயற்கை உரம் இடுதல்',
-          desc: 'மண்ணை 2-3 முறை உழுது மக்கிய தொழு உரம் கலக்கவும்.',
-          category: 'நில தயாரிப்பு',
-          completed: true
-        },
-        {
-          id: 2,
-          week: 'வாரம் 3 - 4 (விதைப்பு)',
-          title: 'விதை நேர்த்தி மற்றும் நாற்று நடுதல்',
-          desc: 'ட்ரைகோடெர்மா விரிடி கொண்டு விதை நேர்த்தி செய்து நாற்று நடவும்.',
-          category: 'விதைப்பு',
-          completed: true
-        },
-        {
-          id: 3,
-          week: 'வாரம் 5 - 8 (வளர்ச்சி)',
-          title: 'யுரியா உரம் இடுதல் மற்றும் நீர் பாசனம்',
-          desc: 'ஏக்கருக்கு 25 கிலோ யுரியா உரம் இட்டு பாசனம் செய்யவும்.',
-          category: 'உரம் இடுதல்',
-          completed: false
-        },
-        {
-          id: 4,
-          week: 'வாரம் 9 - 12 (பூத்தல் & காய்த்தல்)',
-          title: 'பயிர் நோய் தடுப்பு தெளித்தல்',
-          desc: 'மான் கோசெப் பூச்சிக்கொல்லி தெளித்து பயிர் பாதுகாப்பு செய்யவும்.',
-          category: 'பயிர் பாதுகாப்பு',
-          completed: false
-        }
-      ];
     } else {
       return [
         {
@@ -187,7 +152,6 @@ export default function FarmingCalendarScreen() {
     switch (lang) {
       case 'te': return '📅 వ్యవసాయ క్యాలెండర్ & పంట దశలు';
       case 'hi': return '📅 कृषि कैलेंडर एवं फसल चरण अनुवेषक';
-      case 'ta': return '📅 விவசாய நாட்காட்டி & பயிர் கட்டங்கள்';
       default: return '📅 Agricultural Farming Calendar & Stage Tracker';
     }
   };
@@ -196,7 +160,6 @@ export default function FarmingCalendarScreen() {
     switch (lang) {
       case 'te': return 'వారపు పంట పనులు, ఎరువులు మరియు మందుల పిచికారీ సమయాలను గమనించండి.';
       case 'hi': return 'साप्ताहिक फसल कार्यों, उर्वरक प्रयोग और कीट नियंत्रण छिड़काव के समय की निगरानी करें।';
-      case 'ta': return 'வாராந்திர விவசாய பணிகள் மற்றும் உரம் இடும் நேரங்களை கண்காணிக்கவும்.';
       default: return 'Track weekly crop tasks, fertilizer application schedules, and pest protection spray timings.';
     }
   };
@@ -205,7 +168,6 @@ export default function FarmingCalendarScreen() {
     switch (lang) {
       case 'te': return 'వారపు వ్యవసాయ పనుల జాబితా';
       case 'hi': return 'साप्ताहिक कृषि कार्य सूची';
-      case 'ta': return 'வாராந்திர விவசாய பணிகள்';
       default: return 'Weekly Agricultural Activities';
     }
   };
@@ -214,7 +176,6 @@ export default function FarmingCalendarScreen() {
     switch (lang) {
       case 'te': return 'వినండి 🔊';
       case 'hi': return 'सुनें 🔊';
-      case 'ta': return 'கேட்க 🔊';
       default: return 'Listen 🔊';
     }
   };
@@ -223,26 +184,26 @@ export default function FarmingCalendarScreen() {
     <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 p-6 sm:p-8 rounded-3xl border border-emerald-500/40 shadow-2xl space-y-3">
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 shadow-sm space-y-3">
         <div className="flex items-center gap-2">
           <span className="text-2xl">📅</span>
-          <h2 className="text-xl sm:text-2xl font-black text-emerald-400">
+          <h2 className="text-xl sm:text-2xl font-black text-[#2C3333]">
             {getHeaderTitle()}
           </h2>
         </div>
-        <p className="text-xs sm:text-sm text-slate-300 font-bold max-w-3xl">
+        <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-3xl">
           {getHeaderSubtitle()}
         </p>
 
         {/* Crop Growth Progress Bar */}
         <div className="space-y-1.5 pt-2">
-          <div className="flex items-center justify-between text-xs font-black text-slate-200">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-700">
             <span>{lang === 'te' ? 'పంట ఎదుగుదల పూర్తయిన శాతం' : (lang === 'hi' ? 'फसल विकास की प्रगति' : 'Crop Lifecycle Progress')}</span>
-            <span className="text-emerald-400">{progressPct}% {lang === 'te' ? 'పూర్తయింది' : (lang === 'hi' ? 'पूर्ण हुआ' : 'Completed')}</span>
+            <span className="text-[#2D6A4F] font-extrabold">{progressPct}% {lang === 'te' ? 'పూర్తయింది' : (lang === 'hi' ? 'पूर्ण हुआ' : 'Completed')}</span>
           </div>
-          <div className="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800">
+          <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
             <div
-              className="bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 h-full rounded-full transition-all duration-500"
+              className="bg-[#2D6A4F] h-full rounded-full transition-all duration-500"
               style={{ width: `${progressPct}%` }}
             />
           </div>
@@ -251,8 +212,8 @@ export default function FarmingCalendarScreen() {
 
       {/* Task Checklist Grid */}
       <div className="space-y-3">
-        <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2">
-          <Clock className="w-4 h-4 text-emerald-400" />
+        <h3 className="text-xs font-bold uppercase text-slate-500 tracking-wider flex items-center gap-2">
+          <Clock className="w-4 h-4 text-[#2D6A4F]" />
           <span>{getSectionTitle()}</span>
         </h3>
 
@@ -261,10 +222,10 @@ export default function FarmingCalendarScreen() {
             <div
               key={task.id}
               onClick={() => toggleTask(task.id)}
-              className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+              className={`p-6 rounded-3xl border transition-all duration-200 cursor-pointer shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                 task.completed
-                  ? 'bg-slate-950/90 border-emerald-500/40 text-slate-400'
-                  : 'bg-slate-900/90 border-slate-800 hover:border-emerald-500/50 text-slate-100'
+                  ? 'bg-emerald-50/40 border-emerald-200 text-slate-500'
+                  : 'bg-white border-slate-200 hover:border-emerald-300 text-slate-800'
               }`}
             >
               <div className="flex items-start gap-4">
@@ -274,28 +235,28 @@ export default function FarmingCalendarScreen() {
                     e.stopPropagation();
                     toggleTask(task.id);
                   }}
-                  className="mt-1 shrink-0 text-emerald-400 cursor-pointer"
+                  className="mt-1 shrink-0 text-[#2D6A4F] cursor-pointer"
                 >
                   {task.completed ? (
-                    <CheckSquare className="w-6 h-6 text-emerald-400" />
+                    <CheckSquare className="w-6 h-6 text-[#2D6A4F]" />
                   ) : (
-                    <Square className="w-6 h-6 text-slate-500 hover:text-emerald-400" />
+                    <Square className="w-6 h-6 text-slate-400 hover:text-[#2D6A4F]" />
                   )}
                 </button>
 
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200">
                       {task.week}
                     </span>
                     <span className="text-[10px] font-bold text-slate-500">• {task.category}</span>
                   </div>
 
-                  <h4 className={`text-base sm:text-lg font-black ${task.completed ? 'line-through text-slate-500' : 'text-slate-100'}`}>
+                  <h4 className={`text-base sm:text-lg font-bold ${task.completed ? 'line-through text-slate-400' : 'text-[#2C3333]'}`}>
                     {task.title}
                   </h4>
 
-                  <p className="text-xs text-slate-300 font-bold leading-relaxed">
+                  <p className="text-xs text-slate-600 font-semibold leading-relaxed">
                     {task.desc}
                   </p>
                 </div>
@@ -308,10 +269,10 @@ export default function FarmingCalendarScreen() {
                   e.stopPropagation();
                   toggleAudio(task);
                 }}
-                className={`min-h-[44px] px-4 py-2 rounded-2xl border font-black text-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0 transition-all ${
+                className={`min-h-[40px] px-4 py-2 rounded-full border font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0 transition-all ${
                   isPlayingId === task.id
-                    ? 'bg-rose-500 text-slate-950 border-rose-500 animate-pulse'
-                    : 'bg-slate-950 text-emerald-400 border-slate-800 hover:border-emerald-500/40'
+                    ? 'bg-rose-500 text-white border-rose-500 animate-pulse'
+                    : 'bg-emerald-50 text-[#2D6A4F] border-emerald-200 hover:bg-emerald-100'
                 }`}
               >
                 <Volume2 className={`w-4 h-4 ${isPlayingId === task.id ? 'animate-bounce' : ''}`} />

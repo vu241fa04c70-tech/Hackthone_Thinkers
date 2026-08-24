@@ -1,291 +1,234 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, Send, Volume2, Bot, User, Sparkles, CheckCircle2, Cpu, Square, ArrowRight, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Mic, Send, Bot, User, Volume2, Sparkles, AlertCircle, StopCircle } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
-import { speakText, stopSpeech, startSpeechRecognition } from '../utils/voiceUtils';
+import { speakText, stopSpeech } from '../utils/voiceUtils';
 
 export default function FarmCopilot({ activeField }) {
   const { lang, t } = useLanguage();
-  const chatBottomRef = useRef(null);
-
-  const getQuickPrompts = () => {
-    if (lang === 'te') {
-      return [
-        "నా వరి పంటకు పురుగులు వస్తున్నాయి. నేను ఏం చేయాలి?",
-        "నా టమాటా ఆకులు పసుపు రంగులోకి మారుతున్నాయి",
-        "ఈరోజు వర్షం పడుతుందా?",
-        "పంట కోయవచ్చా లేక 3 రోజులు ఆగాలా?",
-        "ఎకరానికి ఎంత Urea ఎరువు వేయాలి?"
-      ];
-    } else if (lang === 'hi') {
-      return [
-        "मेरी फसल में कीट लग रहे हैं, मुझे क्या करना चाहिए?",
-        "मेरी टमाटर की पत्तियां पीली हो रही हैं",
-        "क्या आज बारिश होगी?",
-        "यूरिया खाद कितनी मात्रा में डालें?"
-      ];
-    } else {
-      return [
-        "Pests are infecting my rice crop, what should I do?",
-        "My tomato leaves are turning yellow with brown spots",
-        "Should I harvest my crop now or wait 3 days?",
-        "How much urea fertilizer should I apply?"
-      ];
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      sender: 'bot',
+      text: lang === 'te' 
+        ? 'నమస్కారం! నేను మీ కిసాన్ AI సహాయకుడిని. మీ పంటల ఎరువులు, వర్షపాతం లేదా మార్కెట్ ధరల గురించి ఏమైనా అడగండి.' 
+        : (lang === 'hi' 
+          ? 'नमस्ते! मैं आपका किसान AI सहायक हूँ। अपनी फसल, खाद, बारिश या मंडी भाव के बारे में कुछ भी पूछें।' 
+          : 'Namaskaram! I am your Kisan AI Copilot. Ask me anything about fertilizers, rain warnings, or mandi prices.')
     }
+  ]);
+  const [inputText, setInputText] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [playingAudioId, setPlayingAudioId] = useState(null);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const [messages, setMessages] = useState([]);
-  const [inputQuery, setInputQuery] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [speakingIdx, setSpeakingIdx] = useState(null);
-
   useEffect(() => {
-    const welcome = lang === 'te'
-      ? `నమస్కారం! నేను మీ కిసాన్ AI సహాయకుడిని. మీ పంట సంరక్షణ, ఎరువుల వాడకం లేదా మార్కెట్ ధరల గురించిన ప్రశ్నకు వాయిస్ లేదా టెక్స్ట్ ద్వారా అడగండి.`
-      : (lang === 'hi'
-        ? `नमस्ते! मैं आपका किसान AI सहायक हूँ। अपनी फसल देखभाल या मंडी भाव के बारे में प्रश्न पूछें।`
-        : `Namaste! I am your Kisan AI Agriculture Assistant. Ask any question about crop health, fertilizer dosage, weather, or mandi prices by voice or text.`);
+    scrollToBottom();
+  }, [messages, isTyping]);
 
-    setMessages([
-      {
-        sender: 'ai',
-        text: welcome,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }
-    ]);
-  }, [lang]);
+  const quickQuestions = [
+    lang === 'te' ? 'టమాటా పైరుకి ఈ రోజు మందు కొట్టవచ్చా?' : (lang === 'hi' ? 'क्या आज टमाटर पर छिड़काव कर सकते हैं?' : 'Can I spray pesticides today?'),
+    lang === 'te' ? 'గుంటూరు మండీలో ప్రస్తుత టమాటా ధర ఎంత?' : (lang === 'hi' ? 'गुंटूर मंडी में टमाटर का क्या भाव है?' : 'What is the current Mandi price?'),
+    lang === 'te' ? 'వరి పంటకి ఎంత యూరియా ఎరువు వేయాలి?' : (lang === 'hi' ? 'धान की फसल में कितना यूरिया डालें?' : 'How much Urea fertilizer per acre?')
+  ];
 
-  useEffect(() => {
-    chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
+  const handleSend = (textToSend) => {
+    const query = textToSend || inputText;
+    if (!query.trim()) return;
 
-  const handleSendQuery = async (queryText) => {
-    const textToSend = queryText || inputQuery;
-    if (!textToSend.trim()) return;
+    const userMsg = { id: Date.now(), sender: 'user', text: query };
+    setMessages(prev => [...prev, userMsg]);
+    if (!textToSend) setInputText('');
 
-    const userMsg = {
-      sender: 'user',
-      text: textToSend,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    setIsTyping(true);
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, language: lang })
+    })
+      .then(res => res.json())
+      .then(data => {
+        setIsTyping(false);
+        const botMsgText = data.response || (lang === 'te' ? 'మీ ప్రశ్న పరిశీలించబడింది.' : 'Your query has been processed.');
+        setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: botMsgText }]);
+      })
+      .catch(() => {
+        setIsTyping(false);
+        const fallbackText = lang === 'te' 
+          ? 'క్షమించండి, సర్వర్ కనెక్ట్ కాలేదు. కానీ ఈ రోజు మధ్యాహ్నం వర్షం సూచన ఉంది.' 
+          : 'Rain is forecast for 2 PM today. Please pause spraying.';
+        setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: fallbackText }]);
+      });
+  };
+
+  const toggleMic = () => {
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert(lang === 'te' ? 'మీ బ్రౌజర్ వాయిస్ రికగ్నిషన్‌ని మద్దతు ఇవ్వదు.' : 'Voice recognition is not supported in this browser.');
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = lang === 'te' ? 'te-IN' : (lang === 'hi' ? 'hi-IN' : 'en-IN');
+    recognition.interimResults = false;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setInputText(transcript);
+      handleSend(transcript);
     };
 
-    setMessages(prev => [...prev, userMsg]);
-    setInputQuery('');
-    setIsLoading(true);
-
-    try {
-      const res = await fetch('/api/agents/copilot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: textToSend,
-          language: lang,
-          crop: activeField?.crop_type || 'Tomato'
-        })
-      });
-
-      if (!res.ok) throw new Error('Query failed');
-      const data = await res.json();
-
-      const aiMsg = {
-        sender: 'ai',
-        text: data.response || 'Here is your agricultural advice.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      setMessages(prev => [...prev, aiMsg]);
-      
-      // Auto speak AI response
-      speakText(aiMsg.text, lang);
-    } catch (err) {
-      setMessages(prev => [
-        ...prev,
-        {
-          sender: 'ai',
-          text: lang === 'te' ? 'క్షమించండి, లోపం సంభవించింది. దయచేసి మళ్లీ ప్రయత్నించండి.' : 'Sorry, an error occurred. Please try again.',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
+    recognition.start();
   };
 
-  const handleMicClick = () => {
-    if (isRecording) {
-      setIsRecording(false);
-      return;
-    }
-
-    setIsRecording(true);
-    startSpeechRecognition(
-      lang,
-      (transcript) => {
-        setIsRecording(false);
-        if (transcript) {
-          handleSendQuery(transcript);
-        }
-      },
-      (err) => {
-        setIsRecording(false);
-      }
-    );
-  };
-
-  const handleSpeakMsg = (idx, text) => {
-    if (speakingIdx === idx) {
+  const toggleSpeech = (msg) => {
+    if (playingAudioId === msg.id) {
       stopSpeech();
-      setSpeakingIdx(null);
+      setPlayingAudioId(null);
       return;
     }
 
-    setSpeakingIdx(idx);
+    setPlayingAudioId(msg.id);
     speakText(
-      text,
+      msg.text,
       lang,
-      () => setSpeakingIdx(idx),
-      () => setSpeakingIdx(null),
-      () => setSpeakingIdx(null)
+      () => setPlayingAudioId(msg.id),
+      () => setPlayingAudioId(null),
+      () => setPlayingAudioId(null)
     );
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
+    <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
       
-      {/* Header */}
-      <div className="bg-gradient-to-r from-cyan-950 via-slate-900 to-teal-950 p-6 rounded-3xl border border-cyan-500/40 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xl font-black shadow-lg">
-            🎤
-          </div>
-          <div>
-            <h2 className="text-xl font-black text-cyan-400 flex items-center gap-2">
-              Kisan Voice AI Assistant
-              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-black">
-                Multilingual Speech AI
-              </span>
-            </h2>
-            <p className="text-xs text-slate-300 font-bold">Ask any farming question in your native language by voice or text.</p>
-          </div>
+      {/* Header Banner */}
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 shadow-sm space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">🎤</span>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-[#2C3333]">
+            {lang === 'hi' ? 'किसान वॉयस AI सहायक' : (lang === 'te' ? 'కిసాన్ వాయిస్ AI సహాయకుడు' : 'Kisan Voice AI Copilot')}
+          </h2>
         </div>
+        <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-3xl">
+          {lang === 'hi' 
+            ? 'अपनी मातृभाषा में बोलकर या लिखकर खेती से जुड़ा कोई भी सवाल पूछें।' 
+            : (lang === 'te' ? 'మీ స్వంత భాషలో మాట్లాడి లేదా రాసి వ్యవసాయ సందేహాలను నివృత్తి చేసుకోండి.' : 'Ask any farming question in your native language by voice or text.')}
+        </p>
       </div>
 
-      {/* Quick Prompts Tap Chips */}
-      <div className="space-y-2">
-        <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider">
-          💡 Quick Farming Question Shortcuts:
-        </span>
-        <div className="flex space-x-2 overflow-x-auto pb-2 no-scrollbar">
-          {getQuickPrompts().map((prompt, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleSendQuery(prompt)}
-              className="min-h-[44px] px-4 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/40 text-xs font-bold text-slate-200 cursor-pointer shrink-0 transition-all shadow-md"
-            >
-              <span>💬 {prompt}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Chat Messages Box */}
-      <div className="bg-slate-900/90 rounded-3xl border border-slate-800 p-4 sm:p-6 shadow-2xl flex flex-col min-h-[450px] max-h-[550px] justify-between">
+      {/* Main Chat Window */}
+      <div className="bg-white rounded-3xl border border-emerald-100 shadow-sm flex flex-col h-[520px] overflow-hidden">
         
-        <div className="overflow-y-auto space-y-4 pr-1 no-scrollbar flex-1">
-          {messages.map((msg, idx) => {
-            const isAI = msg.sender === 'ai';
-            return (
-              <div
-                key={idx}
-                className={`flex items-start gap-3 ${isAI ? 'justify-start' : 'justify-end'} animate-in fade-in duration-200`}
-              >
-                {isAI && (
-                  <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-cyan-500 to-teal-400 text-slate-950 font-black flex items-center justify-center text-sm shadow-md shrink-0">
-                    🌾
-                  </div>
-                )}
+        {/* Messages Container */}
+        <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 bg-slate-50/50">
+          
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex items-start gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
+            >
+              {/* Avatar Icon */}
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 border ${
+                msg.sender === 'user'
+                  ? 'bg-[#2D6A4F] text-white border-[#2D6A4F]'
+                  : 'bg-emerald-100 text-emerald-800 border-emerald-200'
+              }`}>
+                {msg.sender === 'user' ? '👨‍🌾' : '🤖'}
+              </div>
 
-                <div
-                  className={`max-w-[85%] sm:max-w-[75%] p-4 rounded-3xl space-y-2 shadow-lg ${
-                    isAI
-                      ? 'bg-slate-950 border border-slate-800 text-slate-100'
-                      : 'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-bold'
-                  }`}
-                >
-                  <p className="text-xs sm:text-sm font-bold leading-relaxed whitespace-pre-line">
-                    {msg.text}
-                  </p>
+              {/* Message Bubble */}
+              <div className={`max-w-[80%] p-4 rounded-3xl space-y-2 shadow-sm ${
+                msg.sender === 'user'
+                  ? 'bg-emerald-100/90 text-emerald-950 rounded-tr-none font-bold text-xs sm:text-sm border border-emerald-200'
+                  : 'bg-white text-slate-800 rounded-tl-none font-semibold text-xs sm:text-sm border border-slate-200'
+              }`}>
+                <p className="leading-relaxed">{msg.text}</p>
 
-                  <div className={`flex items-center justify-between text-[10px] pt-1 ${isAI ? 'text-slate-400 font-bold border-t border-slate-800' : 'text-slate-900 font-extrabold'}`}>
-                    <span>{msg.timestamp}</span>
-                    {isAI && (
-                      <button
-                        onClick={() => handleSpeakMsg(idx, msg.text)}
-                        className="p-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-400 flex items-center gap-1 cursor-pointer"
-                      >
-                        <Volume2 className={`w-3.5 h-3.5 ${speakingIdx === idx ? 'animate-bounce' : ''}`} />
-                        <span>{speakingIdx === idx ? 'Stop ⏹️' : 'Listen 🔊'}</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {!isAI && (
-                  <div className="w-9 h-9 rounded-2xl bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm shadow-md shrink-0">
-                    👨‍🌾
-                  </div>
+                {msg.sender === 'bot' && (
+                  <button
+                    onClick={() => toggleSpeech(msg)}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2D6A4F] hover:underline cursor-pointer pt-1"
+                  >
+                    <Volume2 className={`w-3.5 h-3.5 ${playingAudioId === msg.id ? 'animate-bounce text-rose-600' : ''}`} />
+                    <span>{playingAudioId === msg.id ? (lang === 'te' ? 'ఆపండి' : 'Stop') : (lang === 'te' ? '🔊 వాయిస్ వినండి' : '🔊 Listen')}</span>
+                  </button>
                 )}
               </div>
-            );
-          })}
+            </div>
+          ))}
 
-          {/* Typing Indicator */}
-          {isLoading && (
-            <div className="flex items-center gap-3 justify-start animate-in fade-in">
-              <div className="w-9 h-9 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 flex items-center justify-center text-sm shrink-0">
-                <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
-              </div>
-              <div className="p-4 rounded-3xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-400 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                <span>Kisan AI is formulating agricultural advice...</span>
-              </div>
+          {isTyping && (
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-500 bg-white p-3 rounded-2xl border border-slate-200 w-max animate-pulse">
+              <Sparkles className="w-4 h-4 text-[#2D6A4F] animate-spin" />
+              <span>{lang === 'hi' ? 'उत्तर तैयार हो रहा है...' : (lang === 'te' ? 'సమాధానం సిద్ధం చేస్తున్నాను...' : 'Kisan AI is typing...')}</span>
             </div>
           )}
 
-          <div ref={chatBottomRef} />
+          <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Bar & Prominent Mic Button (Min 52px Touch Height) */}
-        <div className="pt-4 border-t border-slate-800 flex items-center gap-2">
+        {/* Quick Question Chips Bar */}
+        <div className="p-3 bg-white border-t border-slate-100 flex gap-2 overflow-x-auto no-scrollbar">
+          {quickQuestions.map((q, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleSend(q)}
+              className="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-[#2D6A4F] border border-slate-200 text-xs font-semibold shrink-0 transition-all cursor-pointer"
+            >
+              💡 {q}
+            </button>
+          ))}
+        </div>
+
+        {/* Input Bar */}
+        <div className="p-4 bg-white border-t border-emerald-100 flex items-center gap-2">
           
+          {/* Prominent Mic Button */}
           <button
-            onClick={handleMicClick}
-            className={`min-h-[52px] min-w-[52px] rounded-2xl flex items-center justify-center text-slate-950 font-black cursor-pointer shadow-xl transition-all ${
-              isRecording
-                ? 'bg-rose-500 animate-pulse text-slate-950 shadow-rose-500/30'
-                : 'bg-gradient-to-tr from-cyan-500 to-emerald-400 hover:scale-105 shadow-cyan-500/20'
+            onClick={toggleMic}
+            className={`min-h-[48px] px-4 rounded-full font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+              isListening
+                ? 'bg-rose-500 text-white animate-pulse shadow-md shadow-rose-200'
+                : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-200'
             }`}
-            title="Voice Input (Speech-to-Text)"
+            title="Speak Question"
           >
-            {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+            <Mic className={`w-4 h-4 ${isListening ? 'animate-bounce' : ''}`} />
+            <span className="hidden sm:inline">{isListening ? (lang === 'te' ? 'వింటున్నాను...' : 'Listening...') : (lang === 'te' ? 'మాట్లాడండి' : 'Voice')}</span>
           </button>
 
+          {/* Text Input */}
           <input
             type="text"
-            placeholder={isRecording ? 'Listening to your voice...' : (lang === 'te' ? 'మీ వ్యవసాయ ప్రశ్నా ఇక్కడ రాయండి లేదా మాట్లాడండి...' : 'Type or speak your farming question...')}
-            value={inputQuery}
-            onChange={(e) => setInputQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSendQuery()}
-            className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-slate-100 focus:outline-none focus:border-cyan-500 min-h-[52px]"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            placeholder={lang === 'hi' ? 'अपना प्रश्न यहां लिखें या बोलें...' : (lang === 'te' ? 'మీ సందేహాన్ని ఇక్కడ రాయండి లేదా మాట్లాడండి...' : 'Type or speak your farming question...')}
+            className="flex-1 min-h-[48px] bg-slate-50 border border-slate-200 rounded-full px-4 text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#2D6A4F] transition-all"
           />
 
+          {/* Send Button */}
           <button
-            onClick={() => handleSendQuery()}
-            disabled={!inputQuery.trim() || isLoading}
-            className="min-h-[52px] px-5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-50"
+            onClick={() => handleSend()}
+            disabled={!inputText.trim()}
+            className="min-h-[48px] px-5 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm shrink-0 cursor-pointer"
           >
+            <span>{lang === 'te' ? 'పంపండి' : (lang === 'hi' ? 'भेजें' : 'Send')}</span>
             <Send className="w-4 h-4" />
-            <span className="hidden sm:inline">Send</span>
           </button>
 
         </div>
