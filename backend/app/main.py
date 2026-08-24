@@ -19,7 +19,7 @@ from app.database import (
     FARMER_FEEDBACK_DB, FARMERS_DB, SCANS_HISTORY_DB,
     GOVT_SCHEMES_DB, EMERGENCY_ALERTS_DB, OFFICER_CONTACTS_DB,
     save_feedback, save_scan_history, save_scheme, delete_scheme, update_mandi_price,
-    save_officer_contact, delete_officer_contact
+    save_officer_contact, delete_officer_contact, get_mandi_prices_by_area
 )
 from app.agents.crop_vision import CropVisionAgent
 from app.agents.weather import WeatherAgent
@@ -87,7 +87,6 @@ def get_live_weather(location: Optional[str] = "Mangalagiri, Guntur, Andhra Prad
     loc = location or "Guntur, Andhra Pradesh"
     weather_data = weather_agent.get_weather_forecast(loc)
     
-    # Generate farmer spray advisory
     advisory_te = "ఈ రోజు మధ్యాహ్నం 2 గంటల నుండి సాయంత్రం 6 గంటల మధ్య 85% వర్షపాతం కురిసే అవకాశం ఉంది. పంటలకు క్రిమిసంహారకాల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి."
     advisory_hi = "आज दोपहर 2 बजे से शाम 6 बजे के बीच 85% बारिश की संभावना है। कीटनाशक छिड़काव और सिंचाई रोक दें।"
     advisory_en = "Heavy rain expected between 2 PM and 6 PM today. Pause all pesticide spraying and canal/drip irrigation."
@@ -190,20 +189,21 @@ def remove_scheme(scheme_id: str):
     return {"message": f"Scheme {scheme_id} deleted successfully"}
 
 
-# MANDI MARKET PRICES ADMIN & FARMER ENDPOINTS
+# DYNAMIC REGIONAL MANDI MARKET PRICES ENDPOINTS
 @app.get("/api/mandi")
-def get_mandi_prices():
-    return MANDI_PRICES_DB
+def get_mandi_prices(area: Optional[str] = "Guntur"):
+    return get_mandi_prices_by_area(area or "Guntur")
 
 
 @app.post("/api/mandi")
 def update_mandi(
     crop: str = Body(...),
     current_price: float = Body(...),
-    nearest_mandi: Optional[str] = Body(None)
+    nearest_mandi: Optional[str] = Body(None),
+    area: Optional[str] = Body("Guntur")
 ):
-    res = update_mandi_price(crop, current_price, nearest_mandi)
-    return {"message": f"Mandi price for {crop} updated to ₹{current_price}", "data": res}
+    res = update_mandi_price(crop, current_price, nearest_mandi, area or "Guntur")
+    return {"message": f"Mandi price for {crop} in {area} updated to ₹{current_price}", "data": res}
 
 
 # EMERGENCY WEATHER ALERTS ADMIN & FARMER ENDPOINTS

@@ -1,42 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Volume2, Calendar, MapPin, ArrowUpRight, DollarSign, Award, CheckCircle, TrendingDown, RefreshCw, BarChart2 } from 'lucide-react';
+import { TrendingUp, Volume2, Calendar, MapPin, ArrowUpRight, DollarSign, Award, CheckCircle, TrendingDown, RefreshCw, BarChart2, Search } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
+import { translateMarketTerm } from '../localization/marketTranslator';
+import { getLocalizedLocationName } from '../localization/locationTranslator';
 import { speakText, stopSpeech } from '../utils/voiceUtils';
 
 export default function MarketIntelligence({ activeField }) {
   const { lang, t } = useLanguage();
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [selectedCrop, setSelectedCrop] = useState(activeField?.crop_type || 'Tomato');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Farmer default location
+  const farmerProfile = (() => {
+    const saved = localStorage.getItem('kisan_farmer_profile');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      district: 'Guntur',
+      state: 'Andhra Pradesh'
+    };
+  })();
+
+  const defaultArea = farmerProfile.district || 'Guntur';
+  const [selectedArea, setSelectedArea] = useState(defaultArea);
   const [mandiPrices, setMandiPrices] = useState({});
+  const [selectedCrop, setSelectedCrop] = useState('Tomato');
+
+  const fetchAreaMandiPrices = (area) => {
+    setIsLoading(true);
+    fetch(`/api/mandi?area=${encodeURIComponent(area)}`)
+      .then(res => res.json())
+      .then(data => {
+        setMandiPrices(data || {});
+        // Auto select first crop if selectedCrop not in data
+        const crops = Object.keys(data || {});
+        if (crops.length > 0 && !crops.includes(selectedCrop)) {
+          setSelectedCrop(crops[0]);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  };
 
   useEffect(() => {
-    fetch('/api/mandi')
-      .then(res => res.json())
-      .then(data => setMandiPrices(data || {}))
-      .catch(() => {});
-  }, []);
+    fetchAreaMandiPrices(selectedArea);
+  }, [selectedArea]);
 
   const currentCropData = mandiPrices[selectedCrop] || {
-    current_price: 2600,
-    unit: 'Quintal',
-    trend: 'UP',
-    nearest_mandi: 'Guntur Wholesale APMC Yard'
+    crop: selectedCrop,
+    area: selectedArea,
+    current_price: 2450.0,
+    nearest_mandi: 'Guntur Wholesale Yard',
+    trend: 'Rising',
+    optimal_window: 'Harvest in 3 days (Pre-Rain Gain)',
+    projected_7d: 2750.0
   };
 
-  const currentPriceQtl = currentCropData.current_price || 2600;
+  const currentPriceQtl = currentCropData.current_price || 2450;
   const currentPriceKg = (currentPriceQtl / 100).toFixed(2);
-  const forecastPrice3Days = (currentPriceQtl * 1.1).toFixed(0);
+  const forecastPrice3Days = currentCropData.projected_7d || Math.round(currentPriceQtl * 1.1);
 
-  const getCropDisplayName = (cName) => {
-    switch (cName) {
-      case 'Tomato': return lang === 'te' ? 'టమాటా (Tomato)' : (lang === 'hi' ? 'टमाटर (Tomato)' : 'Tomato');
-      case 'Paddy': return lang === 'te' ? 'వరి (Paddy)' : (lang === 'hi' ? 'धान (Paddy)' : 'Paddy / Rice');
-      case 'Chilli': return lang === 'te' ? 'మిరప (Chilli)' : (lang === 'hi' ? 'मिर्च (Chilli)' : 'Chilli');
-      case 'Cotton': return lang === 'te' ? 'పత్తి (Cotton)' : (lang === 'hi' ? 'कपास (Cotton)' : 'Cotton');
-      case 'Potato': return lang === 'te' ? 'బంగాళాదుంప (Potato)' : (lang === 'hi' ? 'आलू (Potato)' : 'Potato');
-      default: return cName;
-    }
-  };
+  const localizedAreaName = getLocalizedLocationName(selectedArea, lang);
+  const localizedCropName = translateMarketTerm(selectedCrop, lang);
+  const localizedMandiYard = translateMarketTerm(currentCropData.nearest_mandi || `${selectedArea} APMC Market`, lang);
+  const localizedTrend = translateMarketTerm(currentCropData.trend || 'Rising', lang);
+  const localizedWindow = translateMarketTerm(currentCropData.optimal_window || 'Harvest in 3 days (Pre-Rain Gain)', lang);
 
   const toggleAudio = () => {
     if (isPlayingAudio) {
@@ -46,8 +75,8 @@ export default function MarketIntelligence({ activeField }) {
     }
 
     const textToSpeak = lang === 'te'
-      ? `నమస్కారం! ఈ రోజు ${selectedCrop} మార్కెట్ ధర రూ. ${currentPriceQtl} ఒక క్వింటాల్ కి ఉంది. 3 రోజులు ఆగితే ధర ఇంకా పెరిగే అవకాశం ఉంది. గుంటూరు యార్డ్‌లో రవాణా ధర ఎక్కువగా ఉంది.`
-      : `Today ${selectedCrop} market price is ₹${currentPriceQtl} per quintal (₹${currentPriceKg}/kg). Prices expected to increase by 10% in 3 days. Recommendation: HOLD harvest 3 days.`;
+      ? `నమస్కారం! ${localizedAreaName} ప్రాంతపు మార్కెట్‌లో ${selectedCrop} ధర క్వింటాల్‌కి రూ. ${currentPriceQtl} ఉంది. 3 రోజుల తర్వాత అమ్మడం ద్వారా రూ. 300 అధిక రాబడి పొందవచ్చు.`
+      : `Today in ${selectedArea} market, ${selectedCrop} price is ₹${currentPriceQtl} per quintal. Forecast recommendation: Hold or harvest in 3 days for higher gains.`;
 
     setIsPlayingAudio(true);
     speakText(
@@ -59,21 +88,24 @@ export default function MarketIntelligence({ activeField }) {
     );
   };
 
+  const popularAreas = ['Guntur', 'Mangalagiri', 'Vijayawada', 'Hyderabad', 'Karimnagar', 'Tirupati', 'Nashik', 'Ludhiana'];
+  const availableCrops = Object.keys(mandiPrices).length > 0 ? Object.keys(mandiPrices) : ['Tomato', 'Paddy', 'Chilli', 'Cotton'];
+
   const comparisonMarkets = [
     { 
-      location: lang === 'te' ? 'గ్రామ వ్యాపారి (Farmgate Trader)' : (lang === 'hi' ? 'गाँव के व्यापारी' : 'Local Village Trader'), 
-      price: (currentPriceQtl * 0.85).toFixed(0), 
-      netKg: (currentPriceKg * 0.85).toFixed(1) 
+      location: lang === 'te' ? 'గ్రామ స్థానిక వ్యాపారి (Farmgate Trader)' : (lang === 'hi' ? 'गाँव के व्यापारी' : 'Local Village Trader'), 
+      price: Math.round(currentPriceQtl * 0.86), 
+      netKg: (currentPriceKg * 0.86).toFixed(1) 
     },
     { 
-      location: lang === 'te' ? 'గుంటూరు హోల్‌సేల్ యార్డ్' : (lang === 'hi' ? 'गुंटूर मंडी' : 'Guntur Wholesale APMC Yard'), 
+      location: localizedMandiYard, 
       price: currentPriceQtl, 
       netKg: currentPriceKg 
     },
     { 
-      location: lang === 'te' ? 'విజయవాడ రీజినల్ APMC మార్కెట్' : (lang === 'hi' ? 'क्षेत्रीय APMC मंडी' : 'Regional APMC Hub (Vijayawada)'), 
-      price: (currentPriceQtl * 1.12).toFixed(0), 
-      netKg: (currentPriceKg * 1.12).toFixed(1) 
+      location: lang === 'te' ? `${localizedAreaName} రీజినల్ APMC యార్డ్` : `${selectedArea} Regional APMC Hub`, 
+      price: Math.round(currentPriceQtl * 1.10), 
+      netKg: (currentPriceKg * 1.10).toFixed(1) 
     }
   ];
 
@@ -81,135 +113,164 @@ export default function MarketIntelligence({ activeField }) {
     <div className="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
       
       {/* Header Banner */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-black text-[#2C3333] flex items-center gap-2">
-            💰 {lang === 'te' ? 'లైవ్ మండీ పంట ధరలు & అమ్మకం సలహా' : (lang === 'hi' ? 'लाइव मंडी भाव' : 'Live Mandi Market Prices & Sell Advisory')}
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-600 font-semibold mt-1">
-            {lang === 'te'
-              ? 'క్వింటాల్ ఆధారంగా ప్రస్తుత మార్కెట్ ధరలు, యార్డ్ ట్రెండ్స్ మరియు ఉత్తమ అమ్మకపు సమయం.'
-              : 'Real-time crop market prices per quintal, APMC yard trends, and optimal selling timeline.'}
-          </p>
-        </div>
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-[#2C3333] flex items-center gap-2">
+              💰 {lang === 'te' ? 'ప్రాంతాల వారీ లైవ్ మండీ ధరలు & అమ్మకపు సలహా' : (lang === 'hi' ? 'क्षेत्रीय लाइव मंडी भाव एवं बिक्री सलाह' : 'Area-Specific Live Mandi Prices & Sell Advisory')}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 font-semibold mt-1">
+              {lang === 'te'
+                ? 'ప్రతి ప్రాంతం మరియు మండీ యార్డ్‌కి విడివిడిగా ధరలు, 7-రోజుల ధరల ట్రెండ్ మరియు ఉత్తమ అమ్మకపు సమయం.'
+                : 'Real-time crop prices per quintal tailored to your specific region & APMC wholesale market.'}
+            </p>
+          </div>
 
-        <button
-          onClick={toggleAudio}
-          className={`min-h-[44px] px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all shrink-0 ${
-            isPlayingAudio
-              ? 'bg-rose-500 text-white shadow-rose-200 animate-pulse'
-              : 'bg-[#2D6A4F] hover:bg-[#1B4332] text-white shadow-emerald-100'
-          }`}
-        >
-          <Volume2 className={`w-4 h-4 ${isPlayingAudio ? 'animate-bounce' : ''}`} />
-          <span>{isPlayingAudio ? (lang === 'te' ? 'ఆపండి ⏹️' : 'Stop Audio ⏹️') : (lang === 'te' ? '🔊 వాయిస్ సలహా వినండి' : '🔊 Listen Market Audio')}</span>
-        </button>
-      </div>
-
-      {/* Crop Selection Selector Bar */}
-      <div className="flex space-x-2 border-b border-emerald-100 pb-3 overflow-x-auto no-scrollbar">
-        {['Tomato', 'Paddy', 'Chilli', 'Cotton', 'Potato'].map((crop) => (
           <button
-            key={crop}
-            onClick={() => setSelectedCrop(crop)}
-            className={`min-h-[40px] px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
-              selectedCrop === crop
-                ? 'bg-[#2D6A4F] text-white shadow-sm scale-[1.02]'
-                : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
+            onClick={toggleAudio}
+            className={`min-h-[44px] px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all shrink-0 ${
+              isPlayingAudio
+                ? 'bg-rose-500 text-white shadow-rose-200 animate-pulse'
+                : 'bg-[#2D6A4F] hover:bg-[#1B4332] text-white'
             }`}
           >
-            <span>🌾 {getCropDisplayName(crop)}</span>
+            <Volume2 className={`w-4 h-4 ${isPlayingAudio ? 'animate-bounce' : ''}`} />
+            <span>{isPlayingAudio ? (lang === 'te' ? 'ఆపండి' : 'Stop Audio') : (lang === 'te' ? '🔊 వాయిస్ వినండి' : '🔊 Listen Advice')}</span>
           </button>
-        ))}
+        </div>
+
+        {/* Area Selection Chips Bar */}
+        <div className="space-y-2 pt-2 border-t border-emerald-100">
+          <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-[#2D6A4F]" />
+            <span>{lang === 'te' ? 'మీ ప్రాంతం / మండీ యార్డ్‌ను ఎంచుకోండి:' : 'Select Mandi Region / Market Area:'}</span>
+          </span>
+
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+            {popularAreas.map((area) => {
+              const localizedArea = getLocalizedLocationName(area, lang);
+              const isSelected = selectedArea.toLowerCase() === area.toLowerCase();
+              return (
+                <button
+                  key={area}
+                  onClick={() => setSelectedArea(area)}
+                  className={`px-4 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer shrink-0 ${
+                    isSelected
+                      ? 'bg-[#2D6A4F] text-white shadow-md scale-[1.03]'
+                      : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200'
+                  }`}
+                >
+                  📍 {localizedArea}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
 
-      {/* Main Price Card */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Crop Selector Bar */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+        {availableCrops.map((cName) => {
+          const locCrop = translateMarketTerm(cName, lang);
+          const isActive = selectedCrop === cName;
+          return (
+            <button
+              key={cName}
+              onClick={() => setSelectedCrop(cName)}
+              className={`px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
+                isActive
+                  ? 'bg-[#2D6A4F] text-white shadow-md scale-[1.02]'
+                  : 'bg-white text-slate-700 hover:bg-emerald-50 border border-emerald-100'
+              }`}
+            >
+              {locCrop}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Main Mandi Price Highlight Card */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#2D6A4F] via-[#1B4332] to-[#081C15] text-white shadow-lg space-y-6">
         
-        {/* Today's Live Rate */}
-        <div className="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 space-y-6 shadow-sm flex flex-col justify-between">
+        {/* Top Info */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-700/50 pb-4">
+          <div>
+            <div className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-emerald-300" />
+              <span>{localizedMandiYard} ({localizedAreaName})</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {localizedCropName}
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="px-3.5 py-1 rounded-full text-xs font-black bg-emerald-400 text-slate-950 shadow-sm">
+              {localizedTrend}
+            </span>
+          </div>
+        </div>
+
+        {/* Price Metrics Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  {lang === 'te' ? 'పంట:' : 'Crop:'} {getCropDisplayName(selectedCrop)}
-                </span>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#2C3333] mt-1">
-                  {lang === 'te' ? 'ఈనాటి హోల్‌సేల్ మండీ ధర' : (lang === 'hi' ? 'आज का थोक मंडी भाव' : "Today's Wholesale Mandi Rate")}
-                </h3>
-              </div>
-
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold">
-                <ArrowUpRight className="w-4 h-4 text-emerald-800" />
-                <span>{lang === 'te' ? 'ధర ట్రెండ్: పెరుగుతోంది (+10%)' : 'TREND: UP (+10%)'}</span>
-              </div>
+          {/* Current Wholesale Price */}
+          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10 space-y-1">
+            <div className="text-xs font-bold text-emerald-200">
+              {lang === 'te' ? 'ప్రస్తుత హోల్‌సేల్ ధర (క్వింటాల్)' : 'Current Wholesale Price'}
             </div>
-
-            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="text-3xl sm:text-5xl font-extrabold text-[#2D6A4F]">
-                  ₹{currentPriceQtl} <span className="text-sm font-semibold text-slate-500">/ {lang === 'te' ? 'క్వింటాల్' : 'Quintal'}</span>
-                </div>
-                <div className="text-xs text-slate-600 font-semibold mt-1">
-                  ({lang === 'te' ? 'కిలో ధర సగటున' : 'Equivalent to'} <span className="text-[#2D6A4F] font-bold">₹{currentPriceKg}/kg</span>)
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-right">
-                <div className="text-[11px] font-bold text-[#2D6A4F] uppercase">{lang === 'te' ? '3 రోజుల అంచనా ధర' : '3-Day Forecast Price'}</div>
-                <div className="text-xl font-bold text-[#2C3333]">₹{forecastPrice3Days} / {lang === 'te' ? 'క్వింటాల్' : 'qtl'}</div>
-                <div className="text-[10px] text-emerald-800 font-bold">{lang === 'te' ? 'ధర +10% పెరిగే అవకాశం ఉంది' : '+10% Price Increase Expected'}</div>
-              </div>
+            <div className="text-3xl sm:text-4xl font-black text-white">
+              ₹{currentPriceQtl.toLocaleString('en-IN')}
             </div>
-
-            <div className="p-4 rounded-2xl bg-emerald-100/60 border border-emerald-200 text-emerald-950 space-y-1">
-              <div className="text-xs font-bold uppercase text-[#2D6A4F] flex items-center gap-1.5">
-                <Award className="w-4 h-4 text-[#2D6A4F]" />
-                <span>{lang === 'te' ? 'AI సలహా: 3 రోజులు కోత ఆపి వేచి ఉండండి' : 'AI Recommendation: HOLD HARVEST FOR 3 DAYS'}</span>
-              </div>
-              <p className="text-xs text-slate-700 font-semibold leading-relaxed">
-                {lang === 'te'
-                  ? 'మార్కెట్‌లో సరుకు రాక తగ్గింది. 3 రోజులు ఆగి అమ్మితే క్వింటాలుకు ₹200 నుండి ₹250 వరకు అదనపు లాభం లభిస్తుంది.'
-                  : 'Market arrivals are currently low. Waiting 3 days before selling will fetch ₹200-₹250 higher profit per quintal.'}
-              </p>
+            <div className="text-xs text-emerald-200 font-semibold">
+              ≈ ₹{currentPriceKg} / kg
             </div>
           </div>
 
-          <div className="text-xs text-slate-500 font-semibold flex items-center gap-2 pt-2 border-t border-slate-100">
-            <MapPin className="w-4 h-4 text-[#2D6A4F]" />
-            <span>{lang === 'te' ? 'నివేదిక యార్డ్:' : 'Reporting Yard:'} {currentCropData.nearest_mandi || 'Guntur APMC Yard'}</span>
+          {/* 7-Day Forecasted Price */}
+          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10 space-y-1">
+            <div className="text-xs font-bold text-emerald-200">
+              {lang === 'te' ? '3 రోజుల అంచనా ధర' : '3-Day Forecast Price'}
+            </div>
+            <div className="text-3xl sm:text-4xl font-black text-emerald-300">
+              ₹{Number(forecastPrice3Days).toLocaleString('en-IN')}
+            </div>
+            <div className="text-xs text-emerald-200 font-semibold">
+              +₹{(forecastPrice3Days - currentPriceQtl)} / qtl gain
+            </div>
+          </div>
+
+          {/* Optimal Window */}
+          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10 space-y-1">
+            <div className="text-xs font-bold text-emerald-200">
+              {lang === 'te' ? 'ఉత్తమ విక్రయ సమయం' : 'Optimal Window'}
+            </div>
+            <div className="text-sm font-extrabold text-white leading-snug">
+              {localizedWindow}
+            </div>
           </div>
 
         </div>
 
-        {/* Market Price Comparison Breakdown */}
-        <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
-          <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
-            <BarChart2 className="w-4 h-4 text-[#2D6A4F]" />
-            <span>{lang === 'te' ? 'వివిధ మార్కెట్ల ధరల పోలిక' : 'Yard Price Comparison'}</span>
-          </h3>
+      </div>
 
-          <div className="space-y-3">
-            {comparisonMarkets.map((m, idx) => (
-              <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-800">
-                  <span>📍 {m.location}</span>
-                  <span className="text-[#2D6A4F]">₹{m.price} / {lang === 'te' ? 'క్వింటాల్' : 'qtl'}</span>
-                </div>
+      {/* Region Price Comparison Grid */}
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-emerald-100 space-y-4 shadow-sm">
+        <h3 className="text-sm font-bold text-[#2C3333] flex items-center gap-2">
+          <BarChart2 className="w-4 h-4 text-[#2D6A4F]" />
+          <span>{lang === 'te' ? `${localizedAreaName} పరిసర మార్కెట్ల ధరల పోలిక` : `Price Comparison Across Markets near ${localizedAreaName}`}</span>
+        </h3>
 
-                {/* Visual Bar Indicator */}
-                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-[#2D6A4F] h-full rounded-full"
-                    style={{ width: `${Math.min(100, (m.price / (currentPriceQtl * 1.15)) * 100)}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {comparisonMarkets.map((m, idx) => (
+            <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 hover:border-emerald-300 transition-all">
+              <div className="text-xs font-bold text-slate-500">{m.location}</div>
+              <div className="text-xl font-black text-[#2C3333]">₹{Number(m.price).toLocaleString('en-IN')} <span className="text-xs font-bold text-slate-500">/ qtl</span></div>
+              <div className="text-xs font-semibold text-[#2D6A4F]">≈ ₹{m.netKg} / kg</div>
+            </div>
+          ))}
         </div>
-
       </div>
 
     </div>
