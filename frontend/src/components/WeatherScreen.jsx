@@ -9,23 +9,61 @@ export default function WeatherScreen() {
 
   const weatherData = {
     temp: '31°C',
-    condition: lang === 'te' ? 'భారీ వర్షపు సూచన' : 'Heavy Rain Forecast',
+    condition: lang === 'te' ? 'భారీ వర్షపు సూచన' : (lang === 'hi' ? 'भारी बारिश का अनुमान' : 'Heavy Rain Forecast'),
     humidity: '74%',
     wind: '16 km/h',
     rainProb: '85%',
-    uvIndex: 'Moderate (5)',
+    uvIndex: lang === 'te' ? 'సాధారణం (5)' : (lang === 'hi' ? 'सामान्य (5)' : 'Moderate (5)'),
     alert: lang === 'te'
       ? 'ఈ రోజు మధ్యాహ్నం 2 గంటల నుండి సాయంత్రం 6 గంటల మధ్య గుంటూరు మరియు పరిసర ప్రాంతాలలో 85% వర్షపాతం కురిసే అవకాశం ఉంది. పంటలకు క్రిమిసంహారకాల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి.'
-      : 'Heavy rain expected between 2 PM and 6 PM today. Pause all pesticide spraying and canal/drip irrigation.'
+      : (lang === 'hi'
+        ? 'आज दोपहर 2 बजे से शाम 6 बजे के बीच 85% बारिश की संभावना है। कीटनाशक छिड़काव और सिंचाई रोक दें।'
+        : 'Heavy rain expected between 2 PM and 6 PM today. Pause all pesticide spraying and canal/drip irrigation.')
   };
 
   const weeklyForecast = [
-    { day: lang === 'te' ? 'ఈ రోజు (నేడు)' : 'Today', icon: CloudRain, temp: '31°C / 24°C', rain: '85%', desc: 'Heavy Rain' },
-    { day: lang === 'te' ? 'రేపు' : 'Tomorrow', icon: Sun, temp: '33°C / 25°C', rain: '20%', desc: 'Mostly Sunny' },
-    { day: lang === 'te' ? 'ఎల్లుండి' : 'Day 3', icon: Sun, temp: '34°C / 26°C', rain: '10%', desc: 'Clear Skies' },
-    { day: lang === 'te' ? 'గురువారం' : 'Day 4', icon: CloudRain, temp: '30°C / 23°C', rain: '60%', desc: 'Light Shower' },
-    { day: lang === 'te' ? 'శుక్రవారం' : 'Day 5', icon: Sun, temp: '32°C / 24°C', rain: '15%', desc: 'Partly Cloudy' },
-    { day: lang === 'te' ? 'శనివారం' : 'Day 6', icon: Sun, temp: '33°C / 25°C', rain: '0%', desc: 'Sunny Day' }
+    { 
+      day: lang === 'te' ? 'ఈ రోజు (నేడు)' : (lang === 'hi' ? 'आज' : 'Today'), 
+      icon: CloudRain, 
+      temp: '31°C / 24°C', 
+      rain: '85%', 
+      desc: lang === 'te' ? 'భారీ వర్షం' : (lang === 'hi' ? 'भारी बारिश' : 'Heavy Rain') 
+    },
+    { 
+      day: lang === 'te' ? 'రేపు' : (lang === 'hi' ? 'कल' : 'Tomorrow'), 
+      icon: Sun, 
+      temp: '33°C / 25°C', 
+      rain: '20%', 
+      desc: lang === 'te' ? 'ఎండ తీవ్రత' : (lang === 'hi' ? 'ज्यादातर धूप' : 'Mostly Sunny') 
+    },
+    { 
+      day: lang === 'te' ? 'ఎల్లుండి' : (lang === 'hi' ? 'परसों' : 'Day 3'), 
+      icon: Sun, 
+      temp: '34°C / 26°C', 
+      rain: '10%', 
+      desc: lang === 'te' ? 'నిర్మలమైన ఆకాశం' : (lang === 'hi' ? 'साफ आसमान' : 'Clear Skies') 
+    },
+    { 
+      day: lang === 'te' ? 'గురువారం' : (lang === 'hi' ? 'गुरुवार' : 'Day 4'), 
+      icon: CloudRain, 
+      temp: '30°C / 23°C', 
+      rain: '60%', 
+      desc: lang === 'te' ? 'తేలికపాటి వర్షం' : (lang === 'hi' ? 'हल्की बारिश' : 'Light Shower') 
+    },
+    { 
+      day: lang === 'te' ? 'శుక్రవారం' : (lang === 'hi' ? 'शुक्रवार' : 'Day 5'), 
+      icon: Sun, 
+      temp: '32°C / 24°C', 
+      rain: '15%', 
+      desc: lang === 'te' ? 'పాక్షికంగా మేఘావృతం' : (lang === 'hi' ? 'आंशिक बादल' : 'Partly Cloudy') 
+    },
+    { 
+      day: lang === 'te' ? 'శనివారం' : (lang === 'hi' ? 'शनिवार' : 'Day 6'), 
+      icon: Sun, 
+      temp: '33°C / 25°C', 
+      rain: '0%', 
+      desc: lang === 'te' ? 'ఎండ రోజు' : (lang === 'hi' ? 'धूप वाला दिन' : 'Sunny Day') 
+    }
   ];
 
   const toggleAudio = () => {
@@ -52,10 +90,12 @@ export default function WeatherScreen() {
       <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-orange-950 p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-amber-400 flex items-center gap-2">
-            🌤️ Live Agricultural Weather Advisory
+            🌤️ {lang === 'te' ? 'వ్యవసాయ వాతావరణ సమాచారం & సలహాలు' : (lang === 'hi' ? 'कृषि मौसम सलाह' : 'Live Agricultural Weather Advisory')}
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 font-bold mt-1">
-            Real-time rainfall warnings, humidity, and microclimate advice for crop protection.
+            {lang === 'te' 
+              ? 'వర్షపాత హెచ్చరికలు, తేమ శాతం మరియు పంట సంరక్షణ కోసం రియల్-టైమ్ సమాచారం.' 
+              : (lang === 'hi' ? 'फसल सुरक्षा के लिए वास्तविक समय वर्षा चेतावनी और आर्द्रता सलाह।' : 'Real-time rainfall warnings, humidity, and microclimate advice for crop protection.')}
           </p>
         </div>
 
@@ -68,7 +108,7 @@ export default function WeatherScreen() {
           }`}
         >
           <Volume2 className={`w-4 h-4 ${isPlayingAudio ? 'animate-bounce' : ''}`} />
-          <span>{isPlayingAudio ? 'Stop Audio ⏹️' : '🔊 Listen Weather Audio'}</span>
+          <span>{isPlayingAudio ? (lang === 'te' ? 'ఆపండి ⏹️' : 'Stop Audio ⏹️') : (lang === 'te' ? '🔊 వాయిస్ సలహా వినండి' : '🔊 Listen Weather Audio')}</span>
         </button>
       </div>
 
@@ -76,7 +116,7 @@ export default function WeatherScreen() {
       <div className="p-5 rounded-3xl bg-amber-950/80 border-2 border-amber-500/60 text-amber-200 space-y-2 shadow-xl animate-in fade-in duration-300">
         <div className="flex items-center gap-2 text-sm font-black text-amber-400 uppercase tracking-wider">
           <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 animate-bounce" />
-          <span>⚠️ Weather Alert for Farmers</span>
+          <span>⚠️ {lang === 'te' ? 'రైతులకు వాతావరణ హెచ్చరిక' : (lang === 'hi' ? 'किसानों के लिए मौसम चेतावनी' : 'Weather Alert for Farmers')}</span>
         </div>
         <p className="text-xs sm:text-sm font-bold text-slate-200 leading-relaxed">
           {weatherData.alert}
@@ -86,40 +126,44 @@ export default function WeatherScreen() {
       {/* Current Weather Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         
+        {/* Stat Card 1: Temperature */}
         <div className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-2 shadow-xl">
           <div className="flex items-center gap-2 text-slate-400 text-xs font-black">
             <Thermometer className="w-4 h-4 text-amber-400" />
-            <span>Temperature</span>
+            <span>{lang === 'te' ? 'ఉష్ణోగ్రత' : (lang === 'hi' ? 'तापमान' : 'Temperature')}</span>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-amber-400">{weatherData.temp}</div>
           <div className="text-[11px] text-slate-400 font-bold">{weatherData.condition}</div>
         </div>
 
+        {/* Stat Card 2: Rain Probability */}
         <div className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-2 shadow-xl">
           <div className="flex items-center gap-2 text-slate-400 text-xs font-black">
             <CloudRain className="w-4 h-4 text-cyan-400" />
-            <span>Rain Probability</span>
+            <span>{lang === 'te' ? 'వర్షం అవకాశం' : (lang === 'hi' ? 'बारिश की संभावना' : 'Rain Probability')}</span>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-cyan-400">{weatherData.rainProb}</div>
-          <div className="text-[11px] text-slate-400 font-bold">Rain at 2 PM</div>
+          <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? 'మధ్యాహ్నం 2 గంటలకు వర్షం' : (lang === 'hi' ? 'दोपहर 2 बजे बारिश' : 'Rain at 2 PM')}</div>
         </div>
 
+        {/* Stat Card 3: Humidity */}
         <div className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-2 shadow-xl">
           <div className="flex items-center gap-2 text-slate-400 text-xs font-black">
             <Droplets className="w-4 h-4 text-emerald-400" />
-            <span>Humidity</span>
+            <span>{lang === 'te' ? 'తేమ శాతం' : (lang === 'hi' ? 'आर्द्रता' : 'Humidity')}</span>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-emerald-400">{weatherData.humidity}</div>
-          <div className="text-[11px] text-slate-400 font-bold">High Moisture</div>
+          <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? 'అధిక తేమ' : (lang === 'hi' ? 'उच्च नमी' : 'High Moisture')}</div>
         </div>
 
+        {/* Stat Card 4: Wind Speed */}
         <div className="bg-slate-900/90 p-5 rounded-3xl border border-slate-800 space-y-2 shadow-xl">
           <div className="flex items-center gap-2 text-slate-400 text-xs font-black">
             <Wind className="w-4 h-4 text-purple-400" />
-            <span>Wind Speed</span>
+            <span>{lang === 'te' ? 'గాలి వేగం' : (lang === 'hi' ? 'हवा की गति' : 'Wind Speed')}</span>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-purple-400">{weatherData.wind}</div>
-          <div className="text-[11px] text-slate-400 font-bold">South-West Wind</div>
+          <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? 'నైరుతి దిశ గాలి' : (lang === 'hi' ? 'दक्षिण-पश्चिम हवा' : 'South-West Wind')}</div>
         </div>
 
       </div>
@@ -128,7 +172,7 @@ export default function WeatherScreen() {
       <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-2xl">
         <h3 className="text-sm font-black text-slate-100 flex items-center gap-2">
           <Calendar className="w-4 h-4 text-amber-400" />
-          <span>Weekly Microclimate Sowing & Rain Forecast</span>
+          <span>{lang === 'te' ? '📅 వారపు వాతావరణ మరియు విత్తనాల సూచన' : (lang === 'hi' ? 'साप्ताहिक मौसम पूर्वानुमान' : 'Weekly Microclimate Sowing & Rain Forecast')}</span>
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">

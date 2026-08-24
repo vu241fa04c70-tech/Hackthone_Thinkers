@@ -124,7 +124,7 @@ export default function App() {
               className="px-4 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-black text-xs flex items-center gap-2 cursor-pointer border border-slate-700"
             >
               <LogOut className="w-4 h-4 text-cyan-400" />
-              <span>Exit Admin Portal</span>
+              <span>{lang === 'te' ? '🏠 వెనుకకు (Exit)' : (lang === 'hi' ? '🏠 वापस (Exit)' : 'Exit Admin Portal')}</span>
             </button>
           </div>
         </header>
@@ -212,7 +212,7 @@ export default function App() {
               className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0"
               title="Return to Welcome Screen"
             >
-              <span>🏠 Exit</span>
+              <span>{lang === 'te' ? '🏠 వెనుకకు' : (lang === 'hi' ? '🏠 वापस' : '🏠 Exit')}</span>
             </button>
 
             {/* ➕ Create Account / Switch User Button */}
@@ -296,8 +296,8 @@ export default function App() {
       {/* Footer */}
       <footer className="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>🌾 {t('nav.appName')} • Government & Admin Management Control Active</span>
-          <span>Multilingual Speech Recognition & Text-to-Speech (STT & TTS)</span>
+          <span>🌾 {t('nav.appName')} • {lang === 'te' ? 'ప్రభుత్వ సేవలు మరియు అడ్మిన్ నిర్వహణ సక్రియంగా ఉంది' : 'Government & Admin Management Active'}</span>
+          <span>{lang === 'te' ? 'బహుభాషా వాయిస్ AI మరియు కంప్యూటర్ విజన్ సాధనం' : 'Multilingual Speech Recognition & Text-to-Speech (STT & TTS)'}</span>
         </div>
       </footer>
 

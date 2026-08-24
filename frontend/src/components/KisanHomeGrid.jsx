@@ -38,9 +38,9 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
   const mainFeatureCards = [
     {
       id: 'doctor',
-      title: t('home.card1Title') || '📷 Crop Disease Lens',
-      subtitle: t('home.card1Sub') || 'Upload photo of leaf, fruit, stem or flower to diagnose crop diseases instantly.',
-      btnText: t('home.card1Btn') || 'Scan Crop Disease ➔',
+      title: lang === 'te' ? '📷 పంట & వ్యాధి గుర్తింపు AI లెన్స్' : (lang === 'hi' ? '📷 फसल रोग पहचान लेंस' : '📷 Crop Disease Lens'),
+      subtitle: lang === 'te' ? 'ఆకు, పండు, కాండం లేదా పూల ఫోటో తీసి పంట వ్యాధులను తక్షణమే గుర్తించండి.' : 'Upload photo of leaf, fruit, stem or flower to diagnose crop diseases instantly.',
+      btnText: lang === 'te' ? 'పంట వ్యాధి స్కాన్ చేయండి ➔' : 'Scan Crop Disease ➔',
       icon: Camera,
       badge: lang === 'te' ? 'వ్యాధి AI స్కాన్' : 'Vision AI Engine',
       gradient: 'from-emerald-950/90 via-slate-900 to-teal-950/90 border-emerald-500/50 hover:border-emerald-400',
@@ -49,9 +49,9 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
     },
     {
       id: 'weather',
-      title: t('home.card2Title') || '🌦️ Live Weather Advisory',
-      subtitle: t('home.card2Sub') || 'Rain expected today. Pause spraying pesticides & irrigation.',
-      btnText: t('home.card2Btn') || 'View Weather Details ➔',
+      title: lang === 'te' ? '🌦️ ఈనాటి వాతావరణ హెచ్చరికలు' : (lang === 'hi' ? '🌦️ मौसम सलाह' : '🌦️ Live Weather Advisory'),
+      subtitle: lang === 'te' ? 'ఈ రోజు మధ్యాహ్నం వర్షం పడే అవకాశం ఉంది. మందుల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి.' : 'Rain expected today. Pause spraying pesticides & irrigation.',
+      btnText: lang === 'te' ? 'వాతావరణ వివరాలు చూడండి ➔' : 'View Weather Details ➔',
       icon: Sun,
       badge: lang === 'te' ? 'వర్షపాత హెచ్చరిక' : 'Weather Alert',
       gradient: 'from-amber-950/90 via-slate-900 to-orange-950/90 border-amber-500/50 hover:border-amber-400',
@@ -97,19 +97,19 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-black">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>{t('home.briefingTitle') || 'Daily Farmer AI Advisory'}</span>
+                <span>{lang === 'te' ? 'ఈనాటి రైతు AI సమాచారం' : (lang === 'hi' ? 'आज का किसान AI समाचार' : 'Daily Farmer AI Advisory')}</span>
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
-                {t('home.greetingPrefix') || 'Namaskaram'} <span className="text-emerald-400">{farmerName}</span> {t('home.greetingSuffix') || ''} 🌅
+                {t('home.greetingPrefix') || (lang === 'te' ? 'నమస్కారం' : 'Namaskaram')} <span className="text-emerald-400">{farmerName}</span> {t('home.greetingSuffix') || (lang === 'te' ? 'గారూ!' : '')} 🌅
               </h2>
 
               <p className="text-xs sm:text-sm text-slate-300 font-bold">
-                📍 {village}, {district} • 🌾 {t('home.cropContext') || 'Crop'}: <span className="text-emerald-400 font-black">{cropName}</span>
+                📍 {village}, {district} • 🌾 {lang === 'te' ? 'సాగు పంట' : 'Crop'}: <span className="text-emerald-400 font-black">{cropName}</span>
               </p>
             </div>
 
-            {/* Prominent Voice Briefing Button (Min 48px Height for One-Thumb Tap) */}
+            {/* Prominent Voice Briefing Button */}
             <button
               onClick={toggleBriefing}
               className={`min-h-[52px] px-6 py-3.5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-3 cursor-pointer shadow-xl transition-all duration-300 shrink-0 ${
@@ -122,7 +122,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
               <span>
                 {isPlayingBriefing
                   ? (lang === 'te' ? 'ఆపండి ⏹️' : 'Stop Audio ⏹️')
-                  : (t('home.listenBriefing') || '🔊 Listen Morning Briefing')}
+                  : (lang === 'te' ? '🔊 ఉదయం సలహా వినండి' : '🔊 Listen Morning Briefing')}
               </span>
             </button>
 
@@ -133,16 +133,16 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
             <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center gap-3">
               <Sun className="w-6 h-6 text-amber-400 shrink-0" />
               <div>
-                <div className="text-xs font-black text-slate-200">🌦️ Weather Advisory Today</div>
-                <div className="text-[11px] text-slate-400 font-bold">Rain expected at 2 PM. Hold pesticide spray.</div>
+                <div className="text-xs font-black text-slate-200">🌦️ {lang === 'te' ? 'వాతావరణ హెచ్చరిక' : 'Weather Advisory Today'}</div>
+                <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? 'మధ్యాహ్నం 2 గంటలకు వర్షం. మందు కొట్టడం ఆపండి.' : 'Rain expected at 2 PM. Hold pesticide spray.'}</div>
               </div>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center gap-3">
               <TrendingUp className="w-6 h-6 text-emerald-400 shrink-0" />
               <div>
-                <div className="text-xs font-black text-slate-200">💰 {cropName} Mandi Rate</div>
-                <div className="text-[11px] text-slate-400 font-bold">₹2,600 / Quintal • Price expected +₹200 in 3 days.</div>
+                <div className="text-xs font-black text-slate-200">💰 {cropName} {lang === 'te' ? 'మండీ ధర' : 'Mandi Rate'}</div>
+                <div className="text-[11px] text-slate-400 font-bold">{lang === 'te' ? '₹2,600 / క్వింటాల్ • 3 రోజులు ఆగితే ధర పెరుగుతుంది.' : '₹2,600 / Quintal • Price expected +₹200 in 3 days.'}</div>
               </div>
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
       <div className="space-y-3">
         <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2">
           <Zap className="w-4 h-4 text-emerald-400" />
-          <span>Quick Actions & Shortcuts</span>
+          <span>{lang === 'te' ? 'తక్షణ సేవలు & షార్ట్‌కట్‌లు' : (lang === 'hi' ? 'त्वरित सेवाएँ' : 'Quick Actions & Shortcuts')}</span>
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -166,8 +166,8 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-black text-slate-100">Scan Crop</div>
-              <div className="text-[10px] text-slate-400 font-bold">Photo Lens AI</div>
+              <div className="text-xs font-black text-slate-100">{lang === 'te' ? 'పంట స్కాన్' : 'Scan Crop'}</div>
+              <div className="text-[10px] text-slate-400 font-bold">{lang === 'te' ? 'ఫోటో AI లెన్స్' : 'Photo Lens AI'}</div>
             </div>
           </button>
 
@@ -179,8 +179,8 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
               <Mic className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-black text-slate-100">Voice Query</div>
-              <div className="text-[10px] text-slate-400 font-bold">Talk to Kisan AI</div>
+              <div className="text-xs font-black text-slate-100">{lang === 'te' ? 'వాయిస్ ప్రశ్న' : 'Voice Query'}</div>
+              <div className="text-[10px] text-slate-400 font-bold">{lang === 'te' ? 'AI తో మాట్లాడండి' : 'Talk to Kisan AI'}</div>
             </div>
           </button>
 
@@ -192,8 +192,8 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
               <TrendingUp className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-black text-slate-100">Mandi Rate</div>
-              <div className="text-[10px] text-slate-400 font-bold">Today's Prices</div>
+              <div className="text-xs font-black text-slate-100">{lang === 'te' ? 'మండీ ధరలు' : 'Mandi Rate'}</div>
+              <div className="text-[10px] text-slate-400 font-bold">{lang === 'te' ? 'ఈనాటి ధరలు' : "Today's Prices"}</div>
             </div>
           </button>
 
@@ -205,8 +205,8 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-black text-slate-100">Calendar</div>
-              <div className="text-[10px] text-slate-400 font-bold">Sowing Schedule</div>
+              <div className="text-xs font-black text-slate-100">{lang === 'te' ? 'క్యాలెండర్' : 'Calendar'}</div>
+              <div className="text-[10px] text-slate-400 font-bold">{lang === 'te' ? 'విత్తనాల షెడ్యూల్' : 'Sowing Schedule'}</div>
             </div>
           </button>
         </div>
@@ -242,7 +242,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
                 </div>
               </div>
 
-              {/* Action Button (Touch-Friendly Min 44px) */}
+              {/* Action Button */}
               <button
                 className="w-full py-3.5 px-4 rounded-2xl bg-slate-950/90 border border-slate-800 group-hover:border-slate-600 text-slate-100 font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all group-hover:bg-slate-900"
               >
