@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, CloudRain, Wind, Droplets, Volume2, AlertTriangle, Thermometer, ShieldAlert, Calendar, RefreshCw, MapPin, Search } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
+import { getLocalizedLocationName } from '../localization/locationTranslator';
 import { speakText, stopSpeech } from '../utils/voiceUtils';
 
 export default function WeatherScreen() {
@@ -48,21 +49,23 @@ export default function WeatherScreen() {
     }
   };
 
+  const localizedActiveLocation = getLocalizedLocationName(weatherData?.location || activeLocation, lang);
+
   const getAdvisoryText = () => {
     if (!weatherData) return '';
     const isRain = (weatherData.rain_probability_pct || 0) > 40 || (weatherData.current_humidity_pct || 0) > 80;
     
     if (lang === 'te') {
       return isRain
-        ? `ఈ రోజు ${weatherData.location || 'మీ ప్రాంతంలో'} వర్షపాతం కురిసే అవకాశం ఉంది (${Math.round(weatherData.rain_probability_pct || 75)}%). పంటలకు క్రిమిసంహారకాల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి.`
+        ? `ఈ రోజు ${localizedActiveLocation || 'మీ ప్రాంతంలో'} వర్షపాతం కురిసే అవకాశం ఉంది (${Math.round(weatherData.rain_probability_pct || 75)}%). పంటలకు క్రిమిసంహారకాల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి.`
         : `ఈ రోజు వాతావరణం పొడిగా ఉంది (${weatherData.current_temp_c || 31}°C). ఉదయం 7 నుండి 10 గంటల మధ్య మందులు పిచికారీ చేయడానికి అనుకూల సమయం.`;
     } else if (lang === 'hi') {
       return isRain
-        ? `${weatherData.location || 'आपके क्षेत्र'} में आज वर्षा की संभावना है (${Math.round(weatherData.rain_probability_pct || 75)}%)। कीटनाशक छिड़काव और सिंचाई रोक दें।`
+        ? `${localizedActiveLocation || 'आपके क्षेत्र'} में आज वर्षा की संभावना है (${Math.round(weatherData.rain_probability_pct || 75)}%)। कीटनाशक छिड़काव और सिंचाई रोक दें।`
         : `आज मौसम साफ और शुष्क है (${weatherData.current_temp_c || 31}°C)। सुबह छिड़काव के लिए अनुकूल समय है।`;
     } else {
       return isRain
-        ? `Rain expected in ${weatherData.location || 'your area'} today (${Math.round(weatherData.rain_probability_pct || 75)}% chance). Pause all pesticide spraying and canal/drip irrigation.`
+        ? `Rain expected in ${localizedActiveLocation || 'your area'} today (${Math.round(weatherData.rain_probability_pct || 75)}% chance). Pause all pesticide spraying and canal/drip irrigation.`
         : `Clear and dry weather today (${weatherData.current_temp_c || 31}°C). Ideal window for pesticide spraying between 7:00 AM and 10:00 AM.`;
     }
   };
@@ -135,7 +138,7 @@ export default function WeatherScreen() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={lang === 'te' ? 'నగరం/గ్రామం పేరు టైప్ చేయండి (ఉదా: Guntur, Vijayawada)...' : 'Type city or village name (e.g., Guntur, Nashik, Ludhiana)...'}
+              placeholder={lang === 'te' ? 'నగరం/గ్రామం పేరు టైప్ చేయండి (ఉదా: గుంటూరు, విజయవాడ)...' : (lang === 'hi' ? 'शहर/गांव का नाम दर्ज करें (उदा: गुंटूर, विजयवाड़ा)...' : 'Type city or village name (e.g., Guntur, Nashik)...')}
               className="w-full bg-slate-50 border border-slate-200 rounded-full pl-10 pr-4 py-2.5 text-xs font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F] shadow-sm"
             />
           </div>
@@ -143,29 +146,34 @@ export default function WeatherScreen() {
             type="submit"
             className="px-5 py-2.5 rounded-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white font-bold text-xs shrink-0 cursor-pointer shadow-sm"
           >
-            {lang === 'te' ? 'వెతకండి' : 'Search City'}
+            {lang === 'te' ? 'వెతకండి' : (lang === 'hi' ? 'खोजें' : 'Search City')}
           </button>
         </form>
 
-        {/* Popular Farming Hub Chips */}
+        {/* Popular Farming Hub Chips (FULLY LOCALIZED) */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1">
-          <span className="text-[11px] font-bold text-slate-500 shrink-0">Popular Hubs:</span>
-          {popularHubs.map((hub) => (
-            <button
-              key={hub}
-              onClick={() => {
-                setSearchQuery(hub);
-                setActiveLocation(hub);
-              }}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeLocation.toLowerCase().includes(hub.toLowerCase())
-                  ? 'bg-[#2D6A4F] text-white shadow-sm'
-                  : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200'
-              }`}
-            >
-              📍 {hub}
-            </button>
-          ))}
+          <span className="text-[11px] font-bold text-slate-500 shrink-0">
+            {lang === 'te' ? 'ముఖ్య నగరాలు:' : (lang === 'hi' ? 'प्रमुख शहर:' : 'Popular Hubs:')}
+          </span>
+          {popularHubs.map((hub) => {
+            const localizedHub = getLocalizedLocationName(hub, lang);
+            return (
+              <button
+                key={hub}
+                onClick={() => {
+                  setSearchQuery(hub);
+                  setActiveLocation(hub);
+                }}
+                className={`px-3.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                  activeLocation.toLowerCase().includes(hub.toLowerCase())
+                    ? 'bg-[#2D6A4F] text-white shadow-sm'
+                    : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200'
+                }`}
+              >
+                📍 {localizedHub}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -180,10 +188,10 @@ export default function WeatherScreen() {
             </div>
             <div>
               <span className="text-xs uppercase tracking-wider font-extrabold text-emerald-300">
-                🛰️ Live Satellite Weather Prediction
+                🛰️ {lang === 'te' ? 'ప్రత్యక్ష సాటిలైట్ వాతావరణ అంచనా' : 'Live Satellite Weather Prediction'}
               </span>
               <h3 className="text-xl sm:text-2xl font-black text-white">
-                📍 {weatherData?.location || activeLocation}
+                📍 {localizedActiveLocation}
               </h3>
             </div>
           </div>

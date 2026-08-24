@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bot, Camera, Calendar, TrendingUp, Scroll, Home, Sun, UserCheck, Globe, UserPlus, ShieldCheck, LogOut, PhoneCall } from 'lucide-react';
 import { useLanguage } from './localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from './localization/languageMap';
+import { getLocalizedLocationName } from './localization/locationTranslator';
 
 import WelcomeRoleScreen from './components/WelcomeRoleScreen';
 import LanguageSelectionScreen from './components/LanguageSelectionScreen';
@@ -64,13 +65,14 @@ export default function App() {
     if (!farmerProfile) return '';
     const rawName = farmerProfile.farmer_name || 'Ramesh';
     const crop = farmerProfile.main_crop || 'Tomato';
-    const location = `${farmerProfile.district || 'Guntur'}, ${farmerProfile.state || 'Andhra Pradesh'}`;
+    const rawLocation = `${farmerProfile.district || 'Guntur'}, ${farmerProfile.state || 'Andhra Pradesh'}`;
+    const localizedLoc = getLocalizedLocationName(rawLocation, lang);
 
     if (lang === 'en') {
       const cleanName = rawName.replace(/[\u0C00-\u0C7F]/g, '').replace(/[()]/g, '').trim() || 'Ramesh';
-      return `👨‍🌾 ${cleanName} (${crop}) • 📍 ${location}`;
+      return `👨‍🌾 ${cleanName} (${crop}) • 📍 ${localizedLoc}`;
     } else {
-      return `👨‍🌾 ${rawName} (${crop}) • 📍 ${location}`;
+      return `👨‍🌾 ${rawName} (${crop}) • 📍 ${localizedLoc}`;
     }
   };
 
@@ -115,7 +117,7 @@ export default function App() {
 
             <button
               onClick={() => setCurrentMode('welcome')}
-              className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 border border-slate-200 cursor-pointer transition-all shadow-sm shrink-0"
+              className="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 border border-slate-200 cursor-pointer transition-all shadow-sm shrink-0"
             >
               <LogOut className="w-4 h-4 text-[#2D6A4F]" />
               <span>Exit Admin Portal</span>
