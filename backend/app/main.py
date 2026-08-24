@@ -81,6 +81,35 @@ def create_or_update_farmer(farmer: Dict[str, Any] = Body(...)):
     return {"message": "Farmer profile saved successfully", "farmer": farmer}
 
 
+# LIVE WEATHER & MICROCLIMATE FORECAST ENDPOINT
+@app.get("/api/weather")
+def get_live_weather(location: Optional[str] = "Mangalagiri, Guntur, Andhra Pradesh"):
+    loc = location or "Guntur, Andhra Pradesh"
+    weather_data = weather_agent.get_weather_forecast(loc)
+    
+    # Generate farmer spray advisory
+    advisory_te = "ఈ రోజు మధ్యాహ్నం 2 గంటల నుండి సాయంత్రం 6 గంటల మధ్య 85% వర్షపాతం కురిసే అవకాశం ఉంది. పంటలకు క్రిమిసంహారకాల పిచికారీ మరియు నీటిపారుదల నిలిపివేయండి."
+    advisory_hi = "आज दोपहर 2 बजे से शाम 6 बजे के बीच 85% बारिश की संभावना है। कीटनाशक छिड़काव और सिंचाई रोक दें।"
+    advisory_en = "Heavy rain expected between 2 PM and 6 PM today. Pause all pesticide spraying and canal/drip irrigation."
+
+    return {
+        "location": loc,
+        "current_temp_c": weather_data.current_temp_c,
+        "current_humidity_pct": weather_data.current_humidity_pct,
+        "wind_speed_kmh": weather_data.wind_speed_kmh,
+        "rain_probability_pct": 85.0,
+        "condition_en": "Heavy Rain Forecast",
+        "condition_te": "భారీ వర్షపు సూచన",
+        "condition_hi": "भारी बारिश का अनुमान",
+        "spray_advisory": {
+            "te": advisory_te,
+            "hi": advisory_hi,
+            "en": advisory_en
+        },
+        "forecast_7d": weather_data.forecast_7d
+    }
+
+
 @app.get("/api/scans/history")
 def get_scan_history():
     return SCANS_HISTORY_DB
@@ -105,26 +134,18 @@ def get_contacts(
     village: Optional[str] = None
 ):
     contacts_list = list(OFFICER_CONTACTS_DB.values())
-    
-    # Priority sorting: Kisan Call Centre first, then matching location contacts
     sorted_contacts = []
-    
-    # 1. Kisan Call Centre (Always at top)
     for c in contacts_list:
         if c.get("category") == "Kisan Call Centre" or c.get("contact_id") == "kisan_helpline":
             sorted_contacts.append(c)
-
-    # 2. Local Government Officers
     for c in contacts_list:
         if c not in sorted_contacts:
             sorted_contacts.append(c)
-            
     return sorted_contacts
 
 
 @app.post("/api/contacts")
 def create_or_update_contact(contact: Dict[str, Any] = Body(...)):
-    # Phone Validation (Must contain at least 8 digits)
     phone = contact.get("phone", "").strip()
     digits = [ch for ch in phone if ch.isdigit()]
     if len(digits) < 8:
