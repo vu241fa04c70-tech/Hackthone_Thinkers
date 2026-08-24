@@ -133,7 +133,7 @@ SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
     }
 }
 
-# Dynamic Government Schemes Store (GOVT_SCHEMES_DB)
+# Multilingual Dynamic Government Schemes Store (GOVT_SCHEMES_DB)
 GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {
     "scheme_01": {
         "scheme_id": "scheme_01",
@@ -143,10 +143,22 @@ GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {
             "en": "PM-KISAN Samman Nidhi"
         },
         "category": "Direct Income Support",
-        "financial_benefit": "₹6,000 per year (3 Installments of ₹2,000)",
-        "eligibility": "All landholding farmer families across India",
+        "financial_benefit": {
+            "te": "ఏటా ₹6,000 (3 విడతలలో రూ. 2,000 చొప్పున)",
+            "hi": "₹6,000 प्रति वर्ष (3 किस्तों में)",
+            "en": "₹6,000 per year (3 Installments of ₹2,000)"
+        },
+        "eligibility": {
+            "te": "భారతదేశంలో సాగుభూమి ఉన్న చిన్న మరియు కమతాల రైతు కుటుంబాలు",
+            "hi": "भारत में कृषि योग्य भूमि वाले सभी किसान परिवार",
+            "en": "All landholding farmer families across India"
+        },
         "deadline": "Open Year-Round",
-        "description": "Direct bank transfer financial support for small and marginal landholding farmer families.",
+        "description": {
+            "te": "చిన్న మరియు చిన్నకారు రైతు కుటుంబాలకు ఏటా ₹6,000 ఆర్థిక సహాయం నేరుగా బ్యాంక్ ఖాతాలో జమ.",
+            "hi": "छोटे और सीमांत किसान परिवारों को प्रति वर्ष ₹6,000 की प्रत्यक्ष वित्तीय सहायता।",
+            "en": "Direct bank transfer financial support for small and marginal landholding farmer families."
+        },
         "application_link": "https://pmkisan.gov.in",
         "status": "Active",
         "added_by": "Government Admin"
@@ -159,10 +171,22 @@ GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {
             "en": "PM Fasal Bima Yojana (PMFBY)"
         },
         "category": "Crop Insurance & Risk Management",
-        "financial_benefit": "Full financial cover against non-preventable crop yield losses",
-        "eligibility": "Farmers growing notified crops in notified areas",
+        "financial_benefit": {
+            "te": "వర్షాలు, తెగుళ్ల వల్ల పంట నష్టపోతే 100% బీమా రక్షణ",
+            "hi": "100% फसल क्षतिपूर्ति बीमा",
+            "en": "Full financial cover against non-preventable crop yield losses"
+        },
+        "eligibility": {
+            "te": "టమాటా, వరి, మిరప, పత్తి, బంగాళాదుంప సాగు చేసే రైతులు",
+            "hi": "अधिसूचित फसलों की खेती करने वाले सभी किसान",
+            "en": "Farmers growing notified crops in notified areas"
+        },
         "deadline": "31 August 2026",
-        "description": "Comprehensive crop insurance policy with nominal premium rates (1.5% for Rabi, 2% for Kharif).",
+        "description": {
+            "te": "వర్షాలు, వరదలు, కరువు లేదా తెగుళ్ల వల్ల పంట నష్టం వాటిల్లితే 100% నష్టపరిహార బీమా రక్షణ పథకం.",
+            "hi": "आपदाओं, बाढ़ या कीटों से फसल के नुकसान पर पूर्ण वित्तीय सुरक्षा।",
+            "en": "Comprehensive crop insurance policy with nominal premium rates (1.5% for Rabi, 2% for Kharif)."
+        },
         "application_link": "https://pmfby.gov.in",
         "status": "Active",
         "added_by": "Ministry of Agriculture"
@@ -175,10 +199,22 @@ GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {
             "en": "Rythu Bharosa / State Farmer Assistance"
         },
         "category": "State Investment Support",
-        "financial_benefit": "₹13,500 annual investment support",
-        "eligibility": "Landowner & tenant farmer families in the state",
+        "financial_benefit": {
+            "te": "ఏటా ₹13,500 పెట్టుబడి సాయం",
+            "hi": "₹13,500 प्रति वर्ष",
+            "en": "₹13,500 annual investment support"
+        },
+        "eligibility": {
+            "te": "సొంత భూమి ఉన్న రైతులు మరియు కౌలు రైతు కుటుంబాలు",
+            "hi": "स्वयं की भूमि वाले किसान और पट्टेदार किसान",
+            "en": "Landowner & tenant farmer families in the state"
+        },
         "deadline": "15 October 2026",
-        "description": "Annual financial grant provided before crop sowing season to buy seeds, fertilizers, and pesticides.",
+        "description": {
+            "te": "పంట పెట్టుబడి సహాయం కోసం ప్రతి సంవత్సరం విత్తనాల కొనుగోలు సమయానికి విడతల వారీగా ఖాతాలో జమ చేసే పథకం.",
+            "hi": "बीज और उर्वरक की खरीद के लिए प्रतिवर्ष प्रत्यक्ष वित्तीय सहायता।",
+            "en": "Annual financial grant provided before crop sowing season to buy seeds, fertilizers, and pesticides."
+        },
         "application_link": "https://rythubharosa.ap.gov.in",
         "status": "Active",
         "added_by": "State Agriculture Dept"
@@ -191,10 +227,22 @@ GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {
             "en": "Micro-Irrigation & Drip 80% Subsidy Scheme"
         },
         "category": "Subsidized Machinery & Irrigation",
-        "financial_benefit": "80% to 90% subsidy on Drip & Sprinkler equipment",
-        "eligibility": "Small and marginal farmers holding up to 5 acres",
+        "financial_benefit": {
+            "te": "డ్రిప్ మరియు స్ప్రింక్లర్ పరికరాలపై 80% నుండి 90% సబ్సిడీ",
+            "hi": "ड्रिप सिंचाई उपकरणों पर 80% से 90% सब्सिडी",
+            "en": "80% to 90% subsidy on Drip & Sprinkler equipment"
+        },
+        "eligibility": {
+            "te": "5 ఎకరాలలోపు సాగుభూమి ఉన్న చిన్న మరియు చిన్నకారు రైతులు",
+            "hi": "5 एकड़ तक भूमि वाले छोटे और सीमांत किसान",
+            "en": "Small and marginal farmers holding up to 5 acres"
+        },
         "deadline": "30 September 2026",
-        "description": "Subsidized installation of modern drip irrigation kits to conserve water and increase crop yield.",
+        "description": {
+            "te": "నీటిని ఆదా చేసి దిగుబడిని పెంచడానికి ఆధునిక డ్రిప్ పరికరాల రాయితీ అమరిక పథకం.",
+            "hi": "जल संरक्षण और फसल पैदावार बढ़ाने के लिए सब्सिडी युक्त ड्रिप सिंचाई।",
+            "en": "Subsidized installation of modern drip irrigation kits to conserve water and increase crop yield."
+        },
         "application_link": "https://pmksy.gov.in",
         "status": "Active",
         "added_by": "Horticulture Department"
@@ -220,9 +268,9 @@ def save_feedback(decision_id: str, rating: int, feedback_text: str = "") -> Dic
     return entry
 
 def save_scheme(scheme_data: Dict[str, Any]) -> Dict[str, Any]:
-    s_id = scheme_data.get("scheme_id") or f"scheme_{datetime.now().strftime('%Y%m%d%H%M%S')}"
-    scheme_data["scheme_id"] = s_id
-    GOVT_SCHEMES_DB[s_id] = scheme_data
+    scheme_id = scheme_data.get("scheme_id") or f"scheme_{int(datetime.now().timestamp())}"
+    scheme_data["scheme_id"] = scheme_id
+    GOVT_SCHEMES_DB[scheme_id] = scheme_data
     return scheme_data
 
 def delete_scheme(scheme_id: str) -> bool:
@@ -231,18 +279,23 @@ def delete_scheme(scheme_id: str) -> bool:
         return True
     return False
 
-def update_mandi_price(crop: str, current_price: float, nearest_mandi: Optional[str] = None) -> Dict[str, Any]:
+def update_mandi_price(crop: str, price: float, yard: str = "") -> Dict[str, Any]:
     if crop not in MANDI_PRICES_DB:
         MANDI_PRICES_DB[crop] = {
-            "nearest_mandi": nearest_mandi or "APMC Wholesale Yard",
-            "current_price": current_price,
+            "nearest_mandi": yard or "Guntur Wholesale Yard",
+            "current_price": price,
             "historical_prices": [],
-            "projected_7d": current_price * 1.1,
+            "projected_7d": price * 1.1,
             "trend": "Rising",
-            "optimal_window": "Updated by Government Admin"
+            "optimal_window": "Active Market"
         }
     else:
-        MANDI_PRICES_DB[crop]["current_price"] = current_price
-        if nearest_mandi:
-            MANDI_PRICES_DB[crop]["nearest_mandi"] = nearest_mandi
+        MANDI_PRICES_DB[crop]["current_price"] = price
+        if yard:
+            MANDI_PRICES_DB[crop]["nearest_mandi"] = yard
     return MANDI_PRICES_DB[crop]
+
+def broadcast_alert(alert_data: Dict[str, Any]) -> Dict[str, Any]:
+    alert_data["timestamp"] = datetime.now().isoformat()
+    EMERGENCY_ALERTS_DB.insert(0, alert_data)
+    return alert_data

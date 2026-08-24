@@ -20,17 +20,61 @@ export default function GovtSchemesScreen() {
       .catch(() => {});
   }, []);
 
-  const getLocalizedTitle = (schemeId, defaultEn) => {
-    switch (schemeId) {
-      case 'pm_kisan':
-        return lang === 'te' ? 'పీఎం కిసాన్ సమ్మాన్ నిధి (PM-KISAN)' : (lang === 'hi' ? 'पीएम किसान सम्मान निधि (PM-KISAN)' : 'PM-KISAN Samman Nidhi Scheme');
-      case 'rythu_bharosa':
-        return lang === 'te' ? 'రైతు భరోసా / కిసాన్ సమ్మాన్ యోజన' : (lang === 'hi' ? 'पीएम फसल बीमा योजना (PMFBY)' : 'Rythu Bharosa / Farmer Financial Support');
-      case 'crop_insurance':
-        return lang === 'te' ? 'పీఎం ఫసల్ బీమా యోజన (PMFBY Crop Insurance)' : (lang === 'hi' ? 'प्रधानमंत्री फसल बीमा योजना' : 'PM Fasal Bima Yojana (Crop Insurance)');
-      default:
-        return defaultEn;
+  // Robust Field Resolver for Dictionary Objects or English Fallback Strings
+  const resolveLocalized = (val) => {
+    if (!val) return '';
+    if (typeof val === 'object') {
+      return val[lang] || val.te || val.en || '';
     }
+    if (typeof val === 'string') {
+      // Known string translations for 100% language purity
+      if (val.includes('6,000')) {
+        return lang === 'te' 
+          ? 'ఏటా ₹6,000 (3 విడతలలో రూ. 2,000 చొప్పున బ్యాంక్ ఖాతాలో జమ)' 
+          : (lang === 'hi' ? '₹6,000 प्रति वर्ष (3 किस्तों में)' : val);
+      }
+      if (val.includes('Direct bank transfer') || val.includes('small and marginal')) {
+        return lang === 'te'
+          ? 'చిన్న మరియు చిన్నకారు రైతు కుటుంబాలకు ఏటా ₹6,000 ఆర్థిక సహాయం నేరుగా బ్యాంక్ ఖాతాలో జమ.'
+          : (lang === 'hi' ? 'छोटे और सीमांत किसान परिवारों को प्रति वर्ष ₹6,000 की प्रत्यक्ष वित्तीय सहायता।' : val);
+      }
+      if (val.includes('All landholding') || val.includes('landholding farmer')) {
+        return lang === 'te'
+          ? 'భారతదేశంలో సాగుభూమి ఉన్న చిన్న మరియు కమతాల రైతు కుటుంబాలు'
+          : (lang === 'hi' ? 'भारत में कृषि योग्य भूमि वाले सभी किसान परिवार' : val);
+      }
+      if (val.includes('Full financial cover') || val.includes('non-preventable')) {
+        return lang === 'te'
+          ? 'వర్షాలు, తెగుళ్ల వల్ల పంట నష్టపోతే 100% బీమా రక్షణ పథకం'
+          : (lang === 'hi' ? '100% फसल क्षतिपूर्ति बीमा' : val);
+      }
+      if (val.includes('Comprehensive crop insurance') || val.includes('nominal premium')) {
+        return lang === 'te'
+          ? 'వర్షాలు, వరదలు, కరువు లేదా తెగుళ్ల వల్ల పంట నష్టం వాటిల్లితే 100% నష్టపరిహార బీమా రక్షణ పథకం.'
+          : (lang === 'hi' ? 'आपदाओं, बाढ़ या कीटों से फसल के नुकसान पर पूर्ण वित्तीय सुरक्षा।' : val);
+      }
+      if (val.includes('Farmers growing notified') || val.includes('notified crops')) {
+        return lang === 'te'
+          ? 'టమాటా, వరి, మిరప, పత్తి, బంగాళాదుంప సాగు చేసే రైతులు'
+          : (lang === 'hi' ? 'अधिसूचित फसलों की खेती करने वाले सभी किसान' : val);
+      }
+      if (val.includes('13,500')) {
+        return lang === 'te'
+          ? 'ఏటా ₹13,500 పంట పెట్టుబడి సాయం'
+          : (lang === 'hi' ? '₹13,500 प्रति वर्ष' : val);
+      }
+      if (val.includes('Annual financial grant') || val.includes('investment support')) {
+        return lang === 'te'
+          ? 'పంట పెట్టుబడి సహాయం కోసం ప్రతి సంవత్సరం విత్తనాల కొనుగోలు సమయానికి విడతల వారీగా ఖాతాలో జమ చేసే పథకం.'
+          : (lang === 'hi' ? 'बीज और उर्वरक की खरीद के लिए प्रतिवर्ष प्रत्यक्ष वित्तीय सहायता।' : val);
+      }
+      if (val.includes('Landowner & tenant')) {
+        return lang === 'te'
+          ? 'సొంత భూమి ఉన్న రైతులు మరియు కౌలు రైతు కుటుంబాలు'
+          : (lang === 'hi' ? 'स्वयं की भूमि वाले किसान और पट्टेदार किसान' : val);
+      }
+    }
+    return val;
   };
 
   const getLocalizedCategoryTag = (catKey) => {
@@ -41,6 +85,8 @@ export default function GovtSchemesScreen() {
         return lang === 'te' ? 'పంట బీమా & రక్షణ' : (lang === 'hi' ? 'फसल बीमा एवं जोखिम' : 'Crop Insurance & Risk');
       case 'Subsidized Machinery & Irrigation':
         return lang === 'te' ? 'యంత్రాల సబ్సిడీ & నీటిపారుదల' : (lang === 'hi' ? 'मशीनरी सब्सिडी' : 'Subsidized Machinery');
+      case 'State Investment Support':
+        return lang === 'te' ? 'రాష్ట్ర రైతు సాయం' : (lang === 'hi' ? 'राज्य किसान सहायता' : 'State Investment Support');
       default:
         return catKey;
     }
@@ -49,9 +95,9 @@ export default function GovtSchemesScreen() {
   const defaultSchemes = [
     {
       scheme_id: 'pm_kisan',
-      title: getLocalizedTitle('pm_kisan', 'PM-KISAN Samman Nidhi Scheme'),
+      title: lang === 'te' ? 'పీఎం కిసాన్ సమ్మాన్ నిధి (PM-KISAN)' : (lang === 'hi' ? 'पीएम किसान सम्मान निधि (PM-KISAN)' : 'PM-KISAN Samman Nidhi Scheme'),
       category: 'Direct Income Support',
-      financial_benefit: lang === 'te' ? 'ఏటా ₹6,000 (3 విడతలలో రూ. 2,000 చొప్పున)' : (lang === 'hi' ? '₹6,000 प्रति वर्ष (3 किस्तों में)' : '₹6,000 per year (3 Installments of ₹2,000)'),
+      financial_benefit: lang === 'te' ? 'ఏటా ₹6,000 (3 విడతలలో రూ. 2,000 చొప్పున బ్యాంక్ ఖాతాలో జమ)' : (lang === 'hi' ? '₹6,000 प्रति वर्ष (3 किस्तों में)' : '₹6,000 per year (3 Installments of ₹2,000)'),
       description: lang === 'te' 
         ? 'చిన్న మరియు చిన్నకారు రైతు కుటుంబాలకు ఏటా ₹6,000 ఆర్థిక సహాయం నేరుగా బ్యాంక్ ఖాతాలో జమ.' 
         : (lang === 'hi' 
@@ -64,9 +110,9 @@ export default function GovtSchemesScreen() {
     },
     {
       scheme_id: 'rythu_bharosa',
-      title: getLocalizedTitle('rythu_bharosa', 'Rythu Bharosa / Farmer Investment Support'),
-      category: 'Direct Income Support',
-      financial_benefit: lang === 'te' ? 'ఏటా ₹13,500 పెట్టుబడి సాయం' : (lang === 'hi' ? '₹13,500 प्रति वर्ष' : '₹13,500 per year investment support'),
+      title: lang === 'te' ? 'వైఎస్సార్ రైతు భరోసా / రాష్ట్ర రైతు సహాయం' : (lang === 'hi' ? 'राज्य किसान सहायता योजना' : 'Rythu Bharosa / Farmer Financial Support'),
+      category: 'State Investment Support',
+      financial_benefit: lang === 'te' ? 'ఏటా ₹13,500 పంట పెట్టుబడి సాయం' : (lang === 'hi' ? '₹13,500 प्रति वर्ष' : '₹13,500 per year investment support'),
       description: lang === 'te' 
         ? 'పంట పెట్టుబడి సహాయం కోసం ప్రతి సంవత్సరం విత్తనాల కొనుగోలు సమయానికి విడతల వారీగా ఖాతాలో జమ చేసే పథకం.' 
         : (lang === 'hi' 
@@ -79,7 +125,7 @@ export default function GovtSchemesScreen() {
     },
     {
       scheme_id: 'crop_insurance',
-      title: getLocalizedTitle('crop_insurance', 'PM Fasal Bima Yojana (Crop Insurance)'),
+      title: lang === 'te' ? 'పీఎం ఫసల్ భీమా యోజన (PMFBY Crop Insurance)' : (lang === 'hi' ? 'प्रधानमंत्री फसल बीमा योजना' : 'PM Fasal Bima Yojana (Crop Insurance)'),
       category: 'Crop Insurance & Risk Management',
       financial_benefit: lang === 'te' ? 'వర్షాలు, తెగుళ్ల వల్ల పంట నష్టపోతే 100% బీమా రక్షణ' : (lang === 'hi' ? '100% फसल क्षतिपूर्ति बीमा' : 'Full financial cover against non-preventable crop yield losses'),
       description: lang === 'te' 
@@ -94,7 +140,7 @@ export default function GovtSchemesScreen() {
     }
   ];
 
-  const schemesToRender = dbSchemes.length > 0 ? dbSchemes : defaultSchemes;
+  const rawSchemesToRender = dbSchemes.length > 0 ? dbSchemes : defaultSchemes;
 
   const categories = [
     { id: 'ALL', label: lang === 'te' ? 'అన్ని పథకాలు' : (lang === 'hi' ? 'सभी योजनाएं' : 'All Schemes') },
@@ -103,7 +149,7 @@ export default function GovtSchemesScreen() {
     { id: 'Subsidized Machinery & Irrigation', label: lang === 'te' ? 'యంత్రాల సబ్సిడీ' : (lang === 'hi' ? 'मशीनरी सब्सिडी' : 'Machinery Subsidy') }
   ];
 
-  const filteredSchemes = schemesToRender.filter(s =>
+  const filteredSchemes = rawSchemesToRender.filter(s =>
     selectedCategory === 'ALL' ? true : s.category === selectedCategory
   );
 
@@ -114,8 +160,10 @@ export default function GovtSchemesScreen() {
       return;
     }
 
-    const titleStr = typeof scheme.title === 'object' ? (scheme.title[lang] || scheme.title.te || scheme.title.en) : scheme.title;
-    const textToSpeak = `${titleStr}. ${scheme.financial_benefit}. ${scheme.description}`;
+    const titleStr = resolveLocalized(scheme.title);
+    const benefitStr = resolveLocalized(scheme.financial_benefit);
+    const descStr = resolveLocalized(scheme.description);
+    const textToSpeak = `${titleStr}. ${benefitStr}. ${descStr}`;
 
     setIsPlayingId(scheme.scheme_id);
     speakText(
@@ -164,7 +212,10 @@ export default function GovtSchemesScreen() {
       {/* Schemes Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filteredSchemes.map((s) => {
-          const titleStr = typeof s.title === 'object' ? (s.title[lang] || s.title.te || s.title.en) : s.title;
+          const titleStr = resolveLocalized(s.title);
+          const benefitStr = resolveLocalized(s.financial_benefit);
+          const descStr = resolveLocalized(s.description);
+          const eligStr = resolveLocalized(s.eligibility);
           const isPlaying = isPlayingId === s.scheme_id;
 
           return (
@@ -196,22 +247,22 @@ export default function GovtSchemesScreen() {
                   </button>
                 </div>
 
-                {/* Financial Benefit Tag */}
+                {/* Financial Benefit Tag (100% Localized) */}
                 <div className="p-4 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 space-y-1">
                   <div className="text-[11px] font-black text-emerald-400 uppercase">
                     {lang === 'te' ? 'ఆర్థిక లబ్ధి (ఆదాయ సాయం)' : (lang === 'hi' ? 'वित्तीय लाभ' : 'Financial Benefit')}
                   </div>
-                  <div className="text-base sm:text-lg font-black text-emerald-300">💰 {s.financial_benefit}</div>
+                  <div className="text-base sm:text-lg font-black text-emerald-300">💰 {benefitStr}</div>
                 </div>
 
-                {/* Description */}
+                {/* Description (100% Localized) */}
                 <p className="text-xs sm:text-sm text-slate-300 font-bold leading-relaxed">
-                  {s.description}
+                  {descStr}
                 </p>
 
-                {/* Eligibility */}
+                {/* Eligibility (100% Localized) */}
                 <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-300">
-                  🎯 <span className="text-slate-400 font-black">{lang === 'te' ? 'అర్హత నిబంధనలు:' : (lang === 'hi' ? 'पात्रता:' : 'Eligibility:')}</span> {s.eligibility}
+                  🎯 <span className="text-slate-400 font-black">{lang === 'te' ? 'అర్హత నిబంధనలు:' : (lang === 'hi' ? 'पात्रता:' : 'Eligibility:')}</span> {eligStr}
                 </div>
               </div>
 
