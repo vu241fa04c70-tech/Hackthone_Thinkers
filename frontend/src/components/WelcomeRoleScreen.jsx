@@ -1,123 +1,195 @@
-import React, { useState, useEffect } from 'react';
-import { ShieldCheck, UserCheck, Key, Lock, ArrowRight, Globe, AlertCircle, X, Sparkles, CheckCircle2, UserPlus, Eye, EyeOff } from 'lucide-react';
+import React, { useState } from 'react';
+import { UserCheck, ShieldCheck, ArrowRight, Lock, Key, Globe, Sparkles } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '../localization/languageMap';
 
 export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
-  const { lang, setLanguage, t } = useLanguage();
-  
-  // Check if an Admin password has been created in localStorage
-  const [existingPassword, setExistingPassword] = useState(() => {
-    return localStorage.getItem('kisan_admin_password') || '';
-  });
-
-  const [showAdminModal, setShowAdminModal] = useState(false);
-  const [passwordInput, setPasswordInput] = useState('');
-  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
+  const { lang, setLanguage, isRTL } = useLanguage();
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [inputPassword, setInputPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
 
-  // Admin Login or Registration Handler
-  const handleAdminAuthSubmit = (e) => {
-    e.preventDefault();
+  // Password Setup / Verification Logic
+  const savedPassword = localStorage.getItem('kisan_admin_password');
+  const isFirstTimeSetup = !savedPassword;
+
+  const handleAdminClick = () => {
+    setShowPasswordModal(true);
+    setInputPassword('');
     setPasswordError('');
+  };
 
-    // MODE A: First-time Admin Password Registration
-    if (!existingPassword) {
-      if (!passwordInput || passwordInput.length < 4) {
-        setPasswordError(
-          lang === 'te'
-            ? 'మార్గదర్శకం: పాస్‌వర్డ్ కనీసం 4 అక్షరాలు ఉండాలి.'
-            : (lang === 'hi' ? 'पासवर्ड कम से कम 4 अक्षरों का होना चाहिए।' : 'Password must be at least 4 characters long.')
-        );
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (!inputPassword.trim()) {
+      setPasswordError(lang === 'hi' ? 'कृपया पासवर्ड दर्ज करें' : (lang === 'te' ? 'దయచేసి పాస్‌వర్డ్ ఎంటర్ చేయండి' : 'Please enter password'));
+      return;
+    }
+
+    if (isFirstTimeSetup) {
+      if (inputPassword.length < 4) {
+        setPasswordError(lang === 'hi' ? 'पासवर्ड कम से कम 4 अक्षरों का होना चाहिए' : (lang === 'te' ? 'పాస్‌వర్డ్ కనీసం 4 అక్షరాలు ఉండాలి' : 'Password must be at least 4 characters'));
         return;
       }
-      if (passwordInput !== confirmPasswordInput) {
-        setPasswordError(
-          lang === 'te'
-            ? 'పాస్‌వర్డ్‌లు సరిపోలడం లేదు. దయచేసి మళ్లీ తనిఖీ చేయండి.'
-            : (lang === 'hi' ? 'पासवर्ड मेल नहीं खाते। कृपया पुनः जांचें।' : 'Passwords do not match. Please verify.')
-        );
-        return;
-      }
-
-      // Save newly created custom password
-      localStorage.setItem('kisan_admin_password', passwordInput);
-      setExistingPassword(passwordInput);
-      setShowAdminModal(false);
-      setPasswordInput('');
-      setConfirmPasswordInput('');
+      localStorage.setItem('kisan_admin_password', inputPassword.trim());
+      setShowPasswordModal(false);
       onSelectAdmin();
-    } 
-    // MODE B: Returning Admin Login Verification
-    else {
-      if (passwordInput === existingPassword) {
-        setShowAdminModal(false);
-        setPasswordInput('');
+    } else {
+      if (inputPassword.trim() === savedPassword) {
+        setShowPasswordModal(false);
         onSelectAdmin();
       } else {
-        setPasswordError(
-          lang === 'te'
-            ? '❌ తప్పు పాస్‌వర్డ్. అడ్మిన్ ప్రవేశం నిరాకరించబడింది.'
-            : (lang === 'hi' ? '❌ गलत पासवर्ड। एडमिन प्रवेश अस्वीकृत।' : '❌ Incorrect Admin Password. Access Denied.')
-        );
+        setPasswordError(lang === 'hi' ? 'गलत एडमिन पासवर्ड। पुनः प्रयास करें।' : (lang === 'te' ? 'తప్పు పాస్‌వర్డ్. దయచేసి మళ్లీ ప్రయత్నించండి.' : 'Incorrect password. Please try again.'));
       }
     }
   };
 
-  const getWelcomeGreeting = () => {
+  const getTopBadge = () => {
     switch (lang) {
-      case 'te': return '🌾 కిసాన్ మిత్ర కు సాదర స్వాగతం!';
-      case 'hi': return '🌾 किसान मित्र में आपका हार्दिक स्वागत है!';
-      case 'ta': return '🌾 கிசான் மித்ராவுக்கு நல்வரவு!';
-      case 'kn': return '🌾 ಕಿಸಾನ್ ಮಿತ್ರಕ್ಕೆ ನಿಮಗಿದೋ ಸ್ವಾಗತ!';
-      case 'ml': return '🌾 കിസാൻ മിത്രയിലേക്ക് സ്വാഗതം!';
-      case 'mr': return '🌾 किसान मित्र मध्ये आपले स्वागत आहे!';
-      default: return '🌾 Welcome to Kisan Mitra!';
+      case 'hi': return '✨ नीचे अपना पोर्टल चुनें';
+      case 'te': return '✨ కింద మీ పోర్టల్‌ను ఎంచుకోండి';
+      case 'ta': return '✨ போர்ட்டலை தேர்ந்தெடுக்கவும்';
+      default: return '✨ Select Your Portal Below';
     }
   };
 
-  const getSubGreeting = () => {
+  const getTitle = () => {
     switch (lang) {
-      case 'te': return 'రైతుల సేవలో AI సాంకేతికత • ప్రభుత్వ పథకాలు • మార్కెట్ ధరలు • పంట వ్యాధి నిర్ధారణ';
+      case 'hi': return 'किसान मित्र में आपका हार्दिक स्वागत है!';
+      case 'te': return 'కిసాన్ మిత్ర లోకి స్వాగతం!';
+      case 'ta': return 'கிசான் மித்ராவுக்கு நல்வரவு!';
+      default: return 'Welcome to Kisan Mitra!';
+    }
+  };
+
+  const getSubtitle = () => {
+    switch (lang) {
       case 'hi': return 'किसानों की सेवा में AI तकनीक • सरकारी योजनाएं • मंडी भाव • फसल रोग निदान';
-      case 'ta': return 'விவசாயிகளுக்கான செயற்கை நுண்ணறிவு • அரசு திட்டங்கள் • சந்தை விலை • பயிர் நோய் ஆய்வு';
-      case 'kn': return 'ರೈತರ ಸೇವೆಗಾಗಿ AI ತಂತ್ರಜ್ಞಾನ • ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು • ಮಾರುಕಟ್ಟೆ ದರ • ಬೆಳೆ ರೋಗ ತಪಾಸಣೆ';
-      default: return 'AI-Powered Smart Agriculture • Govt Schemes • Mandi Prices • Vision Crop Diagnosis';
+      case 'te': return 'రైతుల సేవలో AI సాంకేతికత • ప్రభుత్వ పథకాలు • మార్కెట్ ధరలు • పంట వ్యాధి నిర్ధారణ';
+      case 'ta': return 'விவசாயிகளுக்கான AI தொழில்நுட்பம் • அரசு திட்டங்கள் • சந்தை விலை';
+      default: return 'AI Technology for Farmers • Government Schemes • Mandi Prices • Crop Disease Diagnostics';
+    }
+  };
+
+  const getAdminBadge = () => {
+    switch (lang) {
+      case 'hi': return 'पासवर्ड द्वारा सुरक्षित';
+      case 'te': return 'పాస్‌వర్డ్‌తో రక్షణ';
+      default: return 'Password Protected';
+    }
+  };
+
+  const getAdminTitle = () => {
+    switch (lang) {
+      case 'hi': return 'शासन एवं एडमिन पोर्टल';
+      case 'te': return 'ప్రభుత్వ & అడ్మిన్ పోర్టల్';
+      default: return 'Government Admin Portal';
+    }
+  };
+
+  const getAdminDesc = () => {
+    switch (lang) {
+      case 'hi': return 'सरकारी अधिकारियों और व्यवस्थापकों के लिए नई योजनाएं जोड़ने, मंडी भाव अपडेट करने और मौसम चेतावनी जारी करने का पोर्टल।';
+      case 'te': return 'ప్రభుత్వ అధికారులు మరియు అడ్మిన్‌లు కొత్త పథకాలు జోడించడానికి, మండీ ధరలు అప్‌డేట్ చేయడానికి పోర్టల్.';
+      default: return 'For Government Officials & Admins to add new schemes, update live Mandi prices, and broadcast weather alerts.';
+    }
+  };
+
+  const getAdminBullets = () => {
+    if (lang === 'hi') {
+      return [
+        'नई सरकारी योजनाएं प्रकाशित करें',
+        'लाइव फसल मंडी भाव अपडेट करें',
+        'किसानों के लिए मौसम चेतावनियां जारी करें'
+      ];
+    } else if (lang === 'te') {
+      return [
+        'క్రొత్త ప్రభుత్వ పథకాలను ప్రచురించండి',
+        'లైవ్ పంట మార్కెట్ ధరలను అప్‌డేట్ చేయండి',
+        'రైతులకు వాతావరణ హెచ్చరికలు పంపండి'
+      ];
+    } else {
+      return [
+        'Publish New Government Schemes',
+        'Update Live Crop Mandi Prices',
+        'Broadcast Weather Warnings to Farmers'
+      ];
+    }
+  };
+
+  const getAdminBtnText = () => {
+    switch (lang) {
+      case 'hi': return '🔒 एडमिन लॉगिन (पासवर्ड दर्ज करें) ➔';
+      case 'te': return '🔒 అడ్మిన్ లాగిన్ (పాస్‌వర్డ్ నమోదు చేయండి) ➔';
+      default: return '🔒 Admin Login (Enter Password) ➔';
+    }
+  };
+
+  const getFarmerBadge = () => {
+    switch (lang) {
+      case 'hi': return 'सीधा किसान प्रवेश';
+      case 'te': return 'నేరుగా రైతు ప్రవేశం';
+      default: return 'Direct Farmer Access';
+    }
+  };
+
+  const getFarmerTitle = () => {
+    switch (lang) {
+      case 'hi': return 'किसान आवेदन ऐप';
+      case 'te': return 'రైతు మొబైల్ అప్లికేషన్';
+      default: return 'Farmer Application App';
+    }
+  };
+
+  const getFarmerDesc = () => {
+    switch (lang) {
+      case 'hi': return 'किसानों के लिए फसल रोगों का निदान करने, सरकारी योजनाएं देखने, मंडी भाव जांचने और किसान वॉइस AI से बात करने का ऐप।';
+      case 'te': return 'రైతులు పంట వ్యాధులను గుర్తించడానికి, ప్రభుత్వ పథకాలు చూడటానికి, మండీ ధరలు మరియు AI వాయిస్ తో మాట్లాడటానికి యాప్.';
+      default: return 'For Farmers to diagnose crop diseases, view official govt schemes, check Mandi prices, and talk with Kisan Voice AI.';
+    }
+  };
+
+  const getFarmerBullets = () => {
+    if (lang === 'hi') {
+      return [
+        'फसल एवं रोग निदान (गूगल लेंस AI)',
+        'लाइव मंडी भाव एवं मौसम सलाह',
+        'वॉइस AI सहायक एवं कृषि कैलेंडर'
+      ];
+    } else if (lang === 'te') {
+      return [
+        'పంట వ్యాధి గుర్తింపు (గూగుల్ లెన్స్ AI)',
+        'లైవ్ మండీ ధరలు & వాతావరణ సలహాలు',
+        'వాయిస్ AI సహాయకుడు & క్యాలెండర్'
+      ];
+    } else {
+      return [
+        'Crop & Disease AI Diagnosis (Google Lens)',
+        'Live Mandi Prices & Weather Advisory',
+        'Voice AI Assistant & Farming Calendar'
+      ];
+    }
+  };
+
+  const getFarmerBtnText = () => {
+    switch (lang) {
+      case 'hi': return '👤 किसान ऐप में प्रवेश करें ➔';
+      case 'te': return '👤 రైతు యాప్‌లో ప్రవేశించండి ➔';
+      default: return '👤 Enter Farmer Application ➔';
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col justify-between font-['Plus_Jakarta_Sans',sans-serif] relative overflow-hidden">
+    <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col justify-between font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950 p-4 sm:p-6 lg:p-8 ${isRTL ? 'text-right' : 'text-left'}`}>
       
-      {/* Background Decorative Gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/10 blur-3xl pointer-events-none" />
-
-      {/* Top Header Bar with Language Switcher */}
-      <header className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-xl shadow-emerald-500/20 text-2xl">
-            🌾
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-emerald-400 flex items-center gap-2">
-              Kisan Mitra
-              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-black">
-                AI Platform
-              </span>
-            </h1>
-            <p className="text-xs text-slate-400 font-bold">Farmer Voice & Vision AI Engine</p>
-          </div>
-        </div>
-
-        {/* 🌐 Native Language Switcher */}
-        <div className="flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-2xl px-3.5 py-2 shadow-lg backdrop-blur-md">
+      {/* Top Bar Language Selector */}
+      <div className="max-w-6xl w-full mx-auto flex items-center justify-end pb-4">
+        <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-2xl px-4 py-2 shadow-xl">
           <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
           <select
             value={lang}
             onChange={(e) => setLanguage(e.target.value)}
-            className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer max-w-[150px] sm:max-w-[200px]"
+            className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer"
           >
             {Object.values(SUPPORTED_LANGUAGES).map((l) => (
               <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100 font-bold">
@@ -126,252 +198,181 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
             ))}
           </select>
         </div>
-      </header>
+      </div>
 
-      {/* Main Content Area */}
-      <main className="relative z-10 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center text-center my-auto space-y-8">
-        
-        {/* Welcome Hero Section */}
-        <div className="space-y-4 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold shadow-lg">
-            <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span>{lang === 'te' ? 'క్రింది పోర్టల్‌లలో ఒకదాన్ని ఎంచుకోండి' : 'Select Your Portal Below'}</span>
-          </div>
-
-          <h2 className="text-3xl sm:text-5xl font-black text-slate-100 tracking-tight leading-tight">
-            {getWelcomeGreeting()}
-          </h2>
-
-          <p className="text-sm sm:text-base text-slate-300 font-bold max-w-2xl mx-auto leading-relaxed">
-            {getSubGreeting()}
-          </p>
+      {/* Main Hero Header */}
+      <div className="max-w-4xl mx-auto text-center space-y-4 my-auto pt-2 pb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-black shadow-lg">
+          <span>{getTopBadge()}</span>
         </div>
 
-        {/* Dual Role Entry Cards (Government Admin vs Farmer Application) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl pt-4">
-          
-          {/* Card 1: 🏛️ Government & Admin Portal */}
-          <div className="bg-slate-900/90 p-8 rounded-3xl border-2 border-slate-800 hover:border-cyan-500/60 transition-all duration-300 shadow-2xl flex flex-col justify-between text-left group hover:scale-[1.02] relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <ShieldCheck className="w-32 h-32 text-cyan-400" />
-            </div>
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-100 flex items-center justify-center gap-3">
+          <span className="text-4xl sm:text-6xl">🌾</span>
+          <span>{getTitle()}</span>
+        </h1>
 
-            <div className="space-y-4 relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-2xl font-black shadow-lg shadow-cyan-500/10">
+        <p className="text-sm sm:text-base text-slate-300 font-bold max-w-2xl mx-auto leading-relaxed">
+          {getSubtitle()}
+        </p>
+      </div>
+
+      {/* Role Selection Cards Grid */}
+      <div className="max-w-5xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 my-auto">
+        
+        {/* Admin Card */}
+        <div className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border-2 border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden group">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-2xl font-black shadow-lg group-hover:scale-110 transition-transform">
                 🏛️
               </div>
-
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-slate-100">
-                    {lang === 'te' ? 'ప్రభుత్వ & అడ్మిన్ పోర్టల్' : (lang === 'hi' ? 'शासन एवं एडमिन पोर्टल' : 'Government & Admin Portal')}
-                  </h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                    {existingPassword
-                      ? (lang === 'te' ? 'పాస్‌వర్డ్‌తో రక్షించబడింది' : 'Password Protected')
-                      : (lang === 'te' ? 'పాస్‌వర్డ్ సెటప్ అవసరం' : 'Password Setup Needed')}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400 font-bold mt-2 leading-relaxed">
-                  {lang === 'te'
-                    ? 'ప్రభుత్వ అధికారులు కొత్త పథకాలు జోడించడానికి, మార్కెట్ ధరలను నవీకరించడానికి మరియు వర్షపాత హెచ్చరికలను పంపడానికి లాగిన్ అవ్వండి.'
-                    : 'For Government Officials & Admins to add new schemes, update live Mandi prices, and broadcast weather alerts.'}
-                </p>
-              </div>
-
-              <div className="space-y-2 pt-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>{lang === 'te' ? 'కొత్త ప్రభుత్వ పథకాలను జోడించండి' : 'Publish New Government Schemes'}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>{lang === 'te' ? 'మండీ ధరలను నవీకరించండి' : 'Update Live Crop Mandi Prices'}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>{lang === 'te' ? 'వాతావరణ హెచ్చరికలను పంపండి' : 'Broadcast Weather Warnings to Farmers'}</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                setShowAdminModal(true);
-                setPasswordError('');
-              }}
-              className="mt-8 w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xl shadow-cyan-500/20 transition-all group-hover:shadow-cyan-500/30"
-            >
-              <Lock className="w-4 h-4" />
-              <span>
-                {existingPassword
-                  ? (lang === 'te' ? 'అడ్మిన్ లాగిన్ (పాస్‌వర్డ్ నమోదు చేయండి)' : 'Admin Login (Enter Password)')
-                  : (lang === 'te' ? 'అడ్మిన్ పాస్‌వర్డ్‌ను సృష్టించండి ➔' : 'Create Admin Password ➔')}
+              <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                {getAdminBadge()}
               </span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </button>
-          </div>
-
-          {/* Card 2: 👨‍🌾 Farmer Portal / Application */}
-          <div className="bg-slate-900/90 p-8 rounded-3xl border-2 border-slate-800 hover:border-emerald-500/60 transition-all duration-300 shadow-2xl flex flex-col justify-between text-left group hover:scale-[1.02] relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <UserCheck className="w-32 h-32 text-emerald-400" />
             </div>
 
-            <div className="space-y-4 relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-2xl font-black shadow-lg shadow-emerald-500/10">
-                👨‍🌾
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-slate-100">
-                    {lang === 'te' ? 'రైతుల అప్లికేషన్' : (lang === 'hi' ? 'किसान आवेदन ऐप' : 'Farmer Application')}
-                  </h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    {lang === 'te' ? 'నేరుగా ప్రవేశించండి' : 'Direct Farmer Access'}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400 font-bold mt-2 leading-relaxed">
-                  {lang === 'te'
-                    ? 'పంట వ్యాధి నిర్ధారణ, వాతావరణ సమాచారం, ప్రభుత్వం ప్రకటించిన పథకాలు మరియు మార్కెట్ ధరలు చూడటానికి అనువర్తనాన్ని ఉపయోగించండి.'
-                    : 'For Farmers to diagnose crop diseases, view official govt schemes, check Mandi prices, and talk with Kisan Voice AI.'}
-                </p>
-              </div>
-
-              <div className="space-y-2 pt-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{lang === 'te' ? 'పంట & వ్యాధి గుర్తింపు AI (Google Lens)' : 'Crop & Disease AI Diagnosis (Google Lens)'}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{lang === 'te' ? 'మండీ ధరలు & వాతావరణ సలహాలు' : 'Live Mandi Prices & Weather Advisory'}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{lang === 'te' ? 'వాయిస్ సహాయకుడు & వ్యవసాయ క్యాలెండర్' : 'Voice AI Assistant & Farming Calendar'}</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={onSelectFarmer}
-              className="mt-8 w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xl shadow-emerald-500/20 transition-all group-hover:shadow-emerald-500/30"
-            >
-              <UserCheck className="w-4 h-4" />
-              <span>{lang === 'te' ? 'రైతుల యాప్‌ను ప్రారంభించండి ➔' : 'Enter Farmer Application ➔'}</span>
-            </button>
-          </div>
-
-        </div>
-
-      </main>
-
-      {/* Admin Password Login / Registration Modal */}
-      {showAdminModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-md p-6 sm:p-8 rounded-3xl shadow-2xl space-y-6 relative animate-in fade-in zoom-in duration-200">
-            
-            <button
-              onClick={() => setShowAdminModal(false)}
-              className="absolute top-4 right-4 p-2 rounded-xl bg-slate-950 text-slate-400 hover:text-slate-200 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 flex items-center justify-center mx-auto text-xl font-black">
-                {existingPassword ? '🔑' : '⚙️'}
-              </div>
-              <h3 className="text-xl font-black text-slate-100">
-                {existingPassword
-                  ? (lang === 'te' ? 'అడ్మిన్ లాగిన్ పాస్‌వర్డ్ నమోదు చేయండి' : 'Government Admin Login')
-                  : (lang === 'te' ? 'అడ్మిన్ పాస్‌వర్డ్‌ను సృష్టించండి' : 'Create Admin Security Password')}
-              </h3>
-              <p className="text-xs text-slate-400 font-bold">
-                {existingPassword
-                  ? (lang === 'te' ? 'పోర్టల్‌లోకి ప్రవేశించడానికి మీ పాస్‌వర్డ్‌ను నమోదు చేయండి.' : 'Enter your custom admin password to access the portal.')
-                  : (lang === 'te' ? 'భవిష్యత్తు లాగిన్‌ల కోసం మీ స్వంత రహస్య పాస్‌వర్డ్‌ను సెట్ చేయండి.' : 'Set up your secret admin password for securing the portal.')}
+            <div>
+              <h2 className="text-2xl font-black text-slate-100 group-hover:text-cyan-300 transition-colors">
+                {getAdminTitle()}
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 font-bold mt-2 leading-relaxed">
+                {getAdminDesc()}
               </p>
             </div>
 
-            {passwordError && (
-              <div className="p-3 rounded-2xl bg-rose-950/90 border border-rose-500/60 text-rose-300 text-xs font-black flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
-                <span>{passwordError}</span>
-              </div>
-            )}
+            <div className="space-y-2 pt-2 border-t border-slate-800">
+              {getAdminBullets().map((bullet, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-xs font-bold text-slate-300">
+                  <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span>{bullet}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-            <form onSubmit={handleAdminAuthSubmit} className="space-y-4">
+          <button
+            onClick={handleAdminClick}
+            className="w-full min-h-[52px] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-500 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-cyan-500/20 cursor-pointer transition-all hover:scale-[1.02]"
+          >
+            <span>{getAdminBtnText()}</span>
+          </button>
+        </div>
+
+        {/* Farmer Application Card */}
+        <div className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden group">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-2xl font-black shadow-lg group-hover:scale-110 transition-transform">
+                👨‍🌾
+              </div>
+              <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                {getFarmerBadge()}
+              </span>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-black text-slate-100 group-hover:text-emerald-300 transition-colors">
+                {getFarmerTitle()}
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 font-bold mt-2 leading-relaxed">
+                {getFarmerDesc()}
+              </p>
+            </div>
+
+            <div className="space-y-2 pt-2 border-t border-slate-800">
+              {getFarmerBullets().map((bullet, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-xs font-bold text-slate-300">
+                  <UserCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>{bullet}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={onSelectFarmer}
+            className="w-full min-h-[52px] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 cursor-pointer transition-all hover:scale-[1.02]"
+          >
+            <span>{getFarmerBtnText()}</span>
+          </button>
+        </div>
+
+      </div>
+
+      {/* Admin Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xl font-black">
+                🔒
+              </div>
               <div>
-                <label className="text-xs font-extrabold text-slate-300">
-                  {existingPassword
-                    ? (lang === 'te' ? 'అడ్మిన్ పాస్‌వర్డ్:' : 'Admin Password:')
-                    : (lang === 'te' ? 'క్రొత్త అడ్మిన్ పాస్‌వర్డ్‌ను సృష్టించండి:' : 'Create New Admin Password:')}
+                <h3 className="text-lg font-black text-slate-100">
+                  {isFirstTimeSetup 
+                    ? (lang === 'hi' ? 'एडमिन पासवर्ड बनाएं' : (lang === 'te' ? 'అడ్మిన్ పాస్‌వర్డ్ సృష్టించండి' : 'Create Admin Security Password'))
+                    : (lang === 'hi' ? 'एडमिन लॉगिन पासवर्ड' : (lang === 'te' ? 'అడ్మిన్ లాగిన్ పాస్‌వర్డ్' : 'Enter Admin Password'))}
+                </h3>
+                <p className="text-xs text-slate-400 font-bold">
+                  {isFirstTimeSetup
+                    ? (lang === 'hi' ? 'एडमिन पोर्टल सुरक्षित रखने के लिए अपना गुप्त पासवर्ड सेट करें।' : (lang === 'te' ? 'అడ్మిన్ పోర్టల్ కోసం మీ రహస్య పాస్‌వర్డ్ సెట్ చేయండి.' : 'Set your secret password to protect the Admin Portal.'))
+                    : (lang === 'hi' ? 'सरकारी एडमिन पोर्टल खोलने के लिए अपना पासवर्ड दर्ज करें।' : (lang === 'te' ? 'అడ్మిన్ పోర్టల్ తెరవడానికి మీ పాస్‌వర్డ్ నమోదు చేయండి.' : 'Enter your secret password to unlock government features.'))}
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-black text-slate-300 uppercase tracking-wider">
+                  {lang === 'hi' ? 'एडमिन सुरक्षा पासवर्ड' : (lang === 'te' ? 'రహస్య పాస్‌వర్డ్' : 'Admin Password')}
                 </label>
-                <div className="relative mt-1">
-                  <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <div className="relative">
                   <input
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder={existingPassword ? 'Enter Password' : 'Create Admin Password (min 4 chars)'}
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-10 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-cyan-500"
+                    type="password"
+                    value={inputPassword}
+                    onChange={(e) => {
+                      setInputPassword(e.target.value);
+                      setPasswordError('');
+                    }}
+                    placeholder={isFirstTimeSetup ? 'e.g. admin123' : '••••••••'}
+                    className="w-full min-h-[48px] bg-slate-950 border border-slate-800 rounded-2xl px-4 text-sm font-black text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition-all"
                     autoFocus
-                    required
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+                  <Key className="w-4 h-4 text-slate-500 absolute right-4 top-4" />
                 </div>
+                {passwordError && (
+                  <p className="text-xs font-black text-rose-400 animate-bounce pt-1">
+                    ⚠️ {passwordError}
+                  </p>
+                )}
               </div>
 
-              {/* Confirm Password Field for First-Time Setup */}
-              {!existingPassword && (
-                <div>
-                  <label className="text-xs font-extrabold text-slate-300">
-                    {lang === 'te' ? 'పాస్‌వర్డ్‌ను నిర్ధారించండి:' : 'Confirm Password:'}
-                  </label>
-                  <div className="relative mt-1">
-                    <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Confirm Admin Password"
-                      value={confirmPasswordInput}
-                      onChange={(e) => setConfirmPasswordInput(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-10 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:border-cyan-500"
-                      required
-                    />
-                  </div>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/20"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                <span>
-                  {existingPassword
-                    ? (lang === 'te' ? 'పాస్‌వర్డ్ తనిఖీ చేసి ప్రవేశించండి' : 'Verify Password & Access Portal')
-                    : (lang === 'te' ? 'పాస్‌వర్డ్‌ను సేవ్ చేసి లాగిన్ అవ్వండి ➔' : 'Save Password & Access Portal ➔')}
-                </span>
-              </button>
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordModal(false)}
+                  className="flex-1 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-slate-400 font-black text-xs border border-slate-800 transition-all cursor-pointer"
+                >
+                  {lang === 'hi' ? 'रद्द करें' : (lang === 'te' ? 'రద్దు చేయండి' : 'Cancel')}
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs transition-all cursor-pointer shadow-lg shadow-cyan-500/20"
+                >
+                  {isFirstTimeSetup 
+                    ? (lang === 'hi' ? 'सहेजें और खोलें ➔' : (lang === 'te' ? 'పాస్‌వర్డ్ సేవ్ చేయండి ➔' : 'Save & Login ➔'))
+                    : (lang === 'hi' ? 'लॉगिन करें ➔' : (lang === 'te' ? 'లాగిన్ చేయండి ➔' : 'Unlock Portal ➔'))}
+                </button>
+              </div>
             </form>
-
           </div>
         </div>
       )}
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
-        🌾 Kisan Mitra AI Platform • 22 Official Scheduled Languages Supported
-      </footer>
+      <div className="text-center text-[11px] text-slate-500 font-bold py-2">
+        <span>🌾 Kisan Mitra Multilingual AI Ecosystem • Built for Indian Agriculture</span>
+      </div>
 
     </div>
   );

@@ -18,7 +18,7 @@ import AdminDashboard from './components/AdminDashboard';
 export default function App() {
   const { lang, setLanguage, t, isRTL } = useLanguage();
 
-  // Mode: 'welcome' | 'farmer' | 'admin'
+  // Navigation Mode: 'welcome' (Welcome to Kisan Mitra) | 'lang_select' | 'farmer' | 'admin'
   const [currentMode, setCurrentMode] = useState('welcome');
 
   const [farmerProfile, setFarmerProfile] = useState(() => {
@@ -27,10 +27,6 @@ export default function App() {
       try { return JSON.parse(saved); } catch (e) {}
     }
     return null;
-  });
-
-  const [hasSelectedLang, setHasSelectedLang] = useState(() => {
-    return !!localStorage.getItem('kisanLanguage');
   });
 
   const [activeTab, setActiveTab] = useState('home');
@@ -47,7 +43,7 @@ export default function App() {
     growth_stage: 'Fruiting'
   });
 
-  const handleInitialSetupComplete = () => {
+  const handleAccountSetupComplete = () => {
     const saved = localStorage.getItem('kisan_farmer_profile');
     if (saved) {
       try {
@@ -60,8 +56,7 @@ export default function App() {
         }));
       } catch (e) {}
     }
-    setHasSelectedLang(true);
-    setCurrentMode('welcome');
+    setCurrentMode('farmer');
   };
 
   // Format farmer display name according to active language
@@ -79,21 +74,21 @@ export default function App() {
     }
   };
 
-  // STEP 1: First Choose Language Screen
-  if (!hasSelectedLang) {
+  // STEP 1: Application Launch Landing Page (Welcome to Kisan Mitra)
+  if (currentMode === 'welcome') {
     return (
-      <LanguageSelectionScreen
-        onConfirm={handleInitialSetupComplete}
+      <WelcomeRoleScreen
+        onSelectFarmer={() => setCurrentMode('lang_select')}
+        onSelectAdmin={() => setCurrentMode('admin')}
       />
     );
   }
 
-  // STEP 2: Welcome Role Landing Page in Selected Language
-  if (currentMode === 'welcome') {
+  // STEP 2: Language Selection & Create Account Screen
+  if (currentMode === 'lang_select') {
     return (
-      <WelcomeRoleScreen
-        onSelectFarmer={() => setCurrentMode('farmer')}
-        onSelectAdmin={() => setCurrentMode('admin')}
+      <LanguageSelectionScreen
+        onConfirm={handleAccountSetupComplete}
       />
     );
   }
@@ -124,7 +119,7 @@ export default function App() {
               className="px-4 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-black text-xs flex items-center gap-2 cursor-pointer border border-slate-700"
             >
               <LogOut className="w-4 h-4 text-cyan-400" />
-              <span>{lang === 'te' ? '🏠 వెనుకకు (Exit)' : (lang === 'hi' ? '🏠 वापस (Exit)' : 'Exit Admin Portal')}</span>
+              <span>{lang === 'hi' ? '🏠 वापस' : (lang === 'te' ? '🏠 వెనుకకు' : 'Exit Admin Portal')}</span>
             </button>
           </div>
         </header>
@@ -136,7 +131,7 @@ export default function App() {
     );
   }
 
-  // STEP 4: Full Farmer Application
+  // STEP 4: Full Farmer Application Main App
   const getTabLabel = (id) => {
     switch (id) {
       case 'home': return t('nav.home');
@@ -212,7 +207,7 @@ export default function App() {
               className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0"
               title="Return to Welcome Screen"
             >
-              <span>{lang === 'te' ? '🏠 వెనుకకు' : (lang === 'hi' ? '🏠 वापस' : '🏠 Exit')}</span>
+              <span>{lang === 'hi' ? '🏠 वापस' : (lang === 'te' ? '🏠 వెనుకకు' : '🏠 Exit')}</span>
             </button>
 
             {/* ➕ Create Account / Switch User Button */}
@@ -221,14 +216,14 @@ export default function App() {
                 localStorage.removeItem('kisan_farmer_profile');
                 localStorage.removeItem('kisanLanguage');
                 setFarmerProfile(null);
-                setHasSelectedLang(false);
+                setCurrentMode('lang_select');
               }}
               className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shrink-0"
               title="Create New Account / Switch User"
             >
               <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
               <span className="hidden sm:inline">
-                {lang === 'te' ? '➕ కొత్త ఖాతా' : (lang === 'hi' ? '➕ नया खाता' : '➕ Account')}
+                {lang === 'hi' ? '➕ नया खाता' : (lang === 'te' ? '➕ కొత్త ఖాతా' : '➕ Account')}
               </span>
             </button>
           </div>
@@ -287,7 +282,7 @@ export default function App() {
             onNewAccountClick={() => {
               localStorage.removeItem('kisan_farmer_profile');
               setFarmerProfile(null);
-              setHasSelectedLang(false);
+              setCurrentMode('lang_select');
             }}
           />
         )}
@@ -296,8 +291,8 @@ export default function App() {
       {/* Footer */}
       <footer className="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-bold">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>🌾 {t('nav.appName')} • {lang === 'te' ? 'ప్రభుత్వ సేవలు మరియు అడ్మిన్ నిర్వహణ సక్రియంగా ఉంది' : 'Government & Admin Management Active'}</span>
-          <span>{lang === 'te' ? 'బహుభాషా వాయిస్ AI మరియు కంప్యూటర్ విజన్ సాధనం' : 'Multilingual Speech Recognition & Text-to-Speech (STT & TTS)'}</span>
+          <span>🌾 {t('nav.appName')} • {lang === 'hi' ? 'शासकीय एवं प्रशासनिक पोर्टल सक्रिय' : (lang === 'te' ? 'ప్రభుత్వ సేవలు మరియు అడ్మిన్ నిర్వహణ సక్రియంగా ఉంది' : 'Government & Admin Management Active')}</span>
+          <span>{lang === 'hi' ? 'बहुभाषी वॉयस AI और कंप्यूटर विजन सिस्टम' : (lang === 'te' ? 'బహుభాషా వాయిస్ AI మరియు కంప్యూటర్ విజన్ సాధనం' : 'Multilingual Speech Recognition & Text-to-Speech (STT & TTS)')}</span>
         </div>
       </footer>
 
