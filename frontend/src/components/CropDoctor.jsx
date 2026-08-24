@@ -84,49 +84,61 @@ export default function CropDoctor({ activeField }) {
   const sampleScans = [
     {
       id: 'sample_tomato_early_blight',
-      title: 'Tomato Leaf - Early Blight (High Confidence)',
+      title: lang === 'te' ? '🍅 టమాటా ఆకుపై ఎండు తెగులు (నమ్మకం 96%)' : 'Tomato Leaf - Early Blight (96% Confidence)',
       url: 'https://images.unsplash.com/photo-1592417817098-8f3d6eb231fc?auto=format&fit=crop&q=80&w=400',
       mockResult: {
         is_clear: true,
-        disease_name: lang === 'te' ? 'టమాటా ఆకుపై ఎండు తెగులు (Early Blight)' : 'Tomato Early Blight (Alternaria solani)',
+        disease_name: lang === 'te' ? 'టమాటా ఆకుపై ఎండు తెగులు (Alternaria solani)' : 'Tomato Early Blight (Alternaria solani)',
         confidence_pct: 96,
-        plant_part: 'Leaf',
+        plant_part: lang === 'te' ? 'ఆకు (Leaf)' : 'Leaf',
         severity: 'Moderate',
-        crop_name: 'Tomato',
+        crop_name: lang === 'te' ? 'టమాటా (Tomato)' : 'Tomato',
         scientificName: 'Solanum lycopersicum',
-        organic_treatment: 'Apply Neem oil (5ml/L water) or Trichoderma viride bio-fungicide once every 7 days.',
-        chemical_treatment: 'Spray Mancozeb 75% WP at 2g/L water (600g in 200L water per acre).',
-        prevention: 'Avoid overhead sprinkler irrigation, maintain proper plant spacing, and practice 3-year crop rotation.',
+        organic_treatment: lang === 'te'
+          ? 'వేప నూనె (లీటరు నీటికి 5 మి.లీ) లేదా ట్రైకోడెర్మా విరిడి జైవిక మందు వారానికి ఒకసారి పిచికారీ చేయండి.'
+          : 'Apply Neem oil (5ml/L water) or Trichoderma viride bio-fungicide once every 7 days.',
+        chemical_treatment: lang === 'te'
+          ? 'ఎకరానికి 600 గ్రాముల ఇండిఫిల్ M-45 (Mancozeb 75% WP) మందును 200 లీటర్ల నీటిలో కలిపి పిచికారీ చేయండి.'
+          : 'Spray Mancozeb 75% WP at 2g/L water (600g in 200L water per acre).',
+        prevention: lang === 'te'
+          ? 'ఆకులపై పైనుంచి నీరు చల్లకుండా డ్రిప్ నీటిపారుదల వాడండి. తగిన మొక్కల మధ్య దూరం పాటించండి.'
+          : 'Avoid overhead sprinkler irrigation, maintain proper plant spacing, and practice 3-year crop rotation.',
         stage1_source: 'Plant.id Health Assessment API',
         stage2_source: 'Google Gemini AI'
       }
     },
     {
       id: 'sample_paddy_blast',
-      title: 'Paddy Rice Blast (High Confidence)',
+      title: lang === 'te' ? '🌾 వరి అగ్గి తెగులు (నమ్మకం 95%)' : 'Paddy Rice Blast (95% Confidence)',
       url: 'https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&q=80&w=400',
       mockResult: {
         is_clear: true,
-        disease_name: lang === 'te' ? 'వరి అగ్గి తెగులు (Rice Blast)' : 'Rice Blast (Pyricularia oryzae)',
-        confidence_pct: 94,
-        plant_part: 'Leaf & Stem',
+        disease_name: lang === 'te' ? 'వరి అగ్గి తెగులు మరియు పండు తెగులు (Pyricularia oryzae)' : 'Rice Blast & Sheath Blight (Pyricularia oryzae)',
+        confidence_pct: 95,
+        plant_part: lang === 'te' ? 'ఆకు మరియు కాండం (Leaf & Stem)' : 'Leaf & Stem',
         severity: 'Severe',
-        crop_name: 'Paddy / Rice',
+        crop_name: lang === 'te' ? 'వరి (Paddy)' : 'Paddy / Rice',
         scientificName: 'Oryza sativa',
-        organic_treatment: 'Spray Pseudomonas fluorescens at 10g/L water during early vegetative stage.',
-        chemical_treatment: 'Spray Tricyclazole 75% WP at 0.6g/L water (120g in 200L water per acre).',
-        prevention: 'Maintain balanced nitrogen application and avoid field flooding stagnation.',
+        organic_treatment: lang === 'te'
+          ? 'లీటరు నీటికి 10 గ్రాముల సుడోమోనాస్ ఫ్లోరోసెన్స్ జైవిక మందు కలిపి పిచికారీ చేయండి.'
+          : 'Spray Pseudomonas fluorescens at 10g/L water during early vegetative stage.',
+        chemical_treatment: lang === 'te'
+          ? 'ఎకరానికి 120 గ్రాముల బీమ్ / బాన్ (Tricyclazole 75% WP) మందును 200 లీటర్ల నీటిలో కలిపి పిచికారీ చేయండి.'
+          : 'Spray Tricyclazole 75% WP at 0.6g/L water (120g in 200L water per acre).',
+        prevention: lang === 'te'
+          ? 'యూరియా ఎరువును మోతాదుకు మించి వేయవద్దు. పొలంలో నీటిని తీసివేసి ఆరనివ్వండి.'
+          : 'Maintain balanced nitrogen application and avoid field flooding stagnation.',
         stage1_source: 'Plant.id Health Assessment API',
         stage2_source: 'Google Gemini AI'
       }
     },
     {
       id: 'blurry_low_confidence',
-      title: 'Blurry / Unclear Photo (<75% Confidence)',
+      title: lang === 'te' ? '⚠️ స్పష్టంగా లేని ఫోటో (నమ్మకం <75%)' : 'Blurry / Unclear Photo (<75% Confidence)',
       url: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&q=80&w=400',
       mockResult: {
         is_clear: false,
-        error: 'Unable to confidently identify. Capture a clearer image.',
+        error: lang === 'te' ? 'నమ్మకంగా గుర్తించలేకపోయాము. దయచేసి మరింత స్పష్టమైన ఫోటో తీయండి.' : 'Unable to confidently identify. Capture a clearer image.',
         confidence_pct: 52
       }
     }
@@ -143,7 +155,7 @@ export default function CropDoctor({ activeField }) {
     setTimeout(() => {
       setAnalyzing(false);
       setAnalysisResult(mockData);
-    }, 1300);
+    }, 1200);
   };
 
   const runTwoStageDiagnosis = async (imageFileOrBlob) => {
@@ -177,7 +189,7 @@ export default function CropDoctor({ activeField }) {
     }
 
     const textToSpeak = lang === 'te'
-      ? `గుర్తించిన వ్యాధి: ${analysisResult.disease_name}. నమ్మకం శాతం: ${analysisResult.confidence_pct}%. రసాయన నివారణ: ${analysisResult.chemical_treatment}.`
+      ? `గుర్తించిన పంట వ్యాధి: ${analysisResult.disease_name}. నమ్మకం శాతం: ${analysisResult.confidence_pct}%. రసాయన మందు పిచికారీ: ${analysisResult.chemical_treatment}.`
       : `Diagnosed Disease: ${analysisResult.disease_name}. Confidence: ${analysisResult.confidence_pct}%. Recommended Spray: ${analysisResult.chemical_treatment}`;
 
     setIsPlayingAudio(true);
@@ -188,6 +200,19 @@ export default function CropDoctor({ activeField }) {
       () => setIsPlayingAudio(false),
       () => setIsPlayingAudio(false)
     );
+  };
+
+  const getLocalizedSeverityText = (sev) => {
+    if (lang === 'te') {
+      if (sev === 'Mild') return 'తక్కువ (Mild)';
+      if (sev === 'Severe') return 'తీవ్రమైనది (Severe)';
+      return 'మధ్యస్థం (Moderate)';
+    } else if (lang === 'hi') {
+      if (sev === 'Mild') return 'हल्का (Mild)';
+      if (sev === 'Severe') return 'गंभीर (Severe)';
+      return 'मध्यम (Moderate)';
+    }
+    return sev || 'Moderate';
   };
 
   const getSeverityBadgeColor = (sev) => {
@@ -224,7 +249,7 @@ export default function CropDoctor({ activeField }) {
 
         <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-3xl">
           {lang === 'te' 
-            ? 'దశ 1: ప్లాంట్.ఐడి ప్రాథమిక వ్యాధి గుర్తింపు (75% థ్రెషోల్డ్). దశ 2: జెమిని ఏఐ రైతు మందుల నివారణ సలహా.' 
+            ? 'దశ 1: ప్లాంట్.ఐడి ప్రాథమిక వ్యాధి గుర్తింపు (75% నమ్మకపు నిబంధన). దశ 2: జెమిని ఏఐ జైవిక & రసాయన నివారణ సలహా.' 
             : 'Stage 1: Plant.id Health Assessment API primary detection (75% confidence threshold). Stage 2: Gemini AI farmer treatment & prevention generator.'}
         </p>
       </div>
@@ -240,7 +265,7 @@ export default function CropDoctor({ activeField }) {
           }`}
         >
           <Camera className="w-4 h-4" />
-          <span>{lang === 'te' ? '📷 లైవ్ కెమెరా' : '📷 Live Camera Scanner'}</span>
+          <span>{lang === 'te' ? '📷 లైవ్ కెమెరా స్కేనర్' : (lang === 'hi' ? '📷 लाइव कैमरा स्कैनर' : '📷 Live Camera Scanner')}</span>
         </button>
 
         <button
@@ -252,7 +277,7 @@ export default function CropDoctor({ activeField }) {
           }`}
         >
           <Upload className="w-4 h-4" />
-          <span>{lang === 'te' ? '🖼️ గ్యాలరీ అప్‌లోడ్' : '🖼️ Gallery Photo Upload'}</span>
+          <span>{lang === 'te' ? '🖼️ గ్యాలరీ అప్‌లోడ్' : (lang === 'hi' ? '🖼️ गैलरी अपलोड' : '🖼️ Gallery Photo Upload')}</span>
         </button>
 
         <button
@@ -264,7 +289,7 @@ export default function CropDoctor({ activeField }) {
           }`}
         >
           <Sparkles className="w-4 h-4" />
-          <span>{lang === 'te' ? '🧪 నమూనా ఫోటోల పరీక్ష' : '🧪 Sample Scans Test'}</span>
+          <span>{lang === 'te' ? '🧪 నమూనా ఫోటోల పరీక్ష' : (lang === 'hi' ? '🧪 नमुना स्कैन परीक्षण' : '🧪 Sample Scans Test')}</span>
         </button>
       </div>
 
@@ -340,9 +365,11 @@ export default function CropDoctor({ activeField }) {
                       🖼️
                     </div>
                     <div>
-                      <h4 className="text-sm font-black text-[#2C3333]">Upload Clear Plant Photo</h4>
+                      <h4 className="text-sm font-black text-[#2C3333]">
+                        {lang === 'te' ? 'స్పష్టమైన ఆకు ఫోటో అప్‌లోడ్ చేయండి' : 'Upload Clear Plant Photo'}
+                      </h4>
                       <p className="text-xs text-slate-500 font-semibold mt-1">
-                        Primary identification via Plant.id API • Treatment generation via Gemini AI.
+                        Plant.id API ద్వారా వ్యాధి గుర్తింపు • Gemini AI ద్వారా నివారణ సలహా.
                       </p>
                     </div>
                   </>
@@ -355,7 +382,9 @@ export default function CropDoctor({ activeField }) {
           {/* TAB 3: SAMPLE PRESETS */}
           {activeTab === 'samples' && (
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase text-slate-500">Select Test Preset:</h4>
+              <h4 className="text-xs font-bold uppercase text-slate-500">
+                {lang === 'te' ? 'నమూనా పరీక్ష ఫోటోను ఎంచుకోండి:' : 'Select Test Preset:'}
+              </h4>
               <div className="grid grid-cols-1 gap-2.5">
                 {sampleScans.map((s) => (
                   <div
@@ -366,7 +395,9 @@ export default function CropDoctor({ activeField }) {
                     <img src={s.url} alt={s.title} className="w-12 h-12 rounded-xl object-cover border border-slate-300" />
                     <div>
                       <h5 className="text-xs font-bold text-[#2C3333]">{s.title}</h5>
-                      <span className="text-[10px] text-[#2D6A4F] font-bold">Test scan ➔</span>
+                      <span className="text-[10px] text-[#2D6A4F] font-bold">
+                        {lang === 'te' ? 'పరీక్ష ప్రారంభించండి ➔' : 'Test scan ➔'}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -382,20 +413,20 @@ export default function CropDoctor({ activeField }) {
           <div className="flex items-center justify-between border-b border-emerald-100 pb-3">
             <h3 className="text-base font-black text-[#2C3333] flex items-center gap-2">
               <Stethoscope className="w-5 h-5 text-[#2D6A4F]" />
-              <span>Plant.id + Gemini Diagnosis</span>
+              <span>{lang === 'te' ? 'వ్యాధి నివేదిక & నివారణ సలహా' : 'Plant.id + Gemini Diagnosis'}</span>
             </h3>
 
             {analysisResult && analysisResult.is_clear && (
               <button
                 onClick={toggleAudio}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all ${
                   isPlayingAudio
                     ? 'bg-rose-500 text-white animate-pulse'
                     : 'bg-emerald-50 text-[#2D6A4F] border border-emerald-200'
                 }`}
               >
                 <Volume2 className={`w-3.5 h-3.5 ${isPlayingAudio ? 'animate-bounce' : ''}`} />
-                <span>{isPlayingAudio ? 'Stop ⏹️' : '🔊 Listen Audio'}</span>
+                <span>{isPlayingAudio ? (lang === 'te' ? 'ఆపండి ⏹️' : 'Stop ⏹️') : (lang === 'te' ? '🔊 నివేదిక వినండి' : '🔊 Listen Audio')}</span>
               </button>
             )}
           </div>
@@ -415,12 +446,14 @@ export default function CropDoctor({ activeField }) {
               <div className="flex items-center gap-3 text-amber-800">
                 <AlertOctagon className="w-7 h-7 text-amber-600 shrink-0" />
                 <h4 className="text-base sm:text-lg font-black">
-                  "Unable to confidently identify. Capture a clearer image."
+                  "{lang === 'te' ? 'నమ్మకంగా గుర్తించలేకపోయాము. దయచేసి మరింత స్పష్టమైన ఫోటో తీయండి.' : 'Unable to confidently identify. Capture a clearer image.'}"
                 </h4>
               </div>
 
               <div className="text-xs font-bold text-amber-900 leading-relaxed">
-                Stage 1 Plant.id confidence is below 75% ({analysisResult.confidence_pct}%). Please ensure good lighting and take a clear close-up photo of the leaf or plant part.
+                {lang === 'te'
+                  ? `దశ 1 ప్లాంట్.ఐడి నమ్మకం శాతం 75% కన్నా తక్కువగా ఉంది (${analysisResult.confidence_pct}%). దయచేసి మంచి వెలుతురులో ఆకు దగ్గరగా స్పష్టమైన ఫోటో తీయండి.`
+                  : `Stage 1 Plant.id confidence is below 75% (${analysisResult.confidence_pct}%). Please ensure good lighting and take a clear close-up photo of the leaf or plant part.`}
               </div>
 
               <button
@@ -430,7 +463,7 @@ export default function CropDoctor({ activeField }) {
                 }}
                 className="w-full py-3 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs shadow-sm cursor-pointer transition-all"
               >
-                📸 Capture Clearer Image ➔
+                📸 {lang === 'te' ? 'మరో స్పష్టమైన ఫోటో తీయండి ➔' : 'Capture Clearer Image ➔'}
               </button>
             </div>
           )}
@@ -441,8 +474,8 @@ export default function CropDoctor({ activeField }) {
               
               {/* Pipeline Source Badges */}
               <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                <span className="text-[#2D6A4F]">🟢 Primary AI: Plant.id API</span>
-                <span className="text-emerald-800">✨ Treatment AI: Gemini</span>
+                <span className="text-[#2D6A4F]">🟢 {lang === 'te' ? 'ప్రాథమిక ఏఐ: Plant.id API' : 'Primary AI: Plant.id API'}</span>
+                <span className="text-emerald-800">✨ {lang === 'te' ? 'నివారణ ఏఐ: Google Gemini' : 'Treatment AI: Gemini'}</span>
               </div>
 
               {/* Row 1: Disease Name & Confidence % */}
@@ -450,14 +483,17 @@ export default function CropDoctor({ activeField }) {
                 <div>
                   <div className="text-[10px] font-extrabold text-rose-800 uppercase flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
-                    <span>Diagnosed Disease (Plant.id)</span>
+                    <span>{lang === 'te' ? 'గుర్తించిన పంట వ్యాధి (Plant.id)' : 'Diagnosed Disease (Plant.id)'}</span>
                   </div>
                   <div className="text-lg font-black text-rose-900 mt-0.5">{analysisResult.disease_name}</div>
+                  {analysisResult.scientificName && (
+                    <div className="text-xs text-rose-700 italic font-semibold">{analysisResult.scientificName}</div>
+                  )}
                 </div>
 
                 <div className="text-right shrink-0">
                   <span className="px-3.5 py-1 rounded-full text-xs font-black bg-[#2D6A4F] text-white shadow-sm">
-                    🎯 {analysisResult.confidence_pct}% Confidence
+                    🎯 {analysisResult.confidence_pct}% {lang === 'te' ? 'నమ్మకం' : 'Confidence'}
                   </span>
                 </div>
               </div>
@@ -465,14 +501,18 @@ export default function CropDoctor({ activeField }) {
               {/* Row 2: Affected Plant Part & Severity */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                  <div className="text-[10px] font-bold text-slate-500 uppercase">🍃 Affected Plant Part</div>
+                  <div className="text-[10px] font-bold text-slate-500 uppercase">
+                    🍃 {lang === 'te' ? 'బాధిత మొక్క భాగం' : 'Affected Plant Part'}
+                  </div>
                   <div className="text-sm font-extrabold text-[#2C3333] mt-0.5">{analysisResult.plant_part}</div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                  <div className="text-[10px] font-bold text-slate-500 uppercase">⚠️ Disease Severity</div>
+                  <div className="text-[10px] font-bold text-slate-500 uppercase">
+                    ⚠️ {lang === 'te' ? 'వ్యాధి తీవ్రత మట్టం' : 'Disease Severity'}
+                  </div>
                   <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold mt-1 border ${getSeverityBadgeColor(analysisResult.severity)}`}>
-                    {analysisResult.severity}
+                    {getLocalizedSeverityText(analysisResult.severity)}
                   </span>
                 </div>
               </div>
@@ -481,9 +521,9 @@ export default function CropDoctor({ activeField }) {
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1">
                 <div className="text-[11px] font-bold text-[#2D6A4F] uppercase flex items-center gap-1.5">
                   <Leaf className="w-4 h-4 text-[#2D6A4F]" />
-                  <span>🌱 Organic & Natural Treatment (Gemini AI)</span>
+                  <span>🌱 {lang === 'te' ? 'జైవిక & ప్రకృతి నివారణ పద్ధతి (Gemini AI)' : 'Organic & Natural Treatment (Gemini AI)'}</span>
                 </div>
-                <p className="text-xs text-slate-700 font-semibold leading-relaxed">
+                <p className="text-xs text-slate-800 font-bold leading-relaxed">
                   {analysisResult.organic_treatment}
                 </p>
               </div>
@@ -492,16 +532,16 @@ export default function CropDoctor({ activeField }) {
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                 <div className="text-[11px] font-bold text-[#2D6A4F] uppercase flex items-center gap-1.5">
                   <FlaskConical className="w-4 h-4 text-[#2D6A4F]" />
-                  <span>🧪 Chemical Treatment & Spray Dosage (Gemini AI)</span>
+                  <span>🧪 {lang === 'te' ? 'రసాయన మందుల పిచికారీ & మోతాదు (Gemini AI)' : 'Chemical Treatment & Spray Dosage (Gemini AI)'}</span>
                 </div>
-                <p className="text-xs text-slate-800 font-extrabold leading-relaxed">
+                <p className="text-xs text-slate-900 font-extrabold leading-relaxed">
                   {analysisResult.chemical_treatment}
                 </p>
               </div>
 
               {/* Row 5: Prevention Protocol (Gemini AI) */}
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
-                🛡️ <span className="font-bold text-slate-800">Prevention Advice (Gemini AI):</span> {analysisResult.prevention}
+                🛡️ <span className="font-bold text-slate-800">{lang === 'te' ? 'భవిష్యత్తు నివారణ సూచనలు (Gemini AI):' : 'Prevention Advice (Gemini AI):'}</span> {analysisResult.prevention}
               </div>
 
             </div>
@@ -510,7 +550,9 @@ export default function CropDoctor({ activeField }) {
           {!analyzing && !analysisResult && (
             <div className="p-8 text-center space-y-2 text-slate-500 my-auto">
               <Camera className="w-10 h-10 text-slate-300 mx-auto" />
-              <div className="text-xs font-bold">No plant image scanned yet.</div>
+              <div className="text-xs font-bold">
+                {lang === 'te' ? 'ఇంకా ఏ ఆకు ఫోటో స్కాన్ చేయలేదు.' : 'No plant image scanned yet.'}
+              </div>
             </div>
           )}
 

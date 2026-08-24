@@ -354,8 +354,140 @@ OFFICER_CONTACTS_DB: Dict[str, Dict[str, Any]] = {
     }
 }
 
-SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {}
-GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {}
+# SAMPLE CROP IMAGES DATABASE (SAMPLE_CROP_IMAGES)
+SAMPLE_CROP_IMAGES: Dict[str, Dict[str, Any]] = {
+    "sample_tomato_early_blight": {
+        "id": "sample_tomato_early_blight",
+        "name": "Tomato Leaf - Early Blight (Alternaria solani)",
+        "crop": "Tomato",
+        "disease_name": "Tomato Early Blight (Alternaria solani)",
+        "confidence": 0.96,
+        "affected_area_pct": 28.0,
+        "severity_level": "Moderate",
+        "spread_velocity": "Moderate",
+        "pesticide": {
+            "name": "Mancozeb 75% WP (Indofil M-45)",
+            "active_ingredient": "Mancozeb",
+            "dosage_per_acre": "600 grams in 200 liters water",
+            "dosage_per_liter": "2.0g per 1 liter water",
+            "estimated_cost_inr": 380.0,
+            "nearby_mandi_availability": True
+        },
+        "symptoms": [
+            "Concentric ring spots (bullseye pattern) on lower leaves",
+            "Yellow halo surrounding brown necrotic leaf spots",
+            "Defoliation starting from bottom leaves"
+        ],
+        "cause": "Fungal infection (Alternaria solani) triggered by high humidity and warm temperatures.",
+        "immediate_treatment": [
+            "Spray Mancozeb 75% WP @ 2.0g/L water (600g in 200L water per acre).",
+            "Apply Neem oil (5ml/L) or Trichoderma viride bio-fungicide once every 7 days.",
+            "Prune infected bottom leaves and dispose away from the field."
+        ],
+        "prevention_tips": [
+            "Avoid overhead sprinkler irrigation; use drip irrigation.",
+            "Maintain proper plant spacing for air circulation.",
+            "Practice 3-year crop rotation with non-solanaceous crops."
+        ]
+    },
+    "sample_paddy_rice_blast": {
+        "id": "sample_paddy_rice_blast",
+        "name": "Paddy Leaf - Rice Blast (Pyricularia oryzae)",
+        "crop": "Paddy",
+        "disease_name": "Rice Blast & Sheath Blight (Pyricularia oryzae)",
+        "confidence": 0.95,
+        "affected_area_pct": 32.5,
+        "severity_level": "Severe",
+        "spread_velocity": "Fast",
+        "pesticide": {
+            "name": "Tricyclazole 75% WP (Beam / Baan)",
+            "active_ingredient": "Tricyclazole",
+            "dosage_per_acre": "120 grams in 200 liters water",
+            "dosage_per_liter": "0.6g per 1 liter water",
+            "estimated_cost_inr": 420.0,
+            "nearby_mandi_availability": True
+        },
+        "symptoms": [
+            "Spindle-shaped lesions with gray-white centers and reddish-brown margins",
+            "Neck rot causing empty/whitened panicles",
+            "Aggravated by excess nitrogenous fertilizers"
+        ],
+        "cause": "Fungal infection (Pyricularia oryzae) triggered by 85%+ relative humidity and dew drops.",
+        "immediate_treatment": [
+            "Spray Tricyclazole 75% WP @ 0.6g/L water during early morning hours.",
+            "Pause all Urea/Nitrogenous fertilizer applications for the next 10 days.",
+            "Ensure field drainage to reduce humidity levels."
+        ],
+        "prevention_tips": [
+            "Use certified resistant seed varieties (e.g. MTU 1010 / BPT 5204).",
+            "Treat seeds with Pseudomonas fluorescens @ 10g/kg before sowing."
+        ]
+    },
+    "sample_chilli_leaf_curl": {
+        "id": "sample_chilli_leaf_curl",
+        "name": "Chilli Leaf - Leaf Curl Virus",
+        "crop": "Chilli",
+        "disease_name": "Chilli Leaf Curl Virus (Begomovirus)",
+        "confidence": 0.92,
+        "affected_area_pct": 24.0,
+        "severity_level": "Moderate",
+        "spread_velocity": "Moderate",
+        "pesticide": {
+            "name": "Imidacloprid 17.8% SL (Confidor)",
+            "active_ingredient": "Imidacloprid",
+            "dosage_per_acre": "100 ml in 200 liters water",
+            "dosage_per_liter": "0.5ml per 1 liter water",
+            "estimated_cost_inr": 310.0,
+            "nearby_mandi_availability": True
+        },
+        "symptoms": [
+            "Upward puckering and curling of leaves",
+            "Stunted plant growth and reduced leaf size",
+            "Yellowing of veinlets"
+        ],
+        "cause": "Viral infection transmitted by Whiteflies (Bemisia tabaci).",
+        "immediate_treatment": [
+            "Spray Imidacloprid 17.8% SL @ 0.5ml/L water to control whitefly vector.",
+            "Install yellow sticky traps (15 traps/acre) in the field.",
+            "Apply Neem oil 10,000 ppm @ 2ml/L water every 5 days."
+        ],
+        "prevention_tips": [
+            "Remove and destroy virus-infected plants early.",
+            "Grow barrier crops like Maize or Sorghum around chilli plots."
+        ]
+    }
+}
+
+GOVT_SCHEMES_DB: Dict[str, Dict[str, Any]] = {
+    "pm_kisan": {
+        "scheme_id": "pm_kisan",
+        "title": {
+            "te": "పీఎం కిసాన్ సమ్మాన్ నిధి పథకం (PM-KISAN)",
+            "hi": "पीएम किसान सम्मान निधि योजना",
+            "en": "PM-KISAN Samman Nidhi Scheme"
+        },
+        "category": "Direct Income Support",
+        "financial_benefit": {
+            "te": "ఏటా ₹6,000 (3 విడతలలో రూ. 2,000 చొప్పున బ్యాంక్ ఖాతాలో జమ)",
+            "hi": "₹6,000 प्रति वर्ष (3 किस्तों में)",
+            "en": "₹6,000 per year (3 installments of ₹2,000)"
+        },
+        "eligibility": {
+            "te": "భారతదేశంలో సాగుభూమి ఉన్న చిన్న మరియు కమతాల రైతు కుటుంబాలు",
+            "hi": "भारत में कृषि योग्य भूमि वाले सभी किसान परिवार",
+            "en": "All landholding farmer families across India"
+        },
+        "deadline": "Open Year-Round",
+        "description": {
+            "te": "చిన్న మరియు చిన్నకారు రైతు కుటుంబాలకు ఏటా ₹6,000 ఆర్థిక సహాయం నేరుగా బ్యాంక్ ఖాతాలో జమ చేసే కేంద్ర ప్రభుత్వ పథకం.",
+            "hi": "छोटे और सीमांत किसान परिवारों को प्रति वर्ष ₹6,000 की प्रत्यक्ष वित्तीय सहायता।",
+            "en": "Central Government scheme providing ₹6,000 annual direct income support to landholding farmer families."
+        },
+        "application_link": "https://pmkisan.gov.in",
+        "status": "Active",
+        "added_by": "Central Agriculture Ministry"
+    }
+}
 
 EMERGENCY_ALERTS_DB: List[Dict[str, Any]] = []
 SCANS_HISTORY_DB: List[Dict[str, Any]] = []
