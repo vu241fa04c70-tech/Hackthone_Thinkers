@@ -158,6 +158,7 @@ class CopilotChatRequest(BaseModel):
     field_id: Optional[str] = "field_01"
     audio_base64: Optional[str] = None
     farmer_profile: Optional[Dict[str, Any]] = None
+    history: Optional[List[Dict[str, str]]] = None
 
 class CopilotChatResponse(BaseModel):
     answer: str
