@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserCheck, ShieldCheck, ArrowRight, Lock, Key, Globe, Sparkles } from 'lucide-react';
+import { UserCheck, ShieldCheck, ArrowRight, Lock, Key, Globe, Sparkles, Camera, TrendingUp, Sun, Scroll, Volume2 } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '../localization/languageMap';
 
@@ -9,7 +9,17 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
   const [inputPassword, setInputPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  // Password Setup / Verification Logic
+  // Saved Farmer Profile check for quick 1-click continue
+  const savedFarmer = (() => {
+    try {
+      const p = localStorage.getItem('kisan_farmer_profile');
+      return p ? JSON.parse(p) : null;
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  // Password Setup / Verification Logic for Admin Access
   const savedPassword = localStorage.getItem('kisan_admin_password');
   const isFirstTimeSetup = !savedPassword;
 
@@ -44,130 +54,21 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
     }
   };
 
-  const getTopBadge = () => {
-    switch (lang) {
-      case 'hi': return '✨ नीचे अपना पोर्टल चुनें';
-      case 'te': return '✨ కింద మీ పోర్టల్‌ను ఎంచుకోండి';
-      case 'ta': return '✨ போர்ட்டலை தேர்ந்தெடுக்கவும்';
-      default: return '✨ Select Your Portal Below';
-    }
-  };
-
   const getTitle = () => {
     switch (lang) {
-      case 'hi': return 'किसान मित्र में आपका हार्दिक स्वागत है!';
+      case 'hi': return 'किसान मित्र में आपका स्वागत है';
       case 'te': return 'కిసాన్ మిత్ర లోకి స్వాగతం!';
       case 'ta': return 'கிசான் மித்ராவுக்கு நல்வரவு!';
-      default: return 'Welcome to Kisan Mitra!';
+      default: return 'Welcome to Kisan Mitra';
     }
   };
 
   const getSubtitle = () => {
     switch (lang) {
-      case 'hi': return 'किसानों की सेवा में AI तकनीक • सरकारी योजनाएं • मंडी भाव • फसल रोग निदान';
-      case 'te': return 'రైతుల సేవలో AI సాంకేతికత • ప్రభుత్వ పథకాలు • మార్కెట్ ధరలు • పంట వ్యాధి నిర్ధారణ';
-      case 'ta': return 'விவசாயிகளுக்கான AI தொழில்நுட்பம் • அரசு திட்டங்கள் • சந்தை விலை';
-      default: return 'AI Technology for Farmers • Government Schemes • Mandi Prices • Crop Disease Diagnostics';
-    }
-  };
-
-  const getAdminBadge = () => {
-    switch (lang) {
-      case 'hi': return 'पासवर्ड द्वारा सुरक्षित';
-      case 'te': return 'పాస్‌వర్డ్‌తో రక్షణ';
-      default: return 'Password Protected';
-    }
-  };
-
-  const getAdminTitle = () => {
-    switch (lang) {
-      case 'hi': return 'शासन एवं एडमिन पोर्टल';
-      case 'te': return 'ప్రభుత్వ & అడ్మిన్ పోర్టల్';
-      default: return 'Government Admin Portal';
-    }
-  };
-
-  const getAdminDesc = () => {
-    switch (lang) {
-      case 'hi': return 'सरकारी अधिकारियों और व्यवस्थापकों के लिए नई योजनाएं जोड़ने, मंडी भाव अपडेट करने और मौसम चेतावनी जारी करने का पोर्टल।';
-      case 'te': return 'ప్రభుత్వ అధికారులు మరియు అడ్మిన్‌లు కొత్త పథకాలు జోడించడానికి, మండీ ధరలు అప్‌డేట్ చేయడానికి పోర్టల్.';
-      default: return 'For Government Officials & Admins to add new schemes, update live Mandi prices, and broadcast weather alerts.';
-    }
-  };
-
-  const getAdminBullets = () => {
-    if (lang === 'hi') {
-      return [
-        'नई सरकारी योजनाएं प्रकाशित करें',
-        'लाइव फसल मंडी भाव अपडेट करें',
-        'किसानों के लिए मौसम चेतावनियां जारी करें'
-      ];
-    } else if (lang === 'te') {
-      return [
-        'క్రొత్త ప్రభుత్వ పథకాలను ప్రచురించండి',
-        'లైవ్ పంట మార్కెట్ ధరలను అప్‌డేట్ చేయండి',
-        'రైతులకు వాతావరణ హెచ్చరికలు పంపండి'
-      ];
-    } else {
-      return [
-        'Publish New Government Schemes',
-        'Update Live Crop Mandi Prices',
-        'Broadcast Weather Warnings to Farmers'
-      ];
-    }
-  };
-
-  const getAdminBtnText = () => {
-    switch (lang) {
-      case 'hi': return '🔒 एडमिन लॉगिन (पासवर्ड दर्ज करें) ➔';
-      case 'te': return '🔒 అడ్మిన్ లాగిన్ (పాస్‌వర్డ్ నమోదు చేయండి) ➔';
-      default: return '🔒 Admin Login (Enter Password) ➔';
-    }
-  };
-
-  const getFarmerBadge = () => {
-    switch (lang) {
-      case 'hi': return 'सीधा किसान प्रवेश';
-      case 'te': return 'నేరుగా రైతు ప్రవేశం';
-      default: return 'Direct Farmer Access';
-    }
-  };
-
-  const getFarmerTitle = () => {
-    switch (lang) {
-      case 'hi': return 'किसान आवेदन ऐप';
-      case 'te': return 'రైతు మొబైల్ అప్లికేషన్';
-      default: return 'Farmer Application App';
-    }
-  };
-
-  const getFarmerDesc = () => {
-    switch (lang) {
-      case 'hi': return 'किसानों के लिए फसल रोगों का निदान करने, सरकारी योजनाएं देखने, मंडी भाव जांचने और किसान वॉइस AI से बात करने का ऐप।';
-      case 'te': return 'రైతులు పంట వ్యాధులను గుర్తించడానికి, ప్రభుత్వ పథకాలు చూడటానికి, మండీ ధరలు మరియు AI వాయిస్ తో మాట్లాడటానికి యాప్.';
-      default: return 'For Farmers to diagnose crop diseases, view official govt schemes, check Mandi prices, and talk with Kisan Voice AI.';
-    }
-  };
-
-  const getFarmerBullets = () => {
-    if (lang === 'hi') {
-      return [
-        'फसल एवं रोग निदान (गूगल लेंस AI)',
-        'लाइव मंडी भाव एवं मौसम सलाह',
-        'वॉइस AI सहायक एवं कृषि कैलेंडर'
-      ];
-    } else if (lang === 'te') {
-      return [
-        'పంట వ్యాధి గుర్తింపు (గూగుల్ లెన్స్ AI)',
-        'లైవ్ మండీ ధరలు & వాతావరణ సలహాలు',
-        'వాయిస్ AI సహాయకుడు & క్యాలెండర్'
-      ];
-    } else {
-      return [
-        'Crop & Disease AI Diagnosis (Google Lens)',
-        'Live Mandi Prices & Weather Advisory',
-        'Voice AI Assistant & Farming Calendar'
-      ];
+      case 'hi': return 'भारत के किसानों के लिए AI फसल रोग निदान, लाइव मंडी भाव, मौसम चेतावनियां एवं सरकारी योजनाएं';
+      case 'te': return 'భారతీయ రైతుల కోసం AI పంట వ్యాధి గుర్తింపు, లైవ్ మండీ ధరలు, వాతావరణ హెచ్చరికలు మరియు ప్రభుత్వ పథకాలు';
+      case 'ta': return 'இந்திய விவசாயிகளுக்கான AI பயிர் நோய் கண்டறிதல், நேரலை சந்தை விலை மற்றும் அரசு திட்டங்கள்';
+      default: return 'AI Crop Disease Diagnostics, Live Mandi Rates, Weather Advisory & Government Schemes for Indian Farmers';
     }
   };
 
@@ -175,131 +76,121 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
     switch (lang) {
       case 'hi': return '👤 किसान ऐप में प्रवेश करें ➔';
       case 'te': return '👤 రైతు యాప్‌లో ప్రవేశించండి ➔';
+      case 'ta': return '👤 விவசாயி செயலியில் நுழையவும் ➔';
       default: return '👤 Enter Farmer Application ➔';
     }
   };
 
+  const farmerFeatures = [
+    {
+      title: lang === 'hi' ? '📷 फसल एवं रोग निदान (AI लेंस)' : (lang === 'te' ? '📷 పంట వ్యాధి గుర్తింపు (AI లెన్స్)' : '📷 AI Crop Disease Diagnosis'),
+      desc: lang === 'hi' ? 'फसल की फोटो खींचकर रोग और सटीक दवाई का सुझाव पाएं।' : (lang === 'te' ? 'పంట ఫోటో తీసి వ్యాధి మరియు రసాయన మందుల సలహా పొందండి.' : 'Upload crop photos to detect diseases and chemical treatments.')
+    },
+    {
+      title: lang === 'hi' ? '💰 लाइव मंडी भाव एवं बिक्री सलाह' : (lang === 'te' ? '💰 లైవ్ మండీ ధరలు & అమ్మకం సలహా' : '💰 Live Mandi Prices & Sell Advisory'),
+      desc: lang === 'hi' ? 'निकटतम मंडियों के प्रति क्विंटल भाव और बेचने का सही समय।' : (lang === 'te' ? 'సమీప గుంటూరు యార్డ్ ధరలు మరియు అమ్మకపు ఉత్తమ సమయం.' : 'Real-time APMC mandi prices and AI harvest hold advice.')
+    },
+    {
+      title: lang === 'hi' ? '🌦️ मौसम चेतावनी एवं बुवाई कैलेंडर' : (lang === 'te' ? '🌦️ వాతావరణ హెచ్చరికలు & క్యాలెండర్' : '🌦️ Weather Advisory & Crop Calendar'),
+      desc: lang === 'hi' ? 'बारिश का सटीक अनुमान एवं साप्ताहिक खेती के काम।' : (lang === 'te' ? 'వర్షపాత సూచనలు మరియు వారపు వ్యవసాయ పనుల జాబితా.' : 'Real-time rainfall warnings and weekly farming schedule.')
+    },
+    {
+      title: lang === 'hi' ? '🏛️ सरकारी योजनाएं एवं वित्तीय लाभ' : (lang === 'te' ? '🏛️ ప్రభుత్వ పథకాలు & రాయితీలు' : '🏛️ Government Schemes & Subsidies'),
+      desc: lang === 'hi' ? 'पीएम-किसान, फसल बीमा और सब्सिडी योजनाओं की जानकारी।' : (lang === 'te' ? 'పీఎం-కిసాన్, రైతు భరోసా మరియు ఫసల్ బీమా పథకాల సమాచారం.' : 'PM-KISAN, Rythu Bharosa, and PMFBY crop insurance details.')
+    }
+  ];
+
   return (
     <div className={`min-h-screen bg-[#090d16] text-slate-100 flex flex-col justify-between font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-slate-950 p-4 sm:p-6 lg:p-8 ${isRTL ? 'text-right' : 'text-left'}`}>
       
-      {/* Top Bar Language Selector */}
-      <div className="max-w-6xl w-full mx-auto flex items-center justify-end pb-4">
-        <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-2xl px-4 py-2 shadow-xl">
-          <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
-          <select
-            value={lang}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer"
+      {/* Top Header Bar with Discrete Admin Button */}
+      <div className="max-w-6xl w-full mx-auto flex items-center justify-between pb-4">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-lg text-lg">
+            🌾
+          </div>
+          <span className="text-base font-black text-emerald-400 tracking-tight">Kisan Mitra</span>
+        </div>
+
+        {/* Right Actions: Language Selector + Discrete Admin Login Button */}
+        <div className="flex items-center gap-3">
+          {/* Discrete Admin Link (Only for Admins) */}
+          <button
+            onClick={handleAdminClick}
+            className="px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-cyan-300 border border-slate-800 text-xs font-black flex items-center gap-1.5 cursor-pointer transition-all shadow-md"
+            title="Authorized Government Admin Portal Only"
           >
-            {Object.values(SUPPORTED_LANGUAGES).map((l) => (
-              <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100 font-bold">
-                {l.flag} {l.name} ({l.subName})
-              </option>
-            ))}
-          </select>
+            <Lock className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{lang === 'hi' ? '🔐 एडमिन एक्सेस' : (lang === 'te' ? '🔐 అడ్మిన్ ప్రవేశం' : '🔐 Admin Access')}</span>
+          </button>
+
+          {/* 🌐 Multilingual Dropdown */}
+          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-xl">
+            <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+            <select
+              value={lang}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="bg-transparent text-xs font-black text-emerald-400 focus:outline-none cursor-pointer"
+            >
+              {Object.values(SUPPORTED_LANGUAGES).map((l) => (
+                <option key={l.code} value={l.code} className="bg-slate-900 text-slate-100 font-bold">
+                  {l.flag} {l.name} ({l.subName})
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Main Hero Header */}
-      <div className="max-w-4xl mx-auto text-center space-y-4 my-auto pt-2 pb-6">
+      {/* Hero Welcome Banner (Clean & Focused on Farmers) */}
+      <div className="max-w-4xl mx-auto text-center space-y-5 my-auto pt-4 pb-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-black shadow-lg">
-          <span>{getTopBadge()}</span>
+          <Sparkles className="w-4 h-4 text-emerald-400" />
+          <span>{lang === 'hi' ? 'डिजिटल किसान सेवा ऐप' : (lang === 'te' ? 'డిజిటల్ రైతు యాప్' : 'Digital Agriculture Platform for Farmers')}</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-100 flex items-center justify-center gap-3">
-          <span className="text-4xl sm:text-6xl">🌾</span>
-          <span>{getTitle()}</span>
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-100 leading-tight">
+          {getTitle()}
         </h1>
 
         <p className="text-sm sm:text-base text-slate-300 font-bold max-w-2xl mx-auto leading-relaxed">
           {getSubtitle()}
         </p>
-      </div>
 
-      {/* Role Selection Cards Grid */}
-      <div className="max-w-5xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 my-auto">
-        
-        {/* Admin Card */}
-        <div className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border-2 border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden group">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-2xl font-black shadow-lg group-hover:scale-110 transition-transform">
-                🏛️
-              </div>
-              <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                {getAdminBadge()}
-              </span>
-            </div>
+        {/* Primary Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 max-w-md mx-auto">
+          {/* Saved Farmer Quick Login Button */}
+          {savedFarmer && (
+            <button
+              onClick={onSelectFarmer}
+              className="w-full sm:w-auto min-h-[52px] px-8 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border-2 border-emerald-500/50 font-black text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xl transition-all hover:scale-105"
+            >
+              <span>👨‍🌾 {savedFarmer.farmer_name || 'Ramesh'} {lang === 'hi' ? 'के रूप में जारी रखें ➔' : (lang === 'te' ? 'గా కొనసాగండి ➔' : 'Continue ➔')}</span>
+            </button>
+          )}
 
-            <div>
-              <h2 className="text-2xl font-black text-slate-100 group-hover:text-cyan-300 transition-colors">
-                {getAdminTitle()}
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-300 font-bold mt-2 leading-relaxed">
-                {getAdminDesc()}
-              </p>
-            </div>
-
-            <div className="space-y-2 pt-2 border-t border-slate-800">
-              {getAdminBullets().map((bullet, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                  <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>{bullet}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <button
-            onClick={handleAdminClick}
-            className="w-full min-h-[52px] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-500 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-cyan-500/20 cursor-pointer transition-all hover:scale-[1.02]"
-          >
-            <span>{getAdminBtnText()}</span>
-          </button>
-        </div>
-
-        {/* Farmer Application Card */}
-        <div className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden group">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-2xl font-black shadow-lg group-hover:scale-110 transition-transform">
-                👨‍🌾
-              </div>
-              <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-                {getFarmerBadge()}
-              </span>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-black text-slate-100 group-hover:text-emerald-300 transition-colors">
-                {getFarmerTitle()}
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-300 font-bold mt-2 leading-relaxed">
-                {getFarmerDesc()}
-              </p>
-            </div>
-
-            <div className="space-y-2 pt-2 border-t border-slate-800">
-              {getFarmerBullets().map((bullet, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                  <UserCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{bullet}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
+          {/* Enter Farmer App Main Button */}
           <button
             onClick={onSelectFarmer}
-            className="w-full min-h-[52px] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 cursor-pointer transition-all hover:scale-[1.02]"
+            className="w-full sm:w-auto min-h-[52px] px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-2xl shadow-emerald-500/30 cursor-pointer transition-all hover:scale-105"
           >
             <span>{getFarmerBtnText()}</span>
           </button>
         </div>
-
       </div>
 
-      {/* Admin Password Modal */}
+      {/* Farmer Feature Highlights Grid */}
+      <div className="max-w-5xl w-full mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 my-auto pt-4">
+        {farmerFeatures.map((feat, idx) => (
+          <div key={idx} className="bg-slate-900/90 p-5 sm:p-6 rounded-3xl border border-slate-800 hover:border-emerald-500/40 transition-all space-y-2 shadow-xl">
+            <h3 className="text-base font-black text-slate-100">{feat.title}</h3>
+            <p className="text-xs text-slate-300 font-bold leading-relaxed">{feat.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Secret Admin Password Modal */}
       {showPasswordModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200">
