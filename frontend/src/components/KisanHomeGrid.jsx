@@ -134,13 +134,13 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
             </div>
           </div>
 
-          {/* Right Circular Indian Farmer Illustration Artwork Matching Sample Image 2 */}
-          <div className="relative flex items-center justify-center shrink-0 w-64 h-64 sm:w-80 sm:h-80">
-            <div className="absolute inset-0 rounded-full border-4 border-emerald-300/80 bg-emerald-100/50 shadow-inner" />
-            <div className="absolute inset-3 rounded-full border-2 border-dashed border-emerald-400 animate-spin-slow" style={{ animationDuration: '60s' }} />
+          {/* Right Circular Indian Farmer Illustration Artwork Matching Sample Image 2 - Extra Large Size */}
+          <div className="relative flex items-center justify-center shrink-0 w-72 h-72 sm:w-96 sm:h-96 lg:w-[420px] lg:h-[420px]">
+            <div className="absolute inset-0 rounded-full border-4 border-emerald-300/80 bg-emerald-100/60 shadow-2xl" />
+            <div className="absolute inset-3 rounded-full border-4 border-dashed border-emerald-400 animate-spin-slow" style={{ animationDuration: '60s' }} />
 
-            {/* Large Prominent Center Circular Farmer Image Artwork */}
-            <div className="relative z-10 w-48 h-48 sm:w-60 sm:h-60 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gradient-to-b from-amber-50 via-emerald-50 to-emerald-100 group">
+            {/* Extra Large Center Circular Farmer Image Artwork */}
+            <div className="relative z-10 w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gradient-to-b from-amber-50 via-emerald-50 to-emerald-100 group">
               <img 
                 src="/assets/farmer_avatar.jpg" 
                 alt="Indian Farmer in Field" 
@@ -151,34 +151,34 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
                 }}
               />
               <div className="hidden w-full h-full flex-col items-center justify-center text-center p-3 bg-gradient-to-tr from-emerald-100 to-amber-50">
-                <span className="text-5xl mb-1">👨‍🌾</span>
-                <span className="text-sm font-black text-[#2D6A4F]">Kisan Mitra</span>
+                <span className="text-6xl mb-1">👨‍🌾</span>
+                <span className="text-base font-black text-[#2D6A4F]">Kisan Mitra</span>
               </div>
             </div>
 
-            {/* Orbit Badges Matching Image 2 */}
-            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Sun Weather">
-              <Sun className="w-5 h-5" />
+            {/* Large Orbit Badges */}
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-emerald-300 shadow-xl flex items-center justify-center text-[#2D6A4F]" title="Sun Weather">
+              <Sun className="w-6 h-6" />
             </div>
 
-            <div className="absolute top-1/4 -right-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Crop Health">
-              <Sprout className="w-5 h-5" />
+            <div className="absolute top-1/4 -right-2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-emerald-300 shadow-xl flex items-center justify-center text-[#2D6A4F]" title="Crop Health">
+              <Sprout className="w-6 h-6" />
             </div>
 
-            <div className="absolute bottom-1/4 -right-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Water Irrigation">
-              <Droplets className="w-5 h-5" />
+            <div className="absolute bottom-1/4 -right-2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-emerald-300 shadow-xl flex items-center justify-center text-[#2D6A4F]" title="Water Irrigation">
+              <Droplets className="w-6 h-6" />
             </div>
 
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Vision AI">
-              <Camera className="w-5 h-5" />
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-emerald-300 shadow-xl flex items-center justify-center text-[#2D6A4F]" title="Vision AI">
+              <Camera className="w-6 h-6" />
             </div>
 
-            <div className="absolute bottom-1/4 -left-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Voice AI">
-              <Mic className="w-5 h-5" />
+            <div className="absolute bottom-1/4 -left-2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-emerald-300 shadow-xl flex items-center justify-center text-[#2D6A4F]" title="Voice AI">
+              <Mic className="w-6 h-6" />
             </div>
 
-            <div className="absolute top-1/4 -left-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Mandi Prices">
-              <TrendingUp className="w-5 h-5" />
+            <div className="absolute top-1/4 -left-2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-emerald-300 shadow-xl flex items-center justify-center text-[#2D6A4F]" title="Mandi Prices">
+              <TrendingUp className="w-6 h-6" />
             </div>
           </div>
 

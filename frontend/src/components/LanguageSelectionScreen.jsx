@@ -223,14 +223,14 @@ export default function LanguageSelectionScreen({ onConfirm }) {
         {step === 1 && (
           <div className="space-y-6 animate-in fade-in duration-300">
             
-            {/* Center Orbital Indian Farmer Illustration Artwork Badge */}
+            {/* Center Orbital Indian Farmer Illustration Artwork Badge - Extra Large Size */}
             <div className="flex justify-center">
-              <div className="relative flex items-center justify-center w-48 h-48 sm:w-56 sm:h-56 bg-white/40 p-4 rounded-full backdrop-blur-sm border border-white/60 shadow-xl">
-                <div className="absolute inset-0 rounded-full border-4 border-emerald-300/80 bg-emerald-100/50 shadow-inner" />
-                <div className="absolute inset-2 rounded-full border-2 border-dashed border-emerald-400 animate-spin-slow" style={{ animationDuration: '60s' }} />
+              <div className="relative flex items-center justify-center w-64 h-64 sm:w-80 sm:h-80 bg-white/40 p-4 rounded-full backdrop-blur-sm border border-white/60 shadow-2xl">
+                <div className="absolute inset-0 rounded-full border-4 border-emerald-300/80 bg-emerald-100/60 shadow-inner" />
+                <div className="absolute inset-2 rounded-full border-4 border-dashed border-emerald-400 animate-spin-slow" style={{ animationDuration: '60s' }} />
 
-                {/* Center Image Artwork */}
-                <div className="relative z-10 w-36 h-36 sm:w-40 sm:h-40 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gradient-to-b from-amber-50 to-emerald-100">
+                {/* Extra Large Center Image Artwork */}
+                <div className="relative z-10 w-48 h-48 sm:w-60 sm:h-60 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gradient-to-b from-amber-50 to-emerald-100">
                   <img 
                     src="/assets/farmer_avatar.jpg" 
                     alt="Kisan Mitra Farmer" 
@@ -241,29 +241,29 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                     }}
                   />
                   <div className="hidden w-full h-full flex-col items-center justify-center text-center p-2">
-                    <span className="text-4xl">👨‍🌾</span>
-                    <span className="text-xs font-black text-[#2D6A4F]">Kisan Mitra</span>
+                    <span className="text-5xl">👨‍🌾</span>
+                    <span className="text-sm font-black text-[#2D6A4F]">Kisan Mitra</span>
                   </div>
                 </div>
 
                 {/* Orbiting Icons */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-emerald-300 shadow-md flex items-center justify-center text-[#2D6A4F]">
-                  <Sun className="w-4 h-4" />
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]">
+                  <Sun className="w-5 h-5" />
                 </div>
-                <div className="absolute top-1/4 right-1 w-9 h-9 rounded-full bg-white border-2 border-emerald-300 shadow-md flex items-center justify-center text-[#2D6A4F]">
-                  <Sprout className="w-4 h-4" />
+                <div className="absolute top-1/4 -right-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]">
+                  <Sprout className="w-5 h-5" />
                 </div>
-                <div className="absolute bottom-1/4 right-1 w-9 h-9 rounded-full bg-white border-2 border-emerald-300 shadow-md flex items-center justify-center text-[#2D6A4F]">
-                  <Droplets className="w-4 h-4" />
+                <div className="absolute bottom-1/4 -right-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]">
+                  <Droplets className="w-5 h-5" />
                 </div>
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-emerald-300 shadow-md flex items-center justify-center text-[#2D6A4F]">
-                  <Camera className="w-4 h-4" />
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]">
+                  <Camera className="w-5 h-5" />
                 </div>
-                <div className="absolute bottom-1/4 left-1 w-9 h-9 rounded-full bg-white border-2 border-emerald-300 shadow-md flex items-center justify-center text-[#2D6A4F]">
-                  <Mic className="w-4 h-4" />
+                <div className="absolute bottom-1/4 -left-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]">
+                  <Mic className="w-5 h-5" />
                 </div>
-                <div className="absolute top-1/4 left-1 w-9 h-9 rounded-full bg-white border-2 border-emerald-300 shadow-md flex items-center justify-center text-[#2D6A4F]">
-                  <TrendingUp className="w-4 h-4" />
+                <div className="absolute top-1/4 -left-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]">
+                  <TrendingUp className="w-5 h-5" />
                 </div>
               </div>
             </div>
