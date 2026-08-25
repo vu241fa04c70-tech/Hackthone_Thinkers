@@ -229,7 +229,7 @@ export default function LanguageSelectionScreen({ onConfirm }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3] text-[#2C3333] font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#2D6A4F] selection:text-white flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-[#FAF8F3]/90 india-watermark-bg text-[#2C3333] font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#2D6A4F] selection:text-white flex flex-col justify-between p-4 sm:p-6 lg:p-8">
       
       {/* Top Header Bar Matching Image 2 */}
       <div className="max-w-6xl w-full mx-auto flex items-center justify-between pb-4">
