@@ -161,7 +161,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#FAF8F3] text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
+    <div className={`min-h-screen bg-transparent india-watermark-bg text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
       
       {/* Top Main Navigation Header */}
       <header className="border-b border-emerald-100 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
@@ -233,10 +233,10 @@ export default function App() {
         </div>
       </header>
 
-      {/* Navigation Pill Tabs Bar */}
-      <div className="border-b border-emerald-100 bg-white/60">
+      {/* Navigation Pill Tabs Bar - Solid High Contrast so all Dashboard Names are Clearly Visible */}
+      <div className="border-b-2 border-emerald-200 bg-white shadow-md sticky top-[65px] z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto py-2.5 no-scrollbar">
+          <nav className="flex space-x-1.5 sm:space-x-2 overflow-x-auto py-3 no-scrollbar">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -245,14 +245,14 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-black transition-all shrink-0 cursor-pointer shadow-sm ${
                     isActive
-                      ? 'bg-[#2D6A4F] text-white shadow-md scale-[1.02]'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50'
+                      ? 'bg-[#2D6A4F] text-white shadow-md scale-[1.03] border-2 border-emerald-400'
+                      : 'bg-white text-slate-800 hover:text-[#2D6A4F] hover:bg-emerald-50 border border-slate-300'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#2D6A4F]'}`} />
-                  <span>{labelText}</span>
+                  <Icon className={`w-4.5 h-4.5 ${isActive ? 'text-white' : 'text-[#2D6A4F]'}`} />
+                  <span className="tracking-tight">{labelText}</span>
                 </button>
               );
             })}

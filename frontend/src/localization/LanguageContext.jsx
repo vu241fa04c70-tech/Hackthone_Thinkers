@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { translations } from './translations';
 import { isRTLLanguage } from './languageMap';
+import { stopSpeech, announceLanguageChange } from '../utils/voiceUtils';
 
 const LanguageContext = createContext();
 
@@ -9,9 +10,17 @@ export function LanguageProvider({ children }) {
     return localStorage.getItem('kisanLanguage') || 'te'; // Default Telugu!
   });
 
-  const setLanguage = (newLang) => {
+  const setLanguage = (newLang, speakGreeting = true) => {
     setLangState(newLang);
     localStorage.setItem('kisanLanguage', newLang);
+
+    // Stop any speech playing in old language and announce in newly selected language!
+    stopSpeech();
+    if (speakGreeting) {
+      setTimeout(() => {
+        announceLanguageChange(newLang);
+      }, 150);
+    }
   };
 
   useEffect(() => {

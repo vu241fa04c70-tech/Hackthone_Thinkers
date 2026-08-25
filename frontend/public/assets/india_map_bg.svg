@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1100" fill="none">
+  <!-- India Map Outline & Agricultural Heritage Watermark -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- India Map Vector Fill & Border -->
+    <path d="M500,40 C525,55 540,80 550,105 C575,115 600,105 625,130 C640,155 665,165 690,175 C715,190 740,215 750,240 C775,255 785,280 775,305 C750,330 765,355 790,380 C800,405 815,430 800,455 C790,480 765,495 740,505 C715,515 690,540 675,565 C665,590 650,615 625,640 C600,665 575,690 550,725 C540,750 525,785 515,820 C505,850 500,880 495,910 C490,880 485,850 475,820 C465,785 450,750 440,725 C415,690 390,665 365,640 C340,615 325,590 315,565 C300,540 275,515 250,505 C225,495 200,480 190,455 C175,430 190,405 200,380 C225,355 240,330 215,305 C205,280 215,255 240,240 C250,215 275,190 300,175 C325,165 350,155 360,130 C385,105 410,115 435,105 C450,80 475,55 500,40 Z" 
+          fill="#2D6A4F" fill-opacity="0.12" stroke="#2D6A4F" stroke-width="6" opacity="0.35"/>
+
+    <!-- Saffron & Green Accent Bands over India Map -->
+    <path d="M220,280 Q500,230 780,280" stroke="#FF9933" stroke-width="12" opacity="0.45" fill="none"/>
+    <path d="M180,450 Q500,400 820,450" stroke="#138808" stroke-width="12" opacity="0.45" fill="none"/>
+
+    <!-- Ashoka Chakra 24-Spoked Central Wheel Motif -->
+    <circle cx="500" cy="420" r="105" stroke="#000080" stroke-width="5" fill="none" opacity="0.5"/>
+    <circle cx="500" cy="420" r="16" fill="#000080" opacity="0.5"/>
+    <g stroke="#000080" stroke-width="3" opacity="0.5">
+      <line x1="500" y1="315" x2="500" y2="525" />
+      <line x1="395" y1="420" x2="605" y2="420" />
+      <line x1="425" y1="345" x2="575" y2="495" />
+      <line x1="425" y1="495" x2="575" y2="345" />
+      <line x1="405" y1="380" x2="595" y2="460" />
+      <line x1="405" y1="460" x2="595" y2="380" />
+      <line x1="460" y1="320" x2="540" y2="520" />
+      <line x1="460" y1="520" x2="540" y2="320" />
+    </g>
+
+    <!-- Golden Wheat Ears Symbolizing Indian Agriculture -->
+    <path d="M360,580 Q320,500 270,450 M360,580 Q310,540 250,520" stroke="#D97706" stroke-width="6" opacity="0.4"/>
+    <path d="M640,580 Q680,500 730,450 M640,580 Q690,540 750,520" stroke="#D97706" stroke-width="6" opacity="0.4"/>
+  </g>
+</svg>
