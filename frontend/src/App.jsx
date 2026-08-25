@@ -161,7 +161,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#FAF8F3]/90 india-watermark-bg text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
+    <div className={`min-h-screen bg-transparent india-watermark-bg text-[#2C3333] flex flex-col font-['Plus_Jakarta_Sans',sans-serif] ${isRTL ? 'text-right' : 'text-left'}`}>
       
       {/* Top Main Navigation Header */}
       <header className="border-b border-emerald-100 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
