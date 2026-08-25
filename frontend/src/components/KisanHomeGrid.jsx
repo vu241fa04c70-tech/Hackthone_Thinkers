@@ -95,22 +95,22 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
   return (
     <div className="space-y-8 font-['Plus_Jakarta_Sans',sans-serif]">
       
-      {/* 🌟 1. HERO FARMER FRIEND BANNER */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-white via-[#F4F9F4] to-white border border-emerald-100 p-6 sm:p-8 shadow-sm">
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+      {/* 🌟 1. HERO FARMER FRIEND BANNER MATCHING SAMPLE IMAGE 2 */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-white via-[#F4F9F4] to-white border border-emerald-200 p-6 sm:p-10 shadow-md">
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
           
           {/* Left Text Greeting */}
-          <div className="space-y-3 flex-1 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100/90 text-[#2D6A4F] border border-emerald-200 text-xs font-extrabold shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-[#2D6A4F]" />
+          <div className="space-y-4 flex-1 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-[#2D6A4F] border border-emerald-200 text-xs font-extrabold shadow-sm">
+              <Sparkles className="w-4 h-4 text-[#2D6A4F]" />
               <span>{lang === 'hi' ? 'आज का किसान AI समाचार' : (lang === 'te' ? 'ఈనాటి రైతు AI సమాచారం' : 'Daily Farmer AI Advisory')}</span>
             </div>
 
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#2C3333] tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-black text-[#2C3333] tracking-tight">
               {t('home.greetingPrefix') || (lang === 'hi' ? 'नमस्ते' : (lang === 'te' ? 'నమస్కారం' : 'Namaskaram'))} <span className="text-[#2D6A4F]">{farmerName}</span> {t('home.greetingSuffix') || (lang === 'te' ? 'గారూ!' : 'ji!')} 🌅
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-600 font-semibold">
+            <p className="text-sm sm:text-base text-slate-600 font-semibold">
               📍 {village}, {district} • 🌾 {lang === 'te' ? 'సాగు పంట' : 'Crop'}: <span className="text-[#2D6A4F] font-bold">{cropName}</span>
             </p>
 
@@ -118,7 +118,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
             <div className="pt-2">
               <button
                 onClick={toggleBriefing}
-                className={`w-full sm:w-auto min-h-[48px] px-6 py-3 rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-3 cursor-pointer shadow-sm transition-all duration-200 ${
+                className={`w-full sm:w-auto min-h-[52px] px-8 py-3.5 rounded-full font-extrabold text-sm flex items-center justify-center gap-3 cursor-pointer shadow-md transition-all duration-200 ${
                   isPlayingBriefing
                     ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-200 animate-pulse'
                     : 'bg-[#2D6A4F] hover:bg-[#1B4332] text-white shadow-emerald-100 hover:scale-105'
@@ -134,13 +134,13 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
             </div>
           </div>
 
-          {/* Right Circular Indian Farmer Illustration Artwork Matching Image 2 */}
-          <div className="relative flex items-center justify-center shrink-0 w-56 h-56 sm:w-64 sm:h-64">
-            <div className="absolute inset-0 rounded-full border-2 border-emerald-200/80 bg-emerald-50/40 shadow-inner" />
-            <div className="absolute inset-2 rounded-full border border-dashed border-emerald-300 animate-spin-slow" style={{ animationDuration: '60s' }} />
+          {/* Right Circular Indian Farmer Illustration Artwork Matching Sample Image 2 */}
+          <div className="relative flex items-center justify-center shrink-0 w-64 h-64 sm:w-80 sm:h-80">
+            <div className="absolute inset-0 rounded-full border-4 border-emerald-300/80 bg-emerald-100/50 shadow-inner" />
+            <div className="absolute inset-3 rounded-full border-2 border-dashed border-emerald-400 animate-spin-slow" style={{ animationDuration: '60s' }} />
 
-            {/* Center Circular Farmer Image */}
-            <div className="relative z-10 w-40 h-40 sm:w-44 sm:h-44 rounded-full border-4 border-white shadow-xl overflow-hidden bg-gradient-to-b from-amber-50 to-emerald-100 group">
+            {/* Large Prominent Center Circular Farmer Image Artwork */}
+            <div className="relative z-10 w-48 h-48 sm:w-60 sm:h-60 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gradient-to-b from-amber-50 via-emerald-50 to-emerald-100 group">
               <img 
                 src="/assets/farmer_avatar.jpg" 
                 alt="Indian Farmer in Field" 
@@ -150,59 +150,59 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
                   e.target.nextSibling.style.display = 'flex';
                 }}
               />
-              <div className="hidden w-full h-full flex-col items-center justify-center text-center p-2 bg-gradient-to-tr from-emerald-100 to-amber-50">
-                <span className="text-4xl mb-1">👨‍🌾</span>
-                <span className="text-xs font-black text-[#2D6A4F]">Kisan Mitra</span>
+              <div className="hidden w-full h-full flex-col items-center justify-center text-center p-3 bg-gradient-to-tr from-emerald-100 to-amber-50">
+                <span className="text-5xl mb-1">👨‍🌾</span>
+                <span className="text-sm font-black text-[#2D6A4F]">Kisan Mitra</span>
               </div>
             </div>
 
             {/* Orbit Badges Matching Image 2 */}
-            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Sun Weather">
-              <Sun className="w-4 h-4" />
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Sun Weather">
+              <Sun className="w-5 h-5" />
             </div>
 
-            <div className="absolute top-1/4 right-0 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Crop Health">
-              <Sprout className="w-4 h-4" />
+            <div className="absolute top-1/4 -right-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Crop Health">
+              <Sprout className="w-5 h-5" />
             </div>
 
-            <div className="absolute bottom-1/4 right-0 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Water Irrigation">
-              <Droplets className="w-4 h-4" />
+            <div className="absolute bottom-1/4 -right-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Water Irrigation">
+              <Droplets className="w-5 h-5" />
             </div>
 
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Vision AI">
-              <Camera className="w-4 h-4" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Vision AI">
+              <Camera className="w-5 h-5" />
             </div>
 
-            <div className="absolute bottom-1/4 left-0 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Voice AI">
-              <Mic className="w-4 h-4" />
+            <div className="absolute bottom-1/4 -left-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Voice AI">
+              <Mic className="w-5 h-5" />
             </div>
 
-            <div className="absolute top-1/4 left-0 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Mandi Prices">
-              <TrendingUp className="w-4 h-4" />
+            <div className="absolute top-1/4 -left-1 w-11 h-11 rounded-full bg-white border-2 border-emerald-300 shadow-lg flex items-center justify-center text-[#2D6A4F]" title="Mandi Prices">
+              <TrendingUp className="w-5 h-5" />
             </div>
           </div>
 
         </div>
 
         {/* Quick Weather & Kisan Helpline Summary Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 mt-6 border-t border-emerald-100">
-          <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/60 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 mt-6 border-t border-emerald-200">
+          <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-200 flex items-center gap-3 shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
               <Sun className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-800">🌦️ {lang === 'hi' ? 'मौसम सलाह' : (lang === 'te' ? 'వాతావరణ హెచ్చరిక' : 'Weather Advisory Today')}</div>
-              <div className="text-[11px] text-slate-600 font-semibold">{lang === 'hi' ? 'आज बारिश का अनुमान। छिड़काव रोक दें।' : (lang === 'te' ? 'మధ్యాహ్నం 2 గంటలకు వర్షం. మందు కొట్టడం ఆపండి.' : 'Rain expected today. Pause spraying & irrigation.')}</div>
+              <div className="text-xs font-extrabold text-slate-900">🌦️ {lang === 'hi' ? 'मौसम सलाह' : (lang === 'te' ? 'వాతావరణ హెచ్చరిక' : 'Weather Advisory Today')}</div>
+              <div className="text-xs text-slate-600 font-semibold">{lang === 'hi' ? 'आज बारिश का अनुमान। छिड़काव रोक दें।' : (lang === 'te' ? 'మధ్యాహ్నం 2 గంటలకు వర్షం. మందు కొట్టడం ఆపండి.' : 'Rain expected today. Pause spraying & irrigation.')}</div>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-rose-50/80 border border-rose-200/60 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-rose-100 text-rose-800 flex items-center justify-center shrink-0">
+          <div className="p-4 rounded-2xl bg-rose-50/90 border border-rose-200 flex items-center gap-3 shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-rose-100 text-rose-800 flex items-center justify-center shrink-0">
               <PhoneCall className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-800">📞 {lang === 'hi' ? 'किसान कॉल सेंटर' : (lang === 'te' ? 'కిసాన్ హెల్ప్‌లైన్ నంబర్' : 'Kisan Call Centre')}</div>
-              <div className="text-[11px] text-slate-600 font-semibold">
+              <div className="text-xs font-extrabold text-slate-900">📞 {lang === 'hi' ? 'किसान कॉल सेंटर' : (lang === 'te' ? 'కిసాన్ హెల్ప్‌లైన్ నంబర్' : 'Kisan Call Centre')}</div>
+              <div className="text-xs text-slate-600 font-semibold">
                 <span className="font-extrabold text-rose-700">1800-180-1551</span> (24/7 {lang === 'te' ? 'ఉచితం' : 'Toll-Free'})
               </div>
             </div>
@@ -221,10 +221,10 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <button
             onClick={() => onSelectAction('doctor')}
-            className="p-3 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[72px]"
+            className="p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[76px]"
           >
-            <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <Camera className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <Camera className="w-4 h-4" />
             </div>
             <div>
               <div className="text-xs font-bold text-[#2C3333]">{lang === 'te' ? 'పంట స్కాన్' : 'Crop Doctor'}</div>
@@ -234,10 +234,10 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
 
           <button
             onClick={() => onSelectAction('copilot')}
-            className="p-3 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[72px]"
+            className="p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[76px]"
           >
-            <div className="w-7 h-7 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <Mic className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <Mic className="w-4 h-4" />
             </div>
             <div>
               <div className="text-xs font-bold text-[#2C3333]">{lang === 'te' ? 'AI కోపైలట్' : 'AI Copilot'}</div>
@@ -247,10 +247,10 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
 
           <button
             onClick={() => onSelectAction('support')}
-            className="p-3 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[72px]"
+            className="p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[76px]"
           >
-            <div className="w-7 h-7 rounded-full bg-rose-100 text-rose-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <PhoneCall className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-full bg-rose-100 text-rose-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <PhoneCall className="w-4 h-4" />
             </div>
             <div>
               <div className="text-xs font-bold text-[#2C3333]">{lang === 'te' ? 'అధికారులు' : 'Officer Contacts'}</div>
@@ -260,10 +260,10 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
 
           <button
             onClick={() => onSelectAction('schemes')}
-            className="p-3 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[72px]"
+            className="p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[76px]"
           >
-            <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <Scroll className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <Scroll className="w-4 h-4" />
             </div>
             <div>
               <div className="text-xs font-bold text-[#2C3333]">{lang === 'te' ? 'పథకాలు' : 'Govt Schemes'}</div>
@@ -273,10 +273,10 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
 
           <button
             onClick={() => onSelectAction('calendar')}
-            className="p-3 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[72px]"
+            className="p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[76px]"
           >
-            <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <Calendar className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <Calendar className="w-4 h-4" />
             </div>
             <div>
               <div className="text-xs font-bold text-[#2C3333]">{lang === 'te' ? 'గ్రామ క్యాలెండర్' : 'Village Calendar'}</div>
@@ -286,10 +286,10 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
 
           <button
             onClick={() => onSelectAction('market')}
-            className="p-3 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[72px]"
+            className="p-3.5 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group shadow-sm min-h-[76px]"
           >
-            <div className="w-7 h-7 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <TrendingUp className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <TrendingUp className="w-4 h-4" />
             </div>
             <div>
               <div className="text-xs font-bold text-[#2C3333]">{lang === 'te' ? 'మండీ రేట్లు' : 'Mandi Rates'}</div>

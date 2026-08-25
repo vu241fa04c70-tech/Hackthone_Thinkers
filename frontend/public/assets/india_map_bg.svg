@@ -1,21 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" fill="none">
-  <!-- Subtle Outline Silhouette of Map of India with Agricultural Embellishments -->
-  <g opacity="0.08" stroke="#2D6A4F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <!-- India Map Vector Outline Path -->
-    <path d="M400,60 C420,70 430,90 440,110 C460,120 480,110 500,130 C510,150 530,160 550,170 C570,180 590,200 600,220 C620,230 630,250 620,270 C600,290 610,310 630,330 C640,350 650,370 640,390 C630,410 610,420 590,430 C570,440 550,460 540,480 C530,500 520,520 500,540 C480,560 460,580 440,610 C430,630 420,660 410,690 C405,710 400,740 395,770 C390,740 385,710 380,690 C370,660 360,630 350,610 C330,580 310,560 290,540 C270,520 260,500 250,480 C240,460 220,440 200,430 C180,420 160,410 150,390 C140,370 150,350 160,330 C180,310 190,290 170,270 C160,250 170,230 190,220 C200,200 220,180 240,170 C260,160 280,150 290,130 C310,110 330,120 350,110 C360,90 380,70 400,60 Z" fill="#2D6A4F" fill-opacity="0.03"/>
-    <!-- Ashoka Chakra 24 Spokes Sun Wheel Motif at Center -->
-    <circle cx="400" cy="380" r="70" stroke="#2D6A4F" stroke-width="2" fill="none"/>
-    <circle cx="400" cy="380" r="10" fill="#2D6A4F" fill-opacity="0.2"/>
-    <line x1="400" y1="310" x2="400" y2="450" />
-    <line x1="330" y1="380" x2="470" y2="380" />
-    <line x1="350" y1="330" x2="450" y2="430" />
-    <line x1="350" y1="430" x2="450" y2="330" />
-    <line x1="336" y1="355" x2="464" y2="405" />
-    <line x1="336" y1="405" x2="464" y2="355" />
-    <line x1="375" y1="316" x2="425" y2="444" />
-    <line x1="375" y1="444" x2="425" y2="316" />
-    <!-- Wheat Ears Left & Right -->
-    <path d="M300,500 Q280,450 250,420 M300,500 Q270,470 230,460" stroke="#2D6A4F" stroke-width="2"/>
-    <path d="M500,500 Q520,450 550,420 M500,500 Q530,470 570,460" stroke="#2D6A4F" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1100" fill="none">
+  <!-- India Map Outline & Agricultural Heritage Watermark -->
+  <g opacity="0.22" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- India Map Vector Fill & Border -->
+    <path d="M500,40 C525,55 540,80 550,105 C575,115 600,105 625,130 C640,155 665,165 690,175 C715,190 740,215 750,240 C775,255 785,280 775,305 C750,330 765,355 790,380 C800,405 815,430 800,455 C790,480 765,495 740,505 C715,515 690,540 675,565 C665,590 650,615 625,640 C600,665 575,690 550,725 C540,750 525,785 515,820 C505,850 500,880 495,910 C490,880 485,850 475,820 C465,785 450,750 440,725 C415,690 390,665 365,640 C340,615 325,590 315,565 C300,540 275,515 250,505 C225,495 200,480 190,455 C175,430 190,405 200,380 C225,355 240,330 215,305 C205,280 215,255 240,240 C250,215 275,190 300,175 C325,165 350,155 360,130 C385,105 410,115 435,105 C450,80 475,55 500,40 Z" 
+          fill="#2D6A4F" fill-opacity="0.08" stroke="#2D6A4F" stroke-width="4"/>
+
+    <!-- Saffron & Green Accent Bands over India Map -->
+    <path d="M250,300 Q500,260 750,300" stroke="#FF9933" stroke-width="6" opacity="0.3" fill="none"/>
+    <path d="M200,450 Q500,400 800,450" stroke="#138808" stroke-width="6" opacity="0.3" fill="none"/>
+
+    <!-- Ashoka Chakra 24-Spoked Central Wheel Motif -->
+    <circle cx="500" cy="420" r="95" stroke="#000080" stroke-width="3.5" fill="none" opacity="0.4"/>
+    <circle cx="500" cy="420" r="14" fill="#000080" opacity="0.4"/>
+    <g stroke="#000080" stroke-width="2.5" opacity="0.4">
+      <line x1="500" y1="325" x2="500" y2="515" />
+      <line x1="405" y1="420" x2="595" y2="420" />
+      <line x1="433" y1="353" x2="567" y2="487" />
+      <line x1="433" y1="487" x2="567" y2="353" />
+      <line x1="413" y1="384" x2="587" y2="456" />
+      <line x1="413" y1="456" x2="587" y2="384" />
+      <line x1="464" y1="329" x2="536" y2="511" />
+      <line x1="464" y1="511" x2="536" y2="329" />
+    </g>
+
+    <!-- Golden Wheat Ears Symbolizing Indian Agriculture -->
+    <path d="M360,580 Q320,500 270,450 M360,580 Q310,540 250,520" stroke="#D97706" stroke-width="4"/>
+    <path d="M640,580 Q680,500 730,450 M640,580 Q690,540 750,520" stroke="#D97706" stroke-width="4"/>
   </g>
 </svg>
