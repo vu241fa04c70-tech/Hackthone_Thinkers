@@ -16,7 +16,6 @@ import WeatherScreen from './components/WeatherScreen';
 import FarmProfiles from './components/FarmProfiles';
 import AdminDashboard from './components/AdminDashboard';
 import FarmerSupportScreen from './components/FarmerSupportScreen';
-import ThemeToggle from './components/ThemeToggle';
 
 export default function App() {
   const { lang, setLanguage, t, isRTL } = useLanguage();
@@ -187,9 +186,6 @@ export default function App() {
 
           {/* Multilingual Selector & Navigation Buttons */}
           <div className="flex items-center gap-2">
-            {/* 🌙/☀️ Dark Mode / Light Mode Theme Toggle */}
-            <ThemeToggle />
-
             {/* 🌐 Languages Selector Dropdown */}
             <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 shadow-sm">
               <Globe className="w-4 h-4 text-[#2D6A4F] shrink-0" />
