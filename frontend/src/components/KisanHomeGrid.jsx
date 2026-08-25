@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Sun, TrendingUp, Mic, Volume2, Scroll, Calendar, Sparkles, ArrowRight, ShieldAlert, CheckCircle2, Zap, PhoneCall, Building2, Landmark, MapPin } from 'lucide-react';
+import { Camera, Sun, TrendingUp, Mic, Volume2, Scroll, Calendar, Sparkles, ArrowRight, ShieldAlert, CheckCircle2, Zap, PhoneCall, Building2, Landmark, MapPin, Sprout, Droplets } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { speakText, stopSpeech } from '../utils/voiceUtils';
 
@@ -40,7 +40,7 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
       id: 'doctor',
       title: lang === 'hi' ? '📷 फसल एवं रोग निदान (AI लेंस)' : (lang === 'te' ? '📷 పంట వ్యాధి గుర్తింపు AI లెన్స్' : '📷 Crop Disease AI Lens'),
       subtitle: lang === 'hi' ? 'पौधे की फोटो लें और कीट व सटीक दवाइयों की मात्रा पाएं।' : (lang === 'te' ? 'ఆకు లేదా పండు ఫోటో తీసి పంట వ్యాధులు మరియు పిచికారీ మందు మోతాదు పొందండి.' : 'Scan crop photos to identify diseases, pests, and exact chemical dosages.'),
-      btnText: lang === 'hi' ? 'ఫసల్ స్కాన్ ➔' : (lang === 'te' ? 'పంట వ్యాధి స్కాన్ చేయండి ➔' : 'Scan Crop Disease ➔'),
+      btnText: lang === 'hi' ? 'फसल जांचें ➔' : (lang === 'te' ? 'పంట వ్యాధి స్కాన్ చేయండి ➔' : 'Scan Crop Disease ➔'),
       icon: Camera,
       badge: lang === 'hi' ? 'रोग निदान' : (lang === 'te' ? 'వ్యాధి AI స్కాన్' : 'Vision AI'),
       circleBg: 'bg-emerald-100 text-emerald-800 border-emerald-200'
@@ -96,12 +96,12 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
     <div className="space-y-8 font-['Plus_Jakarta_Sans',sans-serif]">
       
       {/* 🌟 1. HERO FARMER FRIEND BANNER */}
-      <div className="relative overflow-hidden rounded-3xl bg-white border border-emerald-100 p-6 sm:p-8 shadow-sm">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-white via-[#F4F9F4] to-white border border-emerald-100 p-6 sm:p-8 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
           
           {/* Left Text Greeting */}
           <div className="space-y-3 flex-1 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-[#2D6A4F] border border-emerald-200 text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100/90 text-[#2D6A4F] border border-emerald-200 text-xs font-extrabold shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-[#2D6A4F]" />
               <span>{lang === 'hi' ? 'आज का किसान AI समाचार' : (lang === 'te' ? 'ఈనాటి రైతు AI సమాచారం' : 'Daily Farmer AI Advisory')}</span>
             </div>
@@ -134,32 +134,51 @@ export default function KisanHomeGrid({ profile, onSelectAction }) {
             </div>
           </div>
 
-          {/* Right Circular Farmer Illustration */}
-          <div className="relative flex items-center justify-center shrink-0 w-52 h-52 sm:w-60 sm:h-60">
-            <div className="absolute inset-0 rounded-full border-2 border-dashed border-emerald-200 animate-spin-slow" style={{ animationDuration: '40s' }} />
-            <div className="absolute inset-3 rounded-full bg-emerald-50/60 border border-emerald-100" />
+          {/* Right Circular Indian Farmer Illustration Artwork Matching Image 2 */}
+          <div className="relative flex items-center justify-center shrink-0 w-56 h-56 sm:w-64 sm:h-64">
+            <div className="absolute inset-0 rounded-full border-2 border-emerald-200/80 bg-emerald-50/40 shadow-inner" />
+            <div className="absolute inset-2 rounded-full border border-dashed border-emerald-300 animate-spin-slow" style={{ animationDuration: '60s' }} />
 
-            <div className="relative z-10 w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-gradient-to-tr from-emerald-100 via-teal-50 to-amber-50 border-4 border-white shadow-md flex flex-col items-center justify-center text-center p-3">
-              <span className="text-4xl sm:text-5xl mb-1">👨‍🌾</span>
-              <span className="text-xs font-black text-[#2D6A4F] tracking-tight">Kisan Mitra</span>
-              <span className="text-[10px] text-slate-500 font-bold">{lang === 'hi' ? "किसान मित्र" : "Farmer's Friend"}</span>
+            {/* Center Circular Farmer Image */}
+            <div className="relative z-10 w-40 h-40 sm:w-44 sm:h-44 rounded-full border-4 border-white shadow-xl overflow-hidden bg-gradient-to-b from-amber-50 to-emerald-100 group">
+              <img 
+                src="/assets/farmer_avatar.jpg" 
+                alt="Indian Farmer in Field" 
+                className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div className="hidden w-full h-full flex-col items-center justify-center text-center p-2 bg-gradient-to-tr from-emerald-100 to-amber-50">
+                <span className="text-4xl mb-1">👨‍🌾</span>
+                <span className="text-xs font-black text-[#2D6A4F]">Kisan Mitra</span>
+              </div>
             </div>
 
-            {/* Orbit Badges */}
-            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-emerald-100 border-2 border-white shadow-sm flex items-center justify-center text-emerald-800" title="Vision AI">
+            {/* Orbit Badges Matching Image 2 */}
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Sun Weather">
+              <Sun className="w-4 h-4" />
+            </div>
+
+            <div className="absolute top-1/4 right-0 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Crop Health">
+              <Sprout className="w-4 h-4" />
+            </div>
+
+            <div className="absolute bottom-1/4 right-0 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Water Irrigation">
+              <Droplets className="w-4 h-4" />
+            </div>
+
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Vision AI">
               <Camera className="w-4 h-4" />
             </div>
 
-            <div className="absolute top-1/2 -right-1 -translate-y-1/2 w-9 h-9 rounded-full bg-amber-100 border-2 border-white shadow-sm flex items-center justify-center text-amber-800" title="Helpline 1800-180-1551">
-              <PhoneCall className="w-4 h-4" />
-            </div>
-
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-sky-100 border-2 border-white shadow-sm flex items-center justify-center text-sky-800" title="Mandi Prices">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-
-            <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-9 h-9 rounded-full bg-purple-100 border-2 border-white shadow-sm flex items-center justify-center text-purple-800" title="Universal AI">
+            <div className="absolute bottom-1/4 left-0 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Voice AI">
               <Mic className="w-4 h-4" />
+            </div>
+
+            <div className="absolute top-1/4 left-0 w-9 h-9 rounded-full bg-white border-2 border-emerald-200 shadow-md flex items-center justify-center text-[#2D6A4F]" title="Mandi Prices">
+              <TrendingUp className="w-4 h-4" />
             </div>
           </div>
 
