@@ -4,6 +4,7 @@ import { useLanguage } from '../localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '../localization/languageMap';
 import { INDIAN_STATES } from '../utils/indianStates';
 import { speakText } from '../utils/voiceUtils';
+import SearchableDistrictSelect from './SearchableDistrictSelect';
 
 export default function LanguageSelectionScreen({ onConfirm }) {
   const { lang, setLanguage } = useLanguage();
@@ -540,16 +541,15 @@ export default function LanguageSelectionScreen({ onConfirm }) {
                 {/* District & Village */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700">
-                      {lang === 'te' ? 'జిల్లా:' : (lang === 'hi' ? 'जिला:' : 'District Name:')}
+                    <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                      <span>{lang === 'te' ? 'జిల్లా:' : (lang === 'hi' ? 'जिला:' : 'District Name:')}</span>
+                      <span className="text-[10px] text-[#2D6A4F] font-bold">🔍 Searchable</span>
                     </label>
-                    <input
-                      type="text"
+                    <SearchableDistrictSelect
                       value={formData.district}
-                      onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                      placeholder="e.g. Guntur"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-[#2C3333] focus:outline-none focus:border-[#2D6A4F]"
-                      required
+                      onChange={(val) => setFormData({ ...formData, district: val })}
+                      selectedState={formData.state}
+                      placeholder={lang === 'te' ? 'జిల్లాను వెతకండి లేదా ఎంచుకోండి...' : (lang === 'hi' ? 'जिला खोजें या चुनें...' : 'Search or select district...')}
                     />
                   </div>
 
