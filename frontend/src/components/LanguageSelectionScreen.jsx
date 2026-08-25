@@ -5,6 +5,7 @@ import { SUPPORTED_LANGUAGES } from '../localization/languageMap';
 import { INDIAN_STATES } from '../utils/indianStates';
 import { speakText } from '../utils/voiceUtils';
 import SearchableDistrictSelect from './SearchableDistrictSelect';
+import ThemeToggle from './ThemeToggle';
 
 export default function LanguageSelectionScreen({ onConfirm }) {
   const { lang, setLanguage } = useLanguage();
@@ -205,15 +206,19 @@ export default function LanguageSelectionScreen({ onConfirm }) {
           </div>
         </div>
 
-        {step === 2 && (
-          <button
-            onClick={() => setStep(1)}
-            className="px-4 py-2 rounded-full bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center gap-1.5 border border-slate-300 shadow-md cursor-pointer transition-all"
-          >
-            <ChevronLeft className="w-4 h-4 text-[#2D6A4F]" />
-            <span>{lang === 'te' ? 'వెనుకకు (భాష)' : (lang === 'hi' ? 'पीछे (भाषा)' : 'Back to Language')}</span>
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+
+          {step === 2 && (
+            <button
+              onClick={() => setStep(1)}
+              className="px-4 py-2 rounded-full bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center gap-1.5 border border-slate-300 shadow-md cursor-pointer transition-all"
+            >
+              <ChevronLeft className="w-4 h-4 text-[#2D6A4F]" />
+              <span>{lang === 'te' ? 'వెనుకకు (భాష)' : (lang === 'hi' ? 'पीछे (भाषा)' : 'Back to Language')}</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Main Multi-Step Content */}

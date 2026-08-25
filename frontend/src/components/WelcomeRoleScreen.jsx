@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserCheck, ShieldCheck, ArrowRight, Lock, Key, Globe, Sparkles, Camera, TrendingUp, Sun, Scroll, Volume2 } from 'lucide-react';
 import { useLanguage } from '../localization/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '../localization/languageMap';
+import ThemeToggle from './ThemeToggle';
 
 export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
   const { lang, setLanguage, isRTL } = useLanguage();
@@ -111,6 +112,9 @@ export default function WelcomeRoleScreen({ onSelectFarmer, onSelectAdmin }) {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Theme Toggle Button */}
+          <ThemeToggle />
+
           {/* Discrete Admin Access Button */}
           <button
             onClick={handleAdminClick}
