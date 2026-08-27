@@ -583,10 +583,22 @@ export default function CropDoctor({ activeField }) {
                 </div>
               </div>
 
-              {/* Row 3: Observed Symptoms & Pathogen Cause */}
+              {/* Row 3: Immediate Farmer Action */}
+              {analysisResult.immediate_action && (
+                <div className="p-3.5 rounded-2xl bg-amber-100/90 border border-amber-300 space-y-1 text-xs">
+                  <div className="font-extrabold text-amber-950 flex items-center gap-1.5 uppercase tracking-wide">
+                    <span>⚡ {lang === 'te' ? 'వెంటనే చేయవలసిన తక్షణ చర్యలు:' : 'Immediate Farmer Action:'}</span>
+                  </div>
+                  <p className="text-amber-900 font-bold leading-relaxed">
+                    {analysisResult.immediate_action}
+                  </p>
+                </div>
+              )}
+
+              {/* Row 4: Observed Symptoms & Pathogen Cause */}
               {analysisResult.symptoms && analysisResult.symptoms.length > 0 && (
-                <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 space-y-1 text-xs">
-                  <div className="font-extrabold text-amber-900 flex items-center gap-1.5">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1 text-xs">
+                  <div className="font-extrabold text-slate-800 flex items-center gap-1.5">
                     <span>🔍 {lang === 'te' ? 'కనిపించిన వ్యాధి లక్షణాలు:' : 'Observed Visual Symptoms:'}</span>
                   </div>
                   <ul className="list-disc list-inside space-y-0.5 text-slate-800 font-semibold pl-1">
@@ -595,14 +607,14 @@ export default function CropDoctor({ activeField }) {
                     ))}
                   </ul>
                   {analysisResult.cause && (
-                    <div className="pt-1 text-[11px] text-amber-950 font-bold border-t border-amber-200/60 mt-1">
+                    <div className="pt-1 text-[11px] text-slate-900 font-bold border-t border-slate-200 mt-1">
                       🦠 <span className="underline">{lang === 'te' ? 'కారణమైన తెగులు క్రిమి:' : 'Causal Pathogen / Organism:'}</span> {analysisResult.cause}
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Row 4: Organic Treatment */}
+              {/* Row 5: Organic Treatment */}
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1">
                 <div className="text-[11px] font-bold text-[#2D6A4F] uppercase flex items-center gap-1.5">
                   <Leaf className="w-4 h-4 text-[#2D6A4F]" />
@@ -613,7 +625,7 @@ export default function CropDoctor({ activeField }) {
                 </p>
               </div>
 
-              {/* Row 5: Chemical Treatment & Recommended Pesticide Badge */}
+              {/* Row 6: Chemical Treatment & Recommended Pesticide Badge */}
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                 <div className="text-[11px] font-bold text-[#2D6A4F] uppercase flex items-center gap-1.5">
                   <FlaskConical className="w-4 h-4 text-[#2D6A4F]" />
@@ -636,10 +648,29 @@ export default function CropDoctor({ activeField }) {
                 )}
               </div>
 
-              {/* Row 6: Prevention Protocol */}
+              {/* Row 7: Prevention Protocol */}
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
                 🛡️ <span className="font-bold text-slate-800">{lang === 'te' ? 'భవిష్యత్తు నివారణ సూచనలు:' : 'Prevention Advice:'}</span> {analysisResult.prevention}
               </div>
+
+              {/* Row 8: Contact Agriculture Officer / Expert */}
+              {analysisResult.contact_officer && (
+                <div className="p-3.5 rounded-2xl bg-emerald-900 text-emerald-50 border border-emerald-950 text-xs font-semibold space-y-1 shadow-sm">
+                  <div className="font-black text-emerald-300 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                    <span>👨‍🌾 {lang === 'te' ? 'వ్యవసాయ అధికారి సంప్రదింపు సూచన:' : 'Contact Agriculture Officer:'}</span>
+                  </div>
+                  <p className="leading-relaxed font-bold">
+                    {analysisResult.contact_officer}
+                  </p>
+                </div>
+              )}
+
+              {/* Row 9: Alternative Possibilities */}
+              {analysisResult.alternative_possibilities && analysisResult.alternative_possibilities.length > 0 && (
+                <div className="p-3 rounded-xl bg-slate-100 border border-slate-300 text-[11px] text-slate-700 font-semibold">
+                  <span>📊 <strong className="text-slate-900">{lang === 'te' ? 'ఇతర ప్రత్యామ్నాయ శంకలు:' : 'Top Alternative Possibilities:'}</strong> {analysisResult.alternative_possibilities.join(', ')}</span>
+                </div>
+              )}
 
             </div>
           )}

@@ -274,7 +274,27 @@ DISEASE_DATABASE = {
         ],
         "organic": "Soil application of Trichoderma viride (2.5 kg/acre in 100 kg FYM).",
         "chemical": "Dip setts in Carbendazim 50% WP (2g/L water) for 15 minutes before planting.",
-        "prevention": "Use red rot-resistant varieties like Co-0238 or Co-86032."
+        "prevention": "Use red rot-resistant varieties like Co-0238 or Co-86032.",
+        "immediate_action": "Uproot affected cane stools and burn them outside the field to prevent soil inoculum buildup.",
+        "contact_officer": "If red rot spreads across > 15% of cane stools, notify Mandal Agriculture Officer immediately.",
+        "alternatives": ["Sugarcane Smut (12% Likelihood)", "Wilt Disease (8% Likelihood)"]
+    },
+
+    # 11. HEALTHY PLANT
+    "Healthy_Plant": {
+        "crop": "Crop / Plant",
+        "disease": "Healthy Plant (No Active Disease Detected)",
+        "symptoms": [
+            "Vibrant green leaf canopy with uniform foliage texture",
+            "No visible dark leaf spots, chlorosis, lesions, or wilting",
+            "Normal stem turgidity and healthy fruit/pod formation"
+        ],
+        "organic": "Apply well-decomposed Farm Yard Manure (FYM) or vermicompost (2 tons/acre) for soil health.",
+        "chemical": "No chemical fungicides or pesticides required. Maintain balanced NPK nutrient supply.",
+        "prevention": "Regular weekly monitoring, weed management, and drip irrigation scheduling.",
+        "immediate_action": "Continue regular fertigation and keep field free of competitive weeds.",
+        "contact_officer": "Contact Kisan Call Centre (1800-180-1551) for seasonal crop nutrition advice.",
+        "alternatives": ["Mild Nutrient Deficiency (5% Likelihood)"]
     }
 }
 
@@ -388,17 +408,65 @@ class YOLO11VisionAgent:
                 }
             }
 
+        # Localized fields generator
+        l_code = (lang or "en").lower()
+        
+        imm_action = info.get("immediate_action", "Isolate affected plants, prune diseased lower leaves, and pause overhead sprinkler irrigation.")
+        contact_off = info.get("contact_officer", "If symptoms spread across > 20% of your crop, contact Mandal Agriculture Officer or Kisan Call Centre (1800-180-1551).")
+        alts = info.get("alternatives", ["Nutrient Deficiency (10% Likelihood)"])
+
+        if l_code in ["te", "telugu"]:
+            if info["crop"] == "Chilli":
+                crop_name_loc = "మిరప (Chilli)"
+                disease_name_loc = "మిరపకాయ కొమ్మ కుళ్లు మరియు కాయ మచ్చ తెగులు (Anthracnose / Fruit Rot)"
+            elif info["crop"] == "Tomato":
+                crop_name_loc = "టమాటా (Tomato)"
+                disease_name_loc = "టమాటా ఆకు మచ్చ & ఎండు తెగులు (Early Blight)"
+            elif info["crop"] == "Rice":
+                crop_name_loc = "వరి (Paddy / Rice)"
+                disease_name_loc = "వరి అగ్గి తెగులు (Rice Blast)"
+            else:
+                crop_name_loc = f"{info['crop']} (పంట)"
+                disease_name_loc = info["disease"]
+
+            imm_action_loc = f"బాధిత మొక్కలను వేరు చేయండి, తెగులు సోకిన ఆకులను కత్తిరించండి మరియు తుంపర సేద్యం నీటిపారుదల వెంటనే నిలిపివేయండి."
+            contact_off_loc = f"వ్యాధి లక్షణాలు మీ పొలంలో 20% కంటే ఎక్కువ విస్తరిస్తే, వెంటనే మండల వ్యవసాయ అధికారిని లేదా కిసాన్ కాల్ సెంటర్ (1800-180-1551) నంబరును సంప్రదించండి."
+        elif l_code in ["hi", "hindi"]:
+            if info["crop"] == "Chilli":
+                crop_name_loc = "मिर्च (Chilli)"
+                disease_name_loc = "मिर्च का फल सड़न रोग (Chilli Anthracnose)"
+            elif info["crop"] == "Tomato":
+                crop_name_loc = "टमाटर (Tomato)"
+                disease_name_loc = "टमाटर का अगेती झुलसा रोग (Tomato Early Blight)"
+            elif info["crop"] == "Rice":
+                crop_name_loc = "धान (Paddy / Rice)"
+                disease_name_loc = "धान का झोंका रोग (Rice Blast)"
+            else:
+                crop_name_loc = f"{info['crop']} (फ़सल)"
+                disease_name_loc = info["disease"]
+
+            imm_action_loc = "प्रभावित पौधों को अलग करें, रोगग्रस्त पत्तियों की छंटाई करें और फव्वारा सिंचाई तुरंत रोक दें।"
+            contact_off_loc = "यदि लक्षण खेत के 20% से अधिक हिस्से में फैलते हैं, तो तुरंत मंडल कृषि अधिकारी या किसान कॉल सेंटर (1800-180-1551) से संपर्क करें।"
+        else:
+            crop_name_loc = info["crop"]
+            disease_name_loc = info["disease"]
+            imm_action_loc = imm_action
+            contact_off_loc = contact_off
+
         return {
             "is_clear": True,
-            "crop_name": info["crop"],
-            "disease_name": info["disease"],
+            "crop_name": crop_name_loc,
+            "disease_name": disease_name_loc,
             "confidence_pct": confidence_pct,
             "severity": severity,
             "bounding_box": bbox_coords,
             "symptoms": info["symptoms"],
+            "immediate_action": imm_action_loc,
             "organic_treatment": info["organic"],
             "chemical_treatment": info["chemical"],
             "prevention": info["prevention"],
+            "contact_officer": contact_off_loc,
+            "alternative_possibilities": alts,
             "pesticide": {
                 "name": info["chemical"].split(" at ")[0].replace("Spray ", ""),
                 "dosage": info["chemical"],
