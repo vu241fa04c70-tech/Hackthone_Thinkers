@@ -408,7 +408,7 @@ class CropVisionAgent:
             pesticide_name = "Mancozeb 75% WP (Indofil M-45)"
 
         # 2. CHILLI / MIRCHI (మిరప / मिर्च)
-        elif "Chilli" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["chilli", "chili", "mirchi", "మిరప", "మిర్చి", "मिर्च"]):
             crop_loc_map = {"te": "మిరప (Chilli / Pepper)", "hi": "मिर्च (Chilli / Pepper)", "ta": "மிளகாய் (Chilli)", "kn": "ಮೆಣಸಿನಕಾಯಿ (Chilli)", "en": "Chilli (Pepper)"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"
@@ -512,7 +512,7 @@ class CropVisionAgent:
             pesticide_name = "Tricyclazole 75% WP (Beam / Baan)"
 
         # 4. COTTON (పత్తి / कपास)
-        elif "Cotton" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["cotton", "పత్తి", "कपास"]):
             crop_loc_map = {"te": "పత్తి (Cotton)", "hi": "कपास (Cotton)", "en": "Cotton"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"
@@ -539,7 +539,7 @@ class CropVisionAgent:
             pesticide_name = "Streptocycline + Copper Oxychloride"
 
         # 5. POTATO (బంగాళాదుంప / आलू)
-        elif "Potato" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["potato", "బంగాళాదుంప", "आलू"]):
             crop_loc_map = {"te": "బంగాళాదుంప (Potato)", "hi": "आलू (Potato)", "en": "Potato"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"
@@ -566,7 +566,7 @@ class CropVisionAgent:
             pesticide_name = "Cymoxanil 8% + Mancozeb 64% WP (Curzate M8)"
 
         # 6. MAIZE / CORN (మొక్కజొన్న / मक्का)
-        elif "Maize" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["maize", "corn", "మొక్కజొన్న", "मक्का"]):
             crop_loc_map = {"te": "మొక్కజొన్న (Maize)", "hi": "मक्का (Maize)", "en": "Maize (Corn)"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"
@@ -593,7 +593,7 @@ class CropVisionAgent:
             pesticide_name = "Emamectin Benzoate 5% SG (Proclaim)"
 
         # 7. WHEAT (గోధుమ / गेहूं)
-        elif "Wheat" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["wheat", "గోధుమ", "गेहूं"]):
             crop_loc_map = {"te": "గోధుమ (Wheat)", "hi": "गेहूं (Wheat)", "en": "Wheat"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"
@@ -620,7 +620,7 @@ class CropVisionAgent:
             pesticide_name = "Propiconazole 25% EC (Tilt)"
 
         # 8. BRINJAL / EGGPLANT (వంగ / बैंगन)
-        elif "Brinjal" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["brinjal", "eggplant", "వంగ", "వంకాయ", "बैंगन"]):
             crop_loc_map = {"te": "వంగ (Brinjal / Eggplant)", "hi": "बैंगन (Brinjal / Eggplant)", "en": "Brinjal (Eggplant)"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"
@@ -647,7 +647,7 @@ class CropVisionAgent:
             pesticide_name = "Chlorantraniliprole 18.5% SC (Coragen)"
 
         # 9. OKRA / BHENDI (బెండ / भिंडी)
-        elif "Okra" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["okra", "bhendi", "bhindi", "బెండ", "भिंडी"]):
             crop_loc_map = {"te": "బెండ (Okra / Bhendi)", "hi": "भिंडी (Okra / Bhendi)", "en": "Okra (Bhendi)"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"
@@ -674,7 +674,7 @@ class CropVisionAgent:
             pesticide_name = "Acetamiprid 20% SP (Manik)"
 
         # 10. ONION (ఉల్లి / प्याज)
-        elif "Onion" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["onion", "garlic", "ఉల్లి", "ఉల్లిపాయ", "प्याज"]):
             crop_loc_map = {"te": "ఉల్లి (Onion)", "hi": "प्याज (Onion)", "en": "Onion"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"
