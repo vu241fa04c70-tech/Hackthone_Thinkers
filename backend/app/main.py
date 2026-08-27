@@ -254,13 +254,14 @@ def get_samples(language: Optional[str] = "te"):
 async def diagnose_plant_id_and_gemini(
     file: Optional[UploadFile] = File(None),
     sample_key: Optional[str] = Form(None),
-    language: Optional[str] = Form("en")
+    language: Optional[str] = Form("en"),
+    crop_hint: Optional[str] = Form("")
 ):
     lang_code = (language or "en").lower()
 
     if file:
         content = await file.read()
-        report = vision_agent.analyze_uploaded_image(content, crop_hint="", lang=lang_code)
+        report = vision_agent.analyze_uploaded_image(content, crop_hint=crop_hint or "", lang=lang_code)
     elif sample_key:
         report = vision_agent.analyze_sample(sample_key, lang=lang_code)
     else:

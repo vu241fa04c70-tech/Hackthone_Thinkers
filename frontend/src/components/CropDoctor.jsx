@@ -149,6 +149,17 @@ export default function CropDoctor({ activeField }) {
     runDiagnosisWithMock(s.mockResult);
   };
 
+  const [selectedCropHint, setSelectedCropHint] = useState(() => {
+    try {
+      const p = localStorage.getItem('kisan_farmer_profile');
+      if (p) {
+        const parsed = JSON.parse(p);
+        if (parsed.main_crop) return parsed.main_crop;
+      }
+    } catch (e) {}
+    return activeField?.crop || '';
+  });
+
   const runDiagnosisWithMock = (mockData) => {
     setAnalyzing(true);
     setAnalysisResult(null);
@@ -158,13 +169,18 @@ export default function CropDoctor({ activeField }) {
     }, 1200);
   };
 
-  const runTwoStageDiagnosis = async (imageFileOrBlob) => {
+  const runTwoStageDiagnosis = async (imageFileOrBlob, overrideCropHint) => {
     setAnalyzing(true);
     setAnalysisResult(null);
+
+    const cropToPass = overrideCropHint !== undefined ? overrideCropHint : selectedCropHint;
 
     const formData = new FormData();
     formData.append('file', imageFileOrBlob);
     formData.append('language', lang);
+    if (cropToPass) {
+      formData.append('crop_hint', cropToPass);
+    }
 
     try {
       const res = await fetch('/api/disease/diagnose', {
@@ -298,6 +314,35 @@ export default function CropDoctor({ activeField }) {
         
         {/* Left Column: Viewport */}
         <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm flex flex-col justify-between">
+          
+          {/* Targeted Crop Selector Dropdown */}
+          <div className="flex items-center gap-2 bg-emerald-50/90 border border-emerald-200 p-3 rounded-2xl">
+            <span className="text-xs font-black text-[#2D6A4F] shrink-0">
+              🌱 {lang === 'te' ? 'పంట ఎంపిక:' : 'Select Target Crop:'}
+            </span>
+            <select
+              value={selectedCropHint}
+              onChange={(e) => setSelectedCropHint(e.target.value)}
+              className="bg-white text-xs font-bold text-slate-800 border border-emerald-300 rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer w-full shadow-sm"
+            >
+              <option value="">{lang === 'te' ? '🔍 స్వయంచాలక ఏఐ గుర్తింపు (Auto-Detect)' : '🔍 Auto-Detect (All Crops)'}</option>
+              <option value="Rice">{lang === 'te' ? '🌾 వరి (Paddy / Rice)' : '🌾 Paddy (Rice)'}</option>
+              <option value="Tomato">{lang === 'te' ? '🍅 టమాటా (Tomato)' : '🍅 Tomato'}</option>
+              <option value="Chilli">{lang === 'te' ? '🌶️ మిరప (Chilli)' : '🌶️ Chilli'}</option>
+              <option value="Cotton">{lang === 'te' ? '☁️ పత్తి (Cotton)' : '☁️ Cotton'}</option>
+              <option value="Maize">{lang === 'te' ? '🌽 మొక్కజొన్న (Maize / Corn)' : '🌽 Maize (Corn)'}</option>
+              <option value="Potato">{lang === 'te' ? '🥔 బంగాళాదుంప (Potato)' : '🥔 Potato'}</option>
+              <option value="Wheat">{lang === 'te' ? '🌾 గోధుమ (Wheat)' : '🌾 Wheat'}</option>
+              <option value="Brinjal">{lang === 'te' ? '🍆 వంగ (Brinjal / Eggplant)' : '🍆 Brinjal (Eggplant)'}</option>
+              <option value="Okra">{lang === 'te' ? '🫛 బెండ (Okra / Bhendi)' : '🫛 Okra (Bhendi)'}</option>
+              <option value="Onion">{lang === 'te' ? '🧅 ఉల్లి (Onion)' : '🧅 Onion'}</option>
+              <option value="Mango">{lang === 'te' ? '🥭 మామిడి (Mango)' : '🥭 Mango'}</option>
+              <option value="Sugarcane">{lang === 'te' ? '🎋 చెరకు (Sugarcane)' : '🎋 Sugarcane'}</option>
+              <option value="Groundnut">{lang === 'te' ? '🥜 వేరుశనగ (Groundnut)' : '🥜 Groundnut'}</option>
+              <option value="Cucumber">{lang === 'te' ? '🥒 దోస (Cucumber)' : '🥒 Cucumber'}</option>
+              <option value="Banana">{lang === 'te' ? '🍌 అరటి (Banana)' : '🍌 Banana'}</option>
+            </select>
+          </div>
           
           {/* TAB 1: LIVE CAMERA */}
           {activeTab === 'camera' && (

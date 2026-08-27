@@ -77,6 +77,7 @@ class CropVisionAgent:
         total_pixels = len(pixels) or 1
         
         red_fruit_cnt = 0
+        paddy_husk_cnt = 0
         white_boll_cnt = 0
         green_foliage_cnt = 0
         yellow_vein_cnt = 0
@@ -92,9 +93,12 @@ class CropVisionAgent:
             ptot = pr + pg + pb + 1e-5
             pr_r, pg_r, pb_r = pr / ptot, pg / ptot, pb / ptot
             
-            # Red fruit (Tomato / Red Chilli / Apple)
-            if pr > 115 and pr_r > 0.42 and pg_r < 0.35:
+            # True Red Fruit (Tomato / Red Chilli / Apple) - strict red hue vs brown husk
+            if pr > 135 and pg < 100 and pb < 90 and (pr / (pg + 1e-5)) > 1.35 and (pr / (pb + 1e-5)) > 1.45:
                 red_fruit_cnt += 1
+            # Paddy / Rice Panicle & Husk (Golden / Straw Brown / Tan grains)
+            elif pr > 80 and pg > 60 and pb > 20 and pb < 120 and pr >= pg and (pr - pg) < 60 and (pg - pb) > 15:
+                paddy_husk_cnt += 1
             # Green foliage
             elif pg > 65 and pg_r > 0.36:
                 green_foliage_cnt += 1
@@ -123,7 +127,8 @@ class CropVisionAgent:
 
         return {
             "red_pct": (red_fruit_cnt / sampled_count) * 100.0,
-            "white_pct": (white_boll_cnt / sampled_count) * 100.0,
+            "paddy_husk_pct": (paddy_husk_cnt / sampled_count) * 100.0,
+            "white_pct": (white_boll_pct / sampled_count) * 100.0,
             "green_pct": (green_foliage_cnt / sampled_count) * 100.0,
             "yellow_pct": (yellow_vein_cnt / sampled_count) * 100.0,
             "spot_pct": (dark_spot_cnt / sampled_count) * 100.0,
@@ -183,11 +188,13 @@ class CropVisionAgent:
 
         # 2. If no hint provided, perform Visual Feature Auto-Detection
         if not matched_crop:
-            if features["red_pct"] > 3.0:
-                matched_crop = "Tomato"
+            if features["paddy_husk_pct"] > 4.5 or (features["paddy_husk_pct"] > 2.5 and features["green_pct"] < 40.0):
+                matched_crop = "Rice"  # Paddy Rice grains / Panicle detected visually!
+            elif features["red_pct"] > 3.0:
+                matched_crop = "Tomato"  # True vivid red fruit!
             elif features["white_pct"] > 10.0:
-                matched_crop = "Cotton"
-            elif features["yellow_pct"] > 18.0 and features["green_pct"] < 35.0:
+                matched_crop = "Cotton"  # White cotton bolls!
+            elif features["yellow_pct"] > 15.0 and features["green_pct"] < 35.0:
                 matched_crop = "Rice"
             elif features["rust_pct"] > 3.5:
                 matched_crop = "Wheat"
@@ -196,10 +203,12 @@ class CropVisionAgent:
             elif features["green_pct"] > 55.0 and features["std_dev"] > 25.0:
                 matched_crop = "Chilli"
             else:
-                matched_crop = "Tomato"  # Default agricultural staple
+                matched_crop = "Rice" if features["paddy_husk_pct"] > features["red_pct"] else "Tomato"
 
         # Determine Plant Part based on image visual feature signature
-        if features["red_pct"] > 3.0:
+        if features["paddy_husk_pct"] > 4.5 or matched_crop == "Rice":
+            plant_part = "Fruit" if features["paddy_husk_pct"] > 5.0 else "Leaf"
+        elif features["red_pct"] > 3.0:
             plant_part = "Fruit"
         elif features["std_dev"] > 38.0 and features["green_pct"] > 28.0:
             plant_part = "Multiple Parts"
