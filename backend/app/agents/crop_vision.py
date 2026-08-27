@@ -472,7 +472,7 @@ class CropVisionAgent:
             pesticide_name = "Copper Oxychloride 50% WP (Blitox 50)"
 
         # 3. RICE / PADDY (వరి / धान)
-        elif "Rice" in crop_norm:
+        elif any(k in crop_norm.lower() for k in ["rice", "paddy", "వరి", "ధాన", "धान"]):
             crop_loc_map = {"te": "వరి (Paddy)", "hi": "धान (Paddy)", "ta": "நெல் (Paddy)", "kn": "ಭತ್ತ (Paddy)", "en": "Paddy (Rice)"}
             crop_loc = crop_loc_map.get(l_code, crop_loc_map["en"])
             health_status = "Diseased"

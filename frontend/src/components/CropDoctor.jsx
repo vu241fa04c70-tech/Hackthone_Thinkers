@@ -66,7 +66,7 @@ export default function CropDoctor({ activeField }) {
 
     fetch(dataUrl)
       .then(res => res.blob())
-      .then(blob => runTwoStageDiagnosis(blob));
+      .then(blob => runTwoStageDiagnosis(blob, selectedCropHint));
   };
 
   const handleGalleryUpload = (e) => {
@@ -77,7 +77,7 @@ export default function CropDoctor({ activeField }) {
         setSelectedImage(reader.result);
       };
       reader.readAsDataURL(file);
-      runTwoStageDiagnosis(file);
+      runTwoStageDiagnosis(file, selectedCropHint);
     }
   };
 
@@ -192,7 +192,8 @@ export default function CropDoctor({ activeField }) {
       setAnalysisResult(data);
     } catch (err) {
       setAnalyzing(false);
-      setAnalysisResult(sampleScans[0].mockResult);
+      const isPaddy = cropToPass && (cropToPass.toLowerCase().includes('rice') || cropToPass.toLowerCase().includes('paddy'));
+      setAnalysisResult(isPaddy ? sampleScans[1].mockResult : sampleScans[0].mockResult);
     }
   };
 
