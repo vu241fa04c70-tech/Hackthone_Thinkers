@@ -87,29 +87,29 @@ class CropVisionAgent:
         orange_rust_cnt = 0
 
         # Sample pixel step to keep performance fast
-        step = max(1, total_pixels // 2500)
+        step = max(1, total_pixels // 3000)
         for i in range(0, total_pixels, step):
             pr, pg, pb = pixels[i]
             ptot = pr + pg + pb + 1e-5
             pr_r, pg_r, pb_r = pr / ptot, pg / ptot, pb / ptot
             
-            # True Red Fruit (Tomato / Red Chilli / Apple) - strict red hue vs brown husk
-            if pr > 135 and pg < 100 and pb < 90 and (pr / (pg + 1e-5)) > 1.35 and (pr / (pb + 1e-5)) > 1.45:
+            # True Vivid Red Fruit (Tomato / Red Chilli / Red Apple)
+            if pr > 140 and pg < 100 and pb < 85 and (pr / (pg + 1e-5)) > 1.40 and (pr / (pb + 1e-5)) > 1.50:
                 red_fruit_cnt += 1
-            # Paddy / Rice Panicle & Husk (Golden / Straw Brown / Tan grains)
-            elif pr > 80 and pg > 60 and pb > 20 and pb < 120 and pr >= pg and (pr - pg) < 60 and (pg - pb) > 15:
+            # Paddy / Rice Panicle, Grains & Straw Husk (Golden / Tan / Brown husk)
+            elif pr > 65 and pg > 50 and pb < 130 and pr >= (pg - 5) and (pr - pb) > 15 and (pg - pb) > 10:
                 paddy_husk_cnt += 1
             # Green foliage
-            elif pg > 65 and pg_r > 0.36:
+            elif pg > 60 and pg_r > 0.35:
                 green_foliage_cnt += 1
             # White boll / Powdery mildew / Cotton
             elif pr > 175 and pg > 175 and pb > 175:
                 white_boll_cnt += 1
             # Yellow vein network / Chlorosis (Okra YVMV / Greening)
-            elif pr_r > 0.38 and pg_r > 0.38 and pb_r < 0.24:
+            elif pr_r > 0.38 and pg_r > 0.38 and pb_r < 0.25:
                 yellow_vein_cnt += 1
             # Dark necrotic spots (Early Blight / Blast / Anthracnose)
-            elif pr < 60 and pg < 60 and pb < 60:
+            elif pr < 65 and pg < 65 and pb < 65:
                 dark_spot_cnt += 1
             # Bright yellow halo ring (Tikka spot / Canker halo)
             elif pr > 160 and pg > 160 and pb < 100:
@@ -181,34 +181,34 @@ class CropVisionAgent:
             matched_crop = "Papaya"
         elif any(k in crop_clean for k in ["banana", "అరటి", "केला"]):
             matched_crop = "Banana"
-        elif any(k in crop_clean for k in ["apple", "యాపిల్", "सेब"]):
+        elif any(k in crop_clean for k in ["apple", "యాపిల్", "себ"]):
             matched_crop = "Apple"
         elif any(k in crop_clean for k in ["tomato", "టమాటా", "టమోటా", "टमाटर"]):
             matched_crop = "Tomato"
 
         # 2. If no hint provided, perform Visual Feature Auto-Detection
         if not matched_crop:
-            if features["paddy_husk_pct"] > 4.5 or (features["paddy_husk_pct"] > 2.5 and features["green_pct"] < 40.0):
+            if features["paddy_husk_pct"] > 1.5 or (features["paddy_husk_pct"] > 0.8 and features["green_pct"] < 60.0):
                 matched_crop = "Rice"  # Paddy Rice grains / Panicle detected visually!
-            elif features["red_pct"] > 3.0:
+            elif features["red_pct"] > 2.5:
                 matched_crop = "Tomato"  # True vivid red fruit!
-            elif features["white_pct"] > 10.0:
+            elif features["white_pct"] > 8.0:
                 matched_crop = "Cotton"  # White cotton bolls!
-            elif features["yellow_pct"] > 15.0 and features["green_pct"] < 35.0:
+            elif features["yellow_pct"] > 12.0 and features["green_pct"] < 40.0:
                 matched_crop = "Rice"
-            elif features["rust_pct"] > 3.5:
+            elif features["rust_pct"] > 3.0:
                 matched_crop = "Wheat"
-            elif features["purple_pct"] > 3.0:
+            elif features["purple_pct"] > 2.5:
                 matched_crop = "Onion"
             elif features["green_pct"] > 55.0 and features["std_dev"] > 25.0:
                 matched_crop = "Chilli"
             else:
-                matched_crop = "Rice" if features["paddy_husk_pct"] > features["red_pct"] else "Tomato"
+                matched_crop = "Rice"  # Primary cereal staple default for auto-detect!
 
         # Determine Plant Part based on image visual feature signature
-        if features["paddy_husk_pct"] > 4.5 or matched_crop == "Rice":
-            plant_part = "Fruit" if features["paddy_husk_pct"] > 5.0 else "Leaf"
-        elif features["red_pct"] > 3.0:
+        if features["paddy_husk_pct"] > 1.5 or matched_crop == "Rice":
+            plant_part = "Fruit" if features["paddy_husk_pct"] > 2.5 else "Leaf"
+        elif features["red_pct"] > 2.5:
             plant_part = "Fruit"
         elif features["std_dev"] > 38.0 and features["green_pct"] > 28.0:
             plant_part = "Multiple Parts"
