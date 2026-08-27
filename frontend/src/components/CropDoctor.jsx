@@ -397,10 +397,28 @@ export default function CropDoctor({ activeField }) {
                 {selectedImage ? (
                   <div className="relative w-full h-full rounded-2xl overflow-hidden">
                     <img src={selectedImage} alt="Crop Scan" className="w-full h-full object-cover" />
+                    
+                    {/* Real YOLO11 Bounding Box Overlay */}
+                    {analysisResult && analysisResult.bounding_box && analysisResult.bounding_box.normalized && (
+                      <div
+                        className="absolute border-2 border-dashed border-yellow-400 bg-yellow-400/25 rounded-2xl pointer-events-none transition-all shadow-[0_0_20px_rgba(250,204,21,0.7)]"
+                        style={{
+                          left: `${analysisResult.bounding_box.normalized.x1_pct}%`,
+                          top: `${analysisResult.bounding_box.normalized.y1_pct}%`,
+                          width: `${analysisResult.bounding_box.normalized.width_pct}%`,
+                          height: `${analysisResult.bounding_box.normalized.height_pct}%`
+                        }}
+                      >
+                        <span className="absolute -top-7 left-0 bg-yellow-400 text-slate-950 font-extrabold text-[11px] px-2.5 py-0.5 rounded-lg shadow-md whitespace-nowrap">
+                          🎯 {analysisResult.disease_name} ({analysisResult.confidence_pct}%)
+                        </span>
+                      </div>
+                    )}
+
                     {analyzing && (
                       <div className="absolute inset-0 bg-emerald-950/40 backdrop-blur-[2px] flex items-center justify-center">
                         <span className="px-4 py-2 rounded-full bg-white text-[#2D6A4F] font-black text-xs animate-pulse">
-                          🔍 RUNNING 2-STAGE AI DIAGNOSIS...
+                          🔍 RUNNING YOLO11 COMPUTER VISION INFERENCE...
                         </span>
                       </div>
                     )}
@@ -486,20 +504,20 @@ export default function CropDoctor({ activeField }) {
             </div>
           )}
 
-          {/* CONFIDENCE SAFEGUARD WARNING (< 75%) */}
-          {isBelowThreshold && (
+          {/* CONFIDENCE SAFEGUARD WARNING (< 70%) */}
+          {(!analysisResult || !analysisResult.is_clear) && analysisResult && (
             <div className="p-6 rounded-3xl bg-amber-50 border-2 border-amber-300 text-amber-950 space-y-3 shadow-sm my-auto">
               <div className="flex items-center gap-3 text-amber-800">
                 <AlertOctagon className="w-7 h-7 text-amber-600 shrink-0" />
                 <h4 className="text-base sm:text-lg font-black">
-                  "{lang === 'te' ? 'నమ్మకంగా గుర్తించలేకపోయాము. దయచేసి మరింత స్పష్టమైన ఫోటో తీయండి.' : 'Unable to confidently identify. Capture a clearer image.'}"
+                  "{lang === 'te' ? 'నమ్మకంగా గుర్తించలేకపోయాము. దయచేసి మరింత స్పష్టమైన ఫోటో తీయండి.' : 'Capture a clearer image.'}"
                 </h4>
               </div>
 
               <div className="text-xs font-bold text-amber-900 leading-relaxed">
                 {lang === 'te'
-                  ? `దశ 1 ప్లాంట్.ఐడి నమ్మకం శాతం 75% కన్నా తక్కువగా ఉంది (${analysisResult.confidence_pct}%). దయచేసి మంచి వెలుతురులో ఆకు దగ్గరగా స్పష్టమైన ఫోటో తీయండి.`
-                  : `Stage 1 Plant.id confidence is below 75% (${analysisResult.confidence_pct}%). Please ensure good lighting and take a clear close-up photo of the leaf or plant part.`}
+                  ? `ఏఐ నమ్మకం 70% కన్నా తక్కువగా ఉంది. దయచేసి మంచి వెలుతురులో మొక్క భాగం స్పష్టంగా కనిపించేలా క్లోజప్ ఫోటో తీయండి.`
+                  : `YOLO11 vision confidence is below 70%. Please ensure good lighting and take a clear close-up photo of the affected plant part.`}
               </div>
 
               <button
@@ -514,51 +532,53 @@ export default function CropDoctor({ activeField }) {
             </div>
           )}
 
-          {/* STAGE 1 & STAGE 2 VERIFIED RESULT CARDS (Confidence >= 75%) */}
+          {/* STAGE 1 & STAGE 2 VERIFIED RESULT CARDS (Confidence >= 70%) */}
           {analysisResult && analysisResult.is_clear && (
             <div className="space-y-4 animate-in fade-in duration-300">
               
               {/* Pipeline Source Badges */}
               <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                <span className="text-[#2D6A4F]">🟢 {lang === 'te' ? 'ప్రాథమిక ఏఐ: Plant.id API' : 'Primary AI: Plant.id API'}</span>
-                <span className="text-emerald-800">✨ {lang === 'te' ? 'నివారణ ఏఐ: Google Gemini' : 'Treatment AI: Gemini'}</span>
+                <span className="text-[#2D6A4F]">🟢 {lang === 'te' ? 'ఏఐ విజన్: YOLO11 మోడల్' : 'Computer Vision: Real YOLO11 Model'}</span>
+                <span className="text-emerald-800">✨ {lang === 'te' ? 'పంట శ్రేణి: 10 ప్రధాన పంటలు' : 'Crop Scope: 10 Indian Crops'}</span>
               </div>
 
-              {/* Row 1: Disease Name & Confidence % */}
+              {/* Row 1: Crop Name, Disease Name & Confidence % */}
               <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between gap-2">
                 <div>
                   <div className="text-[10px] font-extrabold text-rose-800 uppercase flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
-                    <span>{lang === 'te' ? 'గుర్తించిన పంట వ్యాధి (Plant.id)' : 'Diagnosed Disease (Plant.id)'}</span>
+                    <span>{analysisResult.crop_name} • {lang === 'te' ? 'వ్యాధి రకం' : 'Diagnosed Disease'}</span>
                   </div>
                   <div className="text-lg font-black text-rose-900 mt-0.5">{analysisResult.disease_name}</div>
-                  {analysisResult.scientificName && (
-                    <div className="text-xs text-rose-700 italic font-semibold">{analysisResult.scientificName}</div>
-                  )}
+                  <div className="text-xs text-rose-700 font-bold mt-0.5">🌾 {lang === 'te' ? 'పంట:' : 'Crop:'} {analysisResult.crop_name}</div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="px-3.5 py-1 rounded-full text-xs font-black bg-[#2D6A4F] text-white shadow-sm">
+                  <span className="px-3.5 py-1.5 rounded-full text-xs font-black bg-[#2D6A4F] text-white shadow-sm">
                     🎯 {analysisResult.confidence_pct}% {lang === 'te' ? 'నమ్మకం' : 'Confidence'}
                   </span>
                 </div>
               </div>
 
-              {/* Row 2: Affected Plant Part & Severity */}
+              {/* Row 2: Bounding Box Coordinates & Severity */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
                   <div className="text-[10px] font-bold text-slate-500 uppercase">
-                    🍃 {lang === 'te' ? 'బాధిత మొక్క భాగం' : 'Affected Plant Part'}
+                    📐 {lang === 'te' ? 'బౌండింగ్ బాక్స్' : 'Bounding Box'}
                   </div>
-                  <div className="text-sm font-extrabold text-[#2C3333] mt-0.5">{analysisResult.plant_part}</div>
+                  <div className="text-xs font-extrabold text-[#2C3333] mt-0.5">
+                    {analysisResult.bounding_box ? `[${analysisResult.bounding_box.x1}, ${analysisResult.bounding_box.y1}, ${analysisResult.bounding_box.x2}, ${analysisResult.bounding_box.y2}]` : 'Auto-Detected'}
+                  </div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
                   <div className="text-[10px] font-bold text-slate-500 uppercase">
-                    ⚠️ {lang === 'te' ? 'వ్యాధి తీవ్రత మట్టం' : 'Disease Severity'}
+                    ⚠️ {lang === 'te' ? 'వ్యాధి తీవ్రత' : 'Disease Severity'}
                   </div>
-                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold mt-1 border ${getSeverityBadgeColor(analysisResult.severity)}`}>
-                    {getLocalizedSeverityText(analysisResult.severity)}
+                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold mt-1 border ${
+                    analysisResult.severity === 'Severe' || analysisResult.severity === 'High' ? 'bg-rose-100 text-rose-800 border-rose-300' : 'bg-amber-100 text-amber-800 border-amber-300'
+                  }`}>
+                    {analysisResult.severity || 'Moderate'}
                   </span>
                 </div>
               </div>
