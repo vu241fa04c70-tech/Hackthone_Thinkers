@@ -517,31 +517,62 @@ export default function CropDoctor({ activeField }) {
                 </div>
               </div>
 
-              {/* Row 3: Organic Treatment (Gemini AI) */}
+              {/* Row 3: Observed Symptoms & Pathogen Cause */}
+              {analysisResult.symptoms && analysisResult.symptoms.length > 0 && (
+                <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 space-y-1 text-xs">
+                  <div className="font-extrabold text-amber-900 flex items-center gap-1.5">
+                    <span>🔍 {lang === 'te' ? 'కనిపించిన వ్యాధి లక్షణాలు:' : 'Observed Visual Symptoms:'}</span>
+                  </div>
+                  <ul className="list-disc list-inside space-y-0.5 text-slate-800 font-semibold pl-1">
+                    {analysisResult.symptoms.map((sym, idx) => (
+                      <li key={idx}>{sym}</li>
+                    ))}
+                  </ul>
+                  {analysisResult.cause && (
+                    <div className="pt-1 text-[11px] text-amber-950 font-bold border-t border-amber-200/60 mt-1">
+                      🦠 <span className="underline">{lang === 'te' ? 'కారణమైన తెగులు క్రిమి:' : 'Causal Pathogen / Organism:'}</span> {analysisResult.cause}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Row 4: Organic Treatment */}
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1">
                 <div className="text-[11px] font-bold text-[#2D6A4F] uppercase flex items-center gap-1.5">
                   <Leaf className="w-4 h-4 text-[#2D6A4F]" />
-                  <span>🌱 {lang === 'te' ? 'జైవిక & ప్రకృతి నివారణ పద్ధతి (Gemini AI)' : 'Organic & Natural Treatment (Gemini AI)'}</span>
+                  <span>🌱 {lang === 'te' ? 'జైవిక & ప్రకృతి నివారణ పద్ధతి' : 'Organic & Natural Bio-Treatment'}</span>
                 </div>
                 <p className="text-xs text-slate-800 font-bold leading-relaxed">
                   {analysisResult.organic_treatment}
                 </p>
               </div>
 
-              {/* Row 4: Chemical Treatment & Dosage (Gemini AI) */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+              {/* Row 5: Chemical Treatment & Recommended Pesticide Badge */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                 <div className="text-[11px] font-bold text-[#2D6A4F] uppercase flex items-center gap-1.5">
                   <FlaskConical className="w-4 h-4 text-[#2D6A4F]" />
-                  <span>🧪 {lang === 'te' ? 'రసాయన మందుల పిచికారీ & మోతాదు (Gemini AI)' : 'Chemical Treatment & Spray Dosage (Gemini AI)'}</span>
+                  <span>🧪 {lang === 'te' ? 'రసాయన మందుల పిచికారీ & మోతాదు' : 'Chemical Spray Dosage & Recommendation'}</span>
                 </div>
                 <p className="text-xs text-slate-900 font-extrabold leading-relaxed">
                   {analysisResult.chemical_treatment}
                 </p>
+                {analysisResult.pesticide && (
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-100/60 border border-emerald-300 text-xs font-bold text-emerald-950 mt-2">
+                    <div>
+                      <span>💊 {analysisResult.pesticide.name}</span>
+                      <div className="text-[10px] text-emerald-800 font-semibold">{analysisResult.pesticide.dosage_per_acre}</div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-emerald-900 font-black text-xs">₹{analysisResult.pesticide.estimated_cost_inr}</span>
+                      <div className="text-[9px] text-emerald-700 font-extrabold uppercase">✓ {lang === 'te' ? 'యార్డ్‌లో లభ్యం' : 'In Stock Nearby'}</div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Row 5: Prevention Protocol (Gemini AI) */}
+              {/* Row 6: Prevention Protocol */}
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
-                🛡️ <span className="font-bold text-slate-800">{lang === 'te' ? 'భవిష్యత్తు నివారణ సూచనలు (Gemini AI):' : 'Prevention Advice (Gemini AI):'}</span> {analysisResult.prevention}
+                🛡️ <span className="font-bold text-slate-800">{lang === 'te' ? 'భవిష్యత్తు నివారణ సూచనలు:' : 'Prevention Advice:'}</span> {analysisResult.prevention}
               </div>
 
             </div>
