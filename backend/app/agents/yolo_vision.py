@@ -306,9 +306,13 @@ class YOLO11VisionAgent:
     def _init_model(self):
         if YOLO_AVAILABLE:
             try:
-                # Load pretrained YOLO11 model or default vision backbone
-                self.model = YOLO("yolo11n.pt")
-                logger.info("YOLO11 Computer Vision model loaded successfully.")
+                custom_weights = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "yolo11_crop_model.pt")
+                if os.path.exists(custom_weights):
+                    self.model = YOLO(custom_weights)
+                    logger.info(f"Loaded custom fine-tuned YOLO11 crop model weights from: {custom_weights}")
+                else:
+                    self.model = YOLO("yolo11n.pt")
+                    logger.info("Loaded standard YOLO11 vision backbone.")
             except Exception as err:
                 logger.warning(f"Could not load YOLO11 weights: {err}")
                 self.model = None
