@@ -48,25 +48,4 @@ Kisan Mitra provides an integrated agricultural assistant with:
 
 The objective is to provide farmers with information and assistance in a simple and accessible manner.
 
----
 
-# 🚀 Key Features
-
-## 🌱 1. Crop Disease AI Lens
-
-Farmers can upload an image of a crop or affected plant.
-
-The AI analyzes the image and predicts the possible crop disease.
-
-### Workflow
-
-```text
-Crop Image
-     ↓
-AI Image Analysis
-     ↓
-Crop Identification
-     ↓
-Disease Prediction
-     ↓
-Result for Farmer
