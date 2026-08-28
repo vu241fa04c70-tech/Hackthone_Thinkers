@@ -20,27 +20,42 @@ import FarmerSupportScreen from './components/FarmerSupportScreen';
 export default function App() {
   const { lang, setLanguage, t, isRTL } = useLanguage();
 
-  // Navigation Mode: 'welcome' (Welcome to Kisan Mitra) | 'lang_select' | 'farmer' | 'admin'
-  const [currentMode, setCurrentMode] = useState('welcome');
+  // Navigation Mode: default directly to 'farmer' so all UI features are immediately visible
+  const [currentMode, setCurrentMode] = useState('farmer');
 
   const [farmerProfile, setFarmerProfile] = useState(() => {
     const saved = localStorage.getItem('kisan_farmer_profile');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.farmer_name || parsed.main_crop)) return parsed;
+      } catch (e) {}
     }
-    return null;
+    const defaultP = {
+      farmer_name: 'kaira',
+      main_crop: 'Chilli',
+      district: 'Guntur',
+      village: 'Mangalagiri',
+      state: 'Andhra Pradesh',
+      acreage: 3.5,
+      phone: '+91 98765 43210'
+    };
+    try {
+      localStorage.setItem('kisan_farmer_profile', JSON.stringify(defaultP));
+    } catch (e) {}
+    return defaultP;
   });
 
   const [activeTab, setActiveTab] = useState('home');
 
   const [activeField, setActiveField] = useState({
     field_id: 'field_01',
-    name: 'వరి పొలం',
-    crop_type: farmerProfile?.main_crop || 'Paddy',
-    acreage: farmerProfile?.acreage || 2.5,
+    name: 'మిర్చి పొలం',
+    crop_type: farmerProfile?.main_crop || 'Chilli',
+    acreage: farmerProfile?.acreage || 3.5,
     location: `${farmerProfile?.district || 'Guntur'}, ${farmerProfile?.state || 'Andhra Pradesh'}`,
     soil_type: 'Black Loam',
-    irrigation_system: 'Canal Irrigation',
+    irrigation_system: 'Drip Irrigation',
     planting_date: '2026-06-15',
     growth_stage: 'Fruiting'
   });
@@ -53,7 +68,7 @@ export default function App() {
         setFarmerProfile(parsed);
         setActiveField(prev => ({
           ...prev,
-          crop_type: parsed.main_crop || 'Paddy',
+          crop_type: parsed.main_crop || 'Chilli',
           location: `${parsed.district || 'Guntur'}, ${parsed.state || 'Andhra Pradesh'}`
         }));
       } catch (e) {}
