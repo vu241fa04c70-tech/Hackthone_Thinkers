@@ -1,0 +1,9 @@
+[build]
+  base = "frontend"
+  command = "npm install && npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://kisan-mitra-backend.onrender.com/api/:splat"
+  status = 200
