@@ -2,14 +2,21 @@ import uuid
 import base64
 import json
 import os
+import sys
 import urllib.request
 from datetime import datetime
-from dotenv import load_dotenv
 
-# Load environment variables from .env if present
-load_dotenv()
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"))
+# Ensure parent directory is on sys.path for Render deployment
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Load environment variables safely
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"))
+except ImportError:
+    pass
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
