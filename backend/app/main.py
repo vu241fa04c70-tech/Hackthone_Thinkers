@@ -4,6 +4,13 @@ import json
 import os
 import urllib.request
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env if present
+load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"))
+
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, Dict, Any, List
@@ -379,3 +386,55 @@ def copilot_chat(request: CopilotChatRequest):
 def submit_feedback(request: FarmerFeedbackRequest):
     entry = save_feedback(request.decision_id, request.rating, request.feedback_text or "")
     return {"message": "Farmer feedback recorded.", "entry": entry}
+
+
+@app.post("/api/tts/speak")
+async def generate_tts_audio(payload: Dict[str, Any] = Body(...)):
+    text = payload.get("text", "")
+    lang = payload.get("language", "te")
+    if not text:
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    
+    import re, requests
+    from fastapi.responses import Response
+    
+    # Clean text of markdown and visual symbols
+    clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
+    clean = re.sub(r'https?://\S+', '', clean)
+    clean = re.sub(r'[*#_~`>]', '', clean)
+    clean = re.sub(r'[\U00010000-\U0010ffff\u2600-\u26ff\u2700-\u27bf]', '', clean)
+    clean = re.sub(r'•', '', clean)
+    clean = re.sub(r'[ \t]+', ' ', clean)
+    clean = clean.strip()
+    
+    # Split text into chunks along word boundaries (max 150 chars)
+    words = clean.split(' ')
+    chunks = []
+    curr = ''
+    for w in words:
+        if not curr:
+            curr = w
+        elif len(curr) + 1 + len(w) <= 150:
+            curr += ' ' + w
+        else:
+            chunks.append(curr)
+            curr = w
+    if curr:
+        chunks.append(curr)
+    
+    combined = b''
+    target_tl = lang
+    for c in chunks:
+        url = 'https://translate.google.com/translate_tts'
+        params = {'ie': 'UTF-8', 'tl': target_tl, 'client': 'tw-ob', 'q': c}
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        try:
+            r = requests.get(url, params=params, headers=headers, timeout=6)
+            if r.status_code == 200:
+                combined += r.content
+        except Exception:
+            pass
+            
+    if combined:
+        return Response(content=combined, media_type="audio/mpeg")
+    raise HTTPException(status_code=500, detail="Unable to synthesize audio")

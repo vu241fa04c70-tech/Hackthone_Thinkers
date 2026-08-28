@@ -89,4 +89,36 @@ class ApiService {
       recommendation: 'Harvest in 3 Days (Pre-Rain Optimal Window)',
     );
   }
+
+  static Future<String> askAiCopilot({
+    required String query,
+    required String language,
+    String crop = 'Chilli',
+    String location = 'Guntur',
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConstants.baseUrl}/copilot/chat'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'query': query,
+          'language': language,
+          'farmer_profile': {
+            'farmer_name': 'రైతు అన్నా',
+            'main_crop': crop,
+            'district': location,
+          }
+        }),
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['answer'] ?? data['response'] ?? 'Sorry, could not process request.';
+      }
+    } catch (_) {}
+    return language == 'te'
+        ? 'క్షమించండి, మీ ప్రశ్నకు సమాధానం ఇవ్వలేకపోయాను. దయచేసి మళ్ళీ ప్రయత్నించండి.'
+        : (language == 'hi'
+            ? 'क्षमा करें, मैं आपके प्रश्न को प्रोसेस नहीं कर सका। कृपया पुनः प्रयास करें।'
+            : "Sorry, I couldn't process your question. Please try again.");
+  }
 }
