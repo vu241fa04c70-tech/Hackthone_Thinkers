@@ -1,0 +1,343 @@
+{
+  "class_to_idx": {
+    "Rice___Bacterial_Blight": 0,
+    "Rice___Brown_Spot": 1,
+    "Rice___Leaf_Smut": 2,
+    "Rice___Blast": 3,
+    "Rice___Healthy": 4,
+    "Wheat___Septoria": 5,
+    "Wheat___Stripe_Rust": 6,
+    "Wheat___Leaf_Rust": 7,
+    "Wheat___Healthy": 8,
+    "Maize___Common_Rust": 9,
+    "Maize___Gray_Leaf_Spot": 10,
+    "Maize___Northern_Leaf_Blight": 11,
+    "Maize___Healthy": 12,
+    "Tomato___Bacterial_Spot": 13,
+    "Tomato___Early_Blight": 14,
+    "Tomato___Late_Blight": 15,
+    "Tomato___Leaf_Mold": 16,
+    "Tomato___Septoria_Leaf_Spot": 17,
+    "Tomato___Target_Spot": 18,
+    "Tomato___Yellow_Leaf_Curl_Virus": 19,
+    "Tomato___Mosaic_Virus": 20,
+    "Tomato___Healthy": 21,
+    "Potato___Early_Blight": 22,
+    "Potato___Late_Blight": 23,
+    "Potato___Healthy": 24,
+    "Chilli___Bacterial_Spot": 25,
+    "Chilli___Leaf_Curl": 26,
+    "Chilli___Leaf_Spot": 27,
+    "Chilli___Healthy": 28,
+    "Cotton___Bacterial_Blight": 29,
+    "Cotton___Curl_Virus": 30,
+    "Cotton___Fusarium_Wilt": 31,
+    "Cotton___Healthy": 32,
+    "Mango___Anthracnose": 33,
+    "Mango___Bacterial_Canker": 34,
+    "Mango___Healthy": 35,
+    "Banana___Sigatoka": 36,
+    "Banana___Panama_Disease": 37,
+    "Banana___Healthy": 38,
+    "Citrus___Black_Spot": 39,
+    "Citrus___Citrus_Canker": 40,
+    "Citrus___Greening": 41,
+    "Citrus___Healthy": 42
+  },
+  "idx_to_class": {
+    "0": {
+      "crop": "Rice",
+      "disease": "Bacterial Blight"
+    },
+    "1": {
+      "crop": "Rice",
+      "disease": "Brown Spot"
+    },
+    "2": {
+      "crop": "Rice",
+      "disease": "Leaf Smut"
+    },
+    "3": {
+      "crop": "Rice",
+      "disease": "Blast"
+    },
+    "4": {
+      "crop": "Rice",
+      "disease": "Healthy"
+    },
+    "5": {
+      "crop": "Wheat",
+      "disease": "Septoria"
+    },
+    "6": {
+      "crop": "Wheat",
+      "disease": "Stripe Rust"
+    },
+    "7": {
+      "crop": "Wheat",
+      "disease": "Leaf Rust"
+    },
+    "8": {
+      "crop": "Wheat",
+      "disease": "Healthy"
+    },
+    "9": {
+      "crop": "Maize",
+      "disease": "Common Rust"
+    },
+    "10": {
+      "crop": "Maize",
+      "disease": "Gray Leaf Spot"
+    },
+    "11": {
+      "crop": "Maize",
+      "disease": "Northern Leaf Blight"
+    },
+    "12": {
+      "crop": "Maize",
+      "disease": "Healthy"
+    },
+    "13": {
+      "crop": "Tomato",
+      "disease": "Bacterial Spot"
+    },
+    "14": {
+      "crop": "Tomato",
+      "disease": "Early Blight"
+    },
+    "15": {
+      "crop": "Tomato",
+      "disease": "Late Blight"
+    },
+    "16": {
+      "crop": "Tomato",
+      "disease": "Leaf Mold"
+    },
+    "17": {
+      "crop": "Tomato",
+      "disease": "Septoria Leaf Spot"
+    },
+    "18": {
+      "crop": "Tomato",
+      "disease": "Target Spot"
+    },
+    "19": {
+      "crop": "Tomato",
+      "disease": "Yellow Leaf Curl Virus"
+    },
+    "20": {
+      "crop": "Tomato",
+      "disease": "Mosaic Virus"
+    },
+    "21": {
+      "crop": "Tomato",
+      "disease": "Healthy"
+    },
+    "22": {
+      "crop": "Potato",
+      "disease": "Early Blight"
+    },
+    "23": {
+      "crop": "Potato",
+      "disease": "Late Blight"
+    },
+    "24": {
+      "crop": "Potato",
+      "disease": "Healthy"
+    },
+    "25": {
+      "crop": "Chilli",
+      "disease": "Bacterial Spot"
+    },
+    "26": {
+      "crop": "Chilli",
+      "disease": "Leaf Curl"
+    },
+    "27": {
+      "crop": "Chilli",
+      "disease": "Leaf Spot"
+    },
+    "28": {
+      "crop": "Chilli",
+      "disease": "Healthy"
+    },
+    "29": {
+      "crop": "Cotton",
+      "disease": "Bacterial Blight"
+    },
+    "30": {
+      "crop": "Cotton",
+      "disease": "Curl Virus"
+    },
+    "31": {
+      "crop": "Cotton",
+      "disease": "Fusarium Wilt"
+    },
+    "32": {
+      "crop": "Cotton",
+      "disease": "Healthy"
+    },
+    "33": {
+      "crop": "Mango",
+      "disease": "Anthracnose"
+    },
+    "34": {
+      "crop": "Mango",
+      "disease": "Bacterial Canker"
+    },
+    "35": {
+      "crop": "Mango",
+      "disease": "Healthy"
+    },
+    "36": {
+      "crop": "Banana",
+      "disease": "Sigatoka"
+    },
+    "37": {
+      "crop": "Banana",
+      "disease": "Panama Disease"
+    },
+    "38": {
+      "crop": "Banana",
+      "disease": "Healthy"
+    },
+    "39": {
+      "crop": "Citrus",
+      "disease": "Black Spot"
+    },
+    "40": {
+      "crop": "Citrus",
+      "disease": "Citrus Canker"
+    },
+    "41": {
+      "crop": "Citrus",
+      "disease": "Greening"
+    },
+    "42": {
+      "crop": "Citrus",
+      "disease": "Healthy"
+    }
+  },
+  "crop_to_diseases": {
+    "Rice": [
+      "Bacterial Blight",
+      "Brown Spot",
+      "Leaf Smut",
+      "Blast",
+      "Healthy"
+    ],
+    "Wheat": [
+      "Septoria",
+      "Stripe Rust",
+      "Leaf Rust",
+      "Healthy"
+    ],
+    "Maize": [
+      "Common Rust",
+      "Gray Leaf Spot",
+      "Northern Leaf Blight",
+      "Healthy"
+    ],
+    "Tomato": [
+      "Bacterial Spot",
+      "Early Blight",
+      "Late Blight",
+      "Leaf Mold",
+      "Septoria Leaf Spot",
+      "Target Spot",
+      "Yellow Leaf Curl Virus",
+      "Mosaic Virus",
+      "Healthy"
+    ],
+    "Potato": [
+      "Early Blight",
+      "Late Blight",
+      "Healthy"
+    ],
+    "Chilli": [
+      "Bacterial Spot",
+      "Leaf Curl",
+      "Leaf Spot",
+      "Healthy"
+    ],
+    "Cotton": [
+      "Bacterial Blight",
+      "Curl Virus",
+      "Fusarium Wilt",
+      "Healthy"
+    ],
+    "Mango": [
+      "Anthracnose",
+      "Bacterial Canker",
+      "Healthy"
+    ],
+    "Banana": [
+      "Sigatoka",
+      "Panama Disease",
+      "Healthy"
+    ],
+    "Citrus": [
+      "Black Spot",
+      "Citrus Canker",
+      "Greening",
+      "Healthy"
+    ]
+  },
+  "target_crops": [
+    "Rice",
+    "Wheat",
+    "Maize",
+    "Tomato",
+    "Potato",
+    "Chilli",
+    "Cotton",
+    "Mango",
+    "Banana",
+    "Citrus"
+  ],
+  "default_classes": [
+    "Rice___Bacterial_Blight",
+    "Rice___Brown_Spot",
+    "Rice___Leaf_Smut",
+    "Rice___Blast",
+    "Rice___Healthy",
+    "Wheat___Septoria",
+    "Wheat___Stripe_Rust",
+    "Wheat___Leaf_Rust",
+    "Wheat___Healthy",
+    "Maize___Common_Rust",
+    "Maize___Gray_Leaf_Spot",
+    "Maize___Northern_Leaf_Blight",
+    "Maize___Healthy",
+    "Tomato___Bacterial_Spot",
+    "Tomato___Early_Blight",
+    "Tomato___Late_Blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_Leaf_Spot",
+    "Tomato___Target_Spot",
+    "Tomato___Yellow_Leaf_Curl_Virus",
+    "Tomato___Mosaic_Virus",
+    "Tomato___Healthy",
+    "Potato___Early_Blight",
+    "Potato___Late_Blight",
+    "Potato___Healthy",
+    "Chilli___Bacterial_Spot",
+    "Chilli___Leaf_Curl",
+    "Chilli___Leaf_Spot",
+    "Chilli___Healthy",
+    "Cotton___Bacterial_Blight",
+    "Cotton___Curl_Virus",
+    "Cotton___Fusarium_Wilt",
+    "Cotton___Healthy",
+    "Mango___Anthracnose",
+    "Mango___Bacterial_Canker",
+    "Mango___Healthy",
+    "Banana___Sigatoka",
+    "Banana___Panama_Disease",
+    "Banana___Healthy",
+    "Citrus___Black_Spot",
+    "Citrus___Citrus_Canker",
+    "Citrus___Greening",
+    "Citrus___Healthy"
+  ]
+}

@@ -1,0 +1,61 @@
+filename,crop,disease,source_dataset
+Tomato/01_Healthy.jpg,Tomato,Healthy,Tomato Kaggle Dataset
+Tomato/02_Early_Blight.jpg,Tomato,Early Blight,Tomato Kaggle Dataset
+Tomato/03_Late_Blight.jpg,Tomato,Late Blight,Tomato Kaggle Dataset
+Tomato/04_Septoria_Leaf_Spot.jpg,Tomato,Septoria Leaf Spot,Tomato Kaggle Dataset
+Tomato/05_Leaf_Mold.jpg,Tomato,Leaf Mold,Tomato Kaggle Dataset
+Tomato/06_Bacterial_Spot.jpg,Tomato,Bacterial Spot,Tomato Kaggle Dataset
+Wheat/01_Healthy.jpg,Wheat,Healthy,Wheat Kaggle Dataset
+Wheat/02_Septoria.jpg,Wheat,Septoria,Wheat Kaggle Dataset
+Wheat/03_Stripe_Rust.jpg,Wheat,Stripe Rust,Wheat Kaggle Dataset
+Wheat/04_Leaf_Rust.jpg,Wheat,Leaf Rust,Wheat Kaggle Dataset
+Wheat/05_Healthy.jpg,Wheat,Healthy,Wheat Kaggle Dataset
+Wheat/06_Septoria.jpg,Wheat,Septoria,Wheat Kaggle Dataset
+Rice/01_Healthy.jpg,Rice,Healthy,Rice Kaggle Dataset
+Rice/02_Brown_Spot.jpg,Rice,Brown Spot,Rice Kaggle Dataset
+Rice/03_Leaf_Blast.jpg,Rice,Leaf Blast,Rice Kaggle Dataset
+Rice/04_Bacterial_Leaf_Blight.jpg,Rice,Bacterial Leaf Blight,Rice Kaggle Dataset
+Rice/05_Brown_Spot.jpg,Rice,Brown Spot,Rice Kaggle Dataset
+Rice/06_Leaf_Blast.jpg,Rice,Leaf Blast,Rice Kaggle Dataset
+Maize/01_Healthy.jpg,Maize,Healthy,Maize Kaggle Dataset
+Maize/02_Common_Rust.jpg,Maize,Common Rust,Maize Kaggle Dataset
+Maize/03_Gray_Leaf_Spot.jpg,Maize,Gray Leaf Spot,Maize Kaggle Dataset
+Maize/04_Blight.jpg,Maize,Blight,Maize Kaggle Dataset
+Maize/05_Healthy.jpg,Maize,Healthy,Maize Kaggle Dataset
+Maize/06_Common_Rust.jpg,Maize,Common Rust,Maize Kaggle Dataset
+Potato/01_Healthy.jpg,Potato,Healthy,Potato Kaggle Dataset
+Potato/02_Early_Blight.jpg,Potato,Early Blight,Potato Kaggle Dataset
+Potato/03_Late_Blight.jpg,Potato,Late Blight,Potato Kaggle Dataset
+Potato/04_Healthy.jpg,Potato,Healthy,Potato Kaggle Dataset
+Potato/05_Early_Blight.jpg,Potato,Early Blight,Potato Kaggle Dataset
+Potato/06_Late_Blight.jpg,Potato,Late Blight,Potato Kaggle Dataset
+Chilli/01_Healthy.jpg,Chilli,Healthy,Chilli Kaggle Dataset
+Chilli/02_Bacterial_Spot.jpg,Chilli,Bacterial Spot,Chilli Kaggle Dataset
+Chilli/03_Leaf_Curl.jpg,Chilli,Leaf Curl,Chilli Kaggle Dataset
+Chilli/04_Leaf_Spot.jpg,Chilli,Leaf Spot,Chilli Kaggle Dataset
+Chilli/05_Healthy.jpg,Chilli,Healthy,Chilli Kaggle Dataset
+Chilli/06_Bacterial_Spot.jpg,Chilli,Bacterial Spot,Chilli Kaggle Dataset
+Cotton/01_Healthy.jpg,Cotton,Healthy,Cotton Kaggle Dataset
+Cotton/02_Bacterial_Blight.jpg,Cotton,Bacterial Blight,Cotton Kaggle Dataset
+Cotton/03_Curl_Virus.jpg,Cotton,Curl Virus,Cotton Kaggle Dataset
+Cotton/04_Fusarium_Wilt.jpg,Cotton,Fusarium Wilt,Cotton Kaggle Dataset
+Cotton/05_Healthy.jpg,Cotton,Healthy,Cotton Kaggle Dataset
+Cotton/06_Bacterial_Blight.jpg,Cotton,Bacterial Blight,Cotton Kaggle Dataset
+Mango/01_Healthy.jpg,Mango,Healthy,Mango Kaggle Dataset
+Mango/02_Anthracnose.jpg,Mango,Anthracnose,Mango Kaggle Dataset
+Mango/03_Bacterial_Canker.jpg,Mango,Bacterial Canker,Mango Kaggle Dataset
+Mango/04_Healthy.jpg,Mango,Healthy,Mango Kaggle Dataset
+Mango/05_Anthracnose.jpg,Mango,Anthracnose,Mango Kaggle Dataset
+Mango/06_Bacterial_Canker.jpg,Mango,Bacterial Canker,Mango Kaggle Dataset
+Banana/01_Healthy.jpg,Banana,Healthy,Banana Kaggle Dataset
+Banana/02_Sigatoka.jpg,Banana,Sigatoka,Banana Kaggle Dataset
+Banana/03_Panama_Disease.jpg,Banana,Panama Disease,Banana Kaggle Dataset
+Banana/04_Healthy.jpg,Banana,Healthy,Banana Kaggle Dataset
+Banana/05_Sigatoka.jpg,Banana,Sigatoka,Banana Kaggle Dataset
+Banana/06_Panama_Disease.jpg,Banana,Panama Disease,Banana Kaggle Dataset
+Citrus/01_Healthy.jpg,Citrus,Healthy,Citrus Kaggle Dataset
+Citrus/02_Black_Spot.jpg,Citrus,Black Spot,Citrus Kaggle Dataset
+Citrus/03_Citrus_Canker.jpg,Citrus,Citrus Canker,Citrus Kaggle Dataset
+Citrus/04_Greening.jpg,Citrus,Greening,Citrus Kaggle Dataset
+Citrus/05_Healthy.jpg,Citrus,Healthy,Citrus Kaggle Dataset
+Citrus/06_Black_Spot.jpg,Citrus,Black Spot,Citrus Kaggle Dataset
