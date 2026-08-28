@@ -11,10 +11,22 @@ import io
 import os
 import json
 import logging
-import torch
-import torch.nn as nn
-import numpy as np
-from torchvision import transforms, models
+TORCH_AVAILABLE = False
+try:
+    import torch
+    import torch.nn as nn
+    from torchvision import transforms, models
+    TORCH_AVAILABLE = True
+except Exception as e:
+    torch = None
+    nn = None
+    transforms = None
+    models = None
+
+try:
+    import numpy as np
+except ImportError:
+    np = None
 from PIL import Image, ImageOps
 from typing import Dict, Any, Tuple, Optional
 
@@ -25,13 +37,16 @@ MODELS_DIR = os.path.join(PROJECT_ROOT, "models")
 if not os.path.exists(MODELS_DIR):
     MODELS_DIR = os.path.join(BACKEND_DIR, "models")
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-transform_inference = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-])
+if TORCH_AVAILABLE:
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    transform_inference = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+else:
+    DEVICE = "cpu"
+    transform_inference = None
 
 # Complete Knowledge Base for 2-Stage Predictions
 ADVISORY_DATABASE = {
