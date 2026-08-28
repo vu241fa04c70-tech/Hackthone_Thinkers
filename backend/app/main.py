@@ -35,14 +35,30 @@ from app.database import (
     save_feedback, save_scan_history, save_scheme, delete_scheme, update_mandi_price,
     save_officer_contact, delete_officer_contact, get_mandi_prices_by_area
 )
-from app.agents.crop_vision import CropVisionAgent
-from app.agents.yolo_vision import yolo_vision_agent
-from app.agents.weather import WeatherAgent
-from app.agents.soil_irrigation import SoilIrrigationAgent
-from app.agents.disease_risk import DiseaseRiskAgent
-from app.agents.market import MarketAgent
-from app.agents.copilot import FarmCopilotAgent
-from app.agents.orchestrator import OrchestratorAgent
+try:
+    from app.agents.crop_vision import CropVisionAgent
+except ImportError:
+    CropVisionAgent = None
+
+try:
+    from app.agents.yolo_vision import yolo_vision_agent
+except ImportError:
+    yolo_vision_agent = None
+
+try:
+    from app.agents.two_stage_evaluator import two_stage_evaluator
+except ImportError:
+    two_stage_evaluator = None
+
+try:
+    from app.agents.weather import WeatherAgent
+    from app.agents.soil_irrigation import SoilIrrigationAgent
+    from app.agents.disease_risk import DiseaseRiskAgent
+    from app.agents.market import MarketAgent
+    from app.agents.copilot import FarmCopilotAgent
+    from app.agents.orchestrator import OrchestratorAgent
+except ImportError:
+    WeatherAgent = SoilIrrigationAgent = DiseaseRiskAgent = MarketAgent = FarmCopilotAgent = OrchestratorAgent = None
 from app.agents.morning_briefing import MorningBriefingAgent
 
 app = FastAPI(

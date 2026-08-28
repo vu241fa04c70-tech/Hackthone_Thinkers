@@ -1,7 +1,11 @@
 import io
 import os
 import logging
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    np = None
+
 from PIL import Image, ImageStat, ImageFilter, ImageEnhance
 from typing import Dict, Any, List, Optional, Tuple
 
