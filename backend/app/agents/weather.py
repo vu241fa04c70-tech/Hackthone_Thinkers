@@ -1,5 +1,6 @@
 import os
 import requests
+import urllib.parse
 from typing import Dict, Any, Optional
 from app.schemas import WeatherData, WeatherDay
 
@@ -34,7 +35,7 @@ class WeatherAgent:
             return known[low_loc]
 
         try:
-            geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={urllib_parse_quote(cleaned_loc)}&count=1"
+            geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={urllib.parse.quote(cleaned_loc)}&count=1"
             res = requests.get(geo_url, timeout=5)
             if res.status_code == 200:
                 data = res.json()

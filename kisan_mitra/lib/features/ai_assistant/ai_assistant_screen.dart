@@ -45,13 +45,12 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     }
   }
 
-  void _processResponse(String query) {
-    String reply = 'మీ టమాటా పంటలో నత్రజని లోపం ఉంది. ఎకరానికి 1 బస్తా Urea వేయండి. 3 రోజుల్లో మార్పు కనిపిస్తుంది.';
-    if (query.contains('ధర') || query.contains('price')) {
-      reply = 'ఈ రోజు టమాటా ధర రూ. 24/కిలో ఉంది. 3 రోజుల్లో రూ. 27 అవుతుంది.';
-    }
+  Future<void> _processResponse(String query) async {
+    setState(() => _botResponse = widget.lang == 'te' ? 'సమాధానం సిద్ధం చేస్తున్నాను...' : (widget.lang == 'hi' ? 'उत्तर तैयार हो रहा है...' : 'Thinking...'));
+    final reply = await ApiService.askAiCopilot(query: query, language: widget.lang);
+    if (!mounted) return;
     setState(() => _botResponse = reply);
-    _tts.speak(reply, lang: widget.lang == 'te' ? 'te-IN' : 'hi-IN');
+    _tts.speak(reply, lang: widget.lang == 'te' ? 'te-IN' : (widget.lang == 'hi' ? 'hi-IN' : 'en-IN'));
   }
 
   @override
