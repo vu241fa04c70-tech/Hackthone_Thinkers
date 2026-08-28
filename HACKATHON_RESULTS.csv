@@ -1,0 +1,61 @@
+filename,expected_crop,expected_disease,predicted_crop,predicted_disease,crop_confidence,disease_confidence,crop_correct,disease_correct
+Tomato/01_Healthy.jpg,Tomato,Healthy,Tomato,Healthy Plant,89.0%,84.0%,TRUE,TRUE
+Tomato/02_Early_Blight.jpg,Tomato,Early Blight,Tomato,Early Blight,99.5%,100.0%,TRUE,TRUE
+Tomato/03_Late_Blight.jpg,Tomato,Late Blight,Tomato,Late Blight,100.0%,100.0%,TRUE,TRUE
+Tomato/04_Septoria_Leaf_Spot.jpg,Tomato,Septoria Leaf Spot,Tomato,Septoria Leaf Spot,99.8%,84.0%,TRUE,TRUE
+Tomato/05_Leaf_Mold.jpg,Tomato,Leaf Mold,Tomato,Leaf Mold,94.8%,99.7%,TRUE,TRUE
+Tomato/06_Bacterial_Spot.jpg,Tomato,Bacterial Spot,Tomato,Bacterial Spot,99.9%,99.4%,TRUE,TRUE
+Wheat/01_Healthy.jpg,Wheat,Healthy,Wheat,Healthy Plant,100.0%,99.7%,TRUE,TRUE
+Wheat/02_Septoria.jpg,Wheat,Septoria,Wheat,Septoria Leaf Blotch,100.0%,93.4%,TRUE,TRUE
+Wheat/03_Stripe_Rust.jpg,Wheat,Stripe Rust,Tomato,Early Blight,100.0%,84.0%,FALSE,FALSE
+Wheat/04_Leaf_Rust.jpg,Wheat,Leaf Rust,Wheat,Leaf Rust (Brown Rust),100.0%,98.0%,TRUE,TRUE
+Wheat/05_Healthy.jpg,Wheat,Healthy,Wheat,Healthy Plant,100.0%,99.7%,TRUE,TRUE
+Wheat/06_Septoria.jpg,Wheat,Septoria,Wheat,Septoria Leaf Blotch,100.0%,84.0%,TRUE,TRUE
+Rice/01_Healthy.jpg,Rice,Healthy,Rice,Bacterial Leaf Blight,88.0%,84.0%,TRUE,FALSE
+Rice/02_Brown_Spot.jpg,Rice,Brown Spot,Rice,Brown Spot,99.8%,95.6%,TRUE,TRUE
+Rice/03_Leaf_Blast.jpg,Rice,Leaf Blast,Rice,Leaf Blast,88.0%,90.7%,TRUE,TRUE
+Rice/04_Bacterial_Leaf_Blight.jpg,Rice,Bacterial Leaf Blight,Rice,Bacterial Leaf Blight,88.0%,100.0%,TRUE,TRUE
+Rice/05_Brown_Spot.jpg,Rice,Brown Spot,Tomato,Bacterial Spot,99.9%,91.2%,FALSE,FALSE
+Rice/06_Leaf_Blast.jpg,Rice,Leaf Blast,Rice,Leaf Blast,88.0%,87.6%,TRUE,TRUE
+Maize/01_Healthy.jpg,Maize,Healthy,Maize,Healthy Plant,100.0%,84.0%,TRUE,TRUE
+Maize/02_Common_Rust.jpg,Maize,Common Rust,Maize,Common Rust,98.7%,84.0%,TRUE,TRUE
+Maize/03_Gray_Leaf_Spot.jpg,Maize,Gray Leaf Spot,Maize,Gray Leaf Spot,90.3%,100.0%,TRUE,TRUE
+Maize/04_Blight.jpg,Maize,Blight,Maize,Northern Leaf Blight,100.0%,100.0%,TRUE,TRUE
+Maize/05_Healthy.jpg,Maize,Healthy,Maize,Healthy Plant,100.0%,84.0%,TRUE,TRUE
+Maize/06_Common_Rust.jpg,Maize,Common Rust,Maize,Common Rust,100.0%,84.0%,TRUE,TRUE
+Potato/01_Healthy.jpg,Potato,Healthy,Potato,Healthy Plant,99.1%,95.3%,TRUE,TRUE
+Potato/02_Early_Blight.jpg,Potato,Early Blight,Potato,Early Blight,99.7%,100.0%,TRUE,TRUE
+Potato/03_Late_Blight.jpg,Potato,Late Blight,Potato,Late Blight,98.5%,100.0%,TRUE,TRUE
+Potato/04_Healthy.jpg,Potato,Healthy,Potato,Healthy Plant,98.8%,84.0%,TRUE,TRUE
+Potato/05_Early_Blight.jpg,Potato,Early Blight,Potato,Early Blight,99.8%,84.0%,TRUE,TRUE
+Potato/06_Late_Blight.jpg,Potato,Late Blight,Potato,Late Blight,100.0%,100.0%,TRUE,TRUE
+Chilli/01_Healthy.jpg,Chilli,Healthy,Chilli,Healthy,98.6%,97.6%,TRUE,TRUE
+Chilli/02_Bacterial_Spot.jpg,Chilli,Bacterial Spot,Citrus,Black Spot,93.7%,85.0%,FALSE,FALSE
+Chilli/03_Leaf_Curl.jpg,Chilli,Leaf Curl,Chilli,Leaf Spot,88.0%,89.8%,TRUE,FALSE
+Chilli/04_Leaf_Spot.jpg,Chilli,Leaf Spot,Chilli,Leaf Spot,88.0%,100.0%,TRUE,TRUE
+Chilli/05_Healthy.jpg,Chilli,Healthy,Chilli,Healthy,88.0%,87.8%,TRUE,TRUE
+Chilli/06_Bacterial_Spot.jpg,Chilli,Bacterial Spot,Citrus,Black Spot,97.8%,97.1%,FALSE,FALSE
+Cotton/01_Healthy.jpg,Cotton,Healthy,Cotton,Fusarium Wilt,100.0%,97.3%,TRUE,FALSE
+Cotton/02_Bacterial_Blight.jpg,Cotton,Bacterial Blight,Cotton,Bacterial Blight,96.0%,100.0%,TRUE,TRUE
+Cotton/03_Curl_Virus.jpg,Cotton,Curl Virus,Cotton,Curl Virus,100.0%,84.0%,TRUE,TRUE
+Cotton/04_Fusarium_Wilt.jpg,Cotton,Fusarium Wilt,Cotton,Fusarium Wilt,100.0%,84.0%,TRUE,TRUE
+Cotton/05_Healthy.jpg,Cotton,Healthy,Cotton,Fusarium Wilt,100.0%,98.3%,TRUE,FALSE
+Cotton/06_Bacterial_Blight.jpg,Cotton,Bacterial Blight,Cotton,Bacterial Blight,96.3%,100.0%,TRUE,TRUE
+Mango/01_Healthy.jpg,Mango,Healthy,Mango,Healthy,100.0%,100.0%,TRUE,TRUE
+Mango/02_Anthracnose.jpg,Mango,Anthracnose,Tomato,Late Blight,100.0%,93.7%,FALSE,FALSE
+Mango/03_Bacterial_Canker.jpg,Mango,Bacterial Canker,Mango,Bacterial Canker,99.8%,84.0%,TRUE,TRUE
+Mango/04_Healthy.jpg,Mango,Healthy,Mango,Healthy,100.0%,99.6%,TRUE,TRUE
+Mango/05_Anthracnose.jpg,Mango,Anthracnose,Mango,Anthracnose,100.0%,100.0%,TRUE,TRUE
+Mango/06_Bacterial_Canker.jpg,Mango,Bacterial Canker,Mango,Bacterial Canker,100.0%,91.9%,TRUE,TRUE
+Banana/01_Healthy.jpg,Banana,Healthy,Banana,Sigatoka Leaf Spot,99.8%,84.0%,TRUE,FALSE
+Banana/02_Sigatoka.jpg,Banana,Sigatoka,Banana,Sigatoka Leaf Spot,100.0%,100.0%,TRUE,TRUE
+Banana/03_Panama_Disease.jpg,Banana,Panama Disease,Banana,Panama Fusarium Wilt,100.0%,100.0%,TRUE,FALSE
+Banana/04_Healthy.jpg,Banana,Healthy,Banana,Sigatoka Leaf Spot,93.2%,84.0%,TRUE,FALSE
+Banana/05_Sigatoka.jpg,Banana,Sigatoka,Banana,Panama Fusarium Wilt,100.0%,84.0%,TRUE,FALSE
+Banana/06_Panama_Disease.jpg,Banana,Panama Disease,Banana,Panama Fusarium Wilt,99.8%,99.9%,TRUE,FALSE
+Citrus/01_Healthy.jpg,Citrus,Healthy,Tomato,Leaf Mold,98.4%,84.0%,FALSE,FALSE
+Citrus/02_Black_Spot.jpg,Citrus,Black Spot,Rice,Leaf Blast,88.0%,89.1%,FALSE,FALSE
+Citrus/03_Citrus_Canker.jpg,Citrus,Citrus Canker,Tomato,Leaf Mold,99.8%,84.0%,FALSE,FALSE
+Citrus/04_Greening.jpg,Citrus,Greening,Citrus,Greening,100.0%,100.0%,TRUE,TRUE
+Citrus/05_Healthy.jpg,Citrus,Healthy,Chilli,Healthy,88.0%,84.0%,FALSE,FALSE
+Citrus/06_Black_Spot.jpg,Citrus,Black Spot,Citrus,Black Spot,97.8%,95.9%,TRUE,TRUE

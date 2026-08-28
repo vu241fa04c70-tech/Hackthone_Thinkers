@@ -29,6 +29,7 @@ from app.database import (
     save_officer_contact, delete_officer_contact, get_mandi_prices_by_area
 )
 from app.agents.crop_vision import CropVisionAgent
+from app.agents.yolo_vision import yolo_vision_agent
 from app.agents.weather import WeatherAgent
 from app.agents.soil_irrigation import SoilIrrigationAgent
 from app.agents.disease_risk import DiseaseRiskAgent
@@ -256,92 +257,34 @@ def get_samples(language: Optional[str] = "te"):
     return localized
 
 
-# TWO-STAGE PIPELINE ENDPOINT: Plant.id Primary AI + Gemini Treatment Generator
+# REAL YOLO11 COMPUTER VISION MODEL ENDPOINT
 @app.post("/api/disease/diagnose")
 async def diagnose_plant_id_and_gemini(
     file: Optional[UploadFile] = File(None),
     sample_key: Optional[str] = Form(None),
-    language: Optional[str] = Form("en")
+    language: Optional[str] = Form("en"),
+    crop_hint: Optional[str] = Form("")
 ):
     lang_code = (language or "en").lower()
 
     if file:
         content = await file.read()
-        report = vision_agent.analyze_uploaded_image(content, crop_hint="", lang=lang_code)
-    elif sample_key:
-        report = vision_agent.analyze_sample(sample_key, lang=lang_code)
+        res = yolo_vision_agent.analyze_image(content, crop_hint=crop_hint or "", lang=lang_code)
     else:
-        report = vision_agent.analyze_sample("sample_tomato_early_blight", lang=lang_code)
+        dummy_img = Image.new('RGB', (640, 640), color=(73, 109, 137))
+        img_byte_arr = io.BytesIO()
+        dummy_img.save(img_byte_arr, format='JPEG')
+        res = yolo_vision_agent.analyze_image(img_byte_arr.getvalue(), crop_hint=crop_hint or "Rice", lang=lang_code)
 
-    conf_pct = round(report.confidence * 100, 1)
-
-    if report.is_below_threshold or conf_pct < 75:
-        return {
-            "is_clear": False,
-            "error": "Unable to confidently identify. Capture a clearer image.",
-            "confidence_pct": conf_pct
-        }
-
-    disease_name = report.disease_name
-    plant_part = report.plant_part_detected
-    crop_name = report.crop_detected
-
-    sev_level = report.severity_level.title() if hasattr(report, 'severity_level') and report.severity_level else "Moderate"
-    if sev_level not in ["Mild", "Moderate", "Severe"]:
-        sev_level = "Moderate"
-
-    if lang_code in ["te", "telugu"]:
-        organic = "వేప నూనె (లీటరు నీటికి 5 మి.లీ) లేదా ట్రైకోడెర్మా విరిడి జైవిక మందు వారానికి ఒకసారి పిచికారీ చేయండి."
-        chemical = f"ఎకరానికి 600 గ్రాముల ఇండిఫిల్ M-45 (Mancozeb 75% WP) మందును 200 లీటర్ల నీటిలో కలిపి పిచికారీ చేయండి."
-        prevention = "ఆకులపై పైనుంచి నీరు చల్లకుండా డ్రిప్ నీటిపారుదల వాడండి. తగిన మొక్కల మధ్య దూరం పాటించండి."
-    elif lang_code in ["hi", "hindi"]:
-        organic = "नीम का तेल (5 मिली/लीटर पानी) या ट्राइकोडर्मा विरिडी जैव-कवकनाशी का सप्ताह में एक बार छिड़काव करें।"
-        chemical = "प्रति एकड़ 600 ग्राम मैंकोजेब 75% डब्लूपी को 200 लीटर पानी में मिलाकर पत्तियों पर छिड़कें।"
-        prevention = "ऊपर से पानी देने से बचें, पौधों के बीच उचित दूरी बनाए रखें और फसल चक्र अपनाएं।"
-    else:
-        organic = "Apply Neem oil (5ml/L water) or Trichoderma viride bio-fungicide once every 7 days. Remove infected foliage."
-        chemical = f"Spray Mancozeb 75% WP at 2g/L water (600g in 200L water per acre)."
-        prevention = "Avoid overhead sprinkler irrigation, maintain proper plant spacing, and practice 3-year crop rotation."
-
-    scientific_names = {
-        "Tomato": "Solanum lycopersicum",
-        "Paddy": "Oryza sativa",
-        "Chilli": "Capsicum annuum",
-        "Cotton": "Gossypium hirsutum",
-        "Potato": "Solanum tuberosum",
-        "Maize": "Zea mays",
-        "Wheat": "Triticum aestivum"
-    }
-
-    sc_name = scientific_names.get(crop_name, "Solanum lycopersicum")
-
-    res = {
-        "is_clear": True,
-        "disease_name": disease_name,
-        "confidence_pct": conf_pct,
-        "confidence": f"{conf_pct}%",
-        "plant_part": plant_part,
-        "severity": sev_level,
-        "crop_name": crop_name,
-        "commonName": crop_name,
-        "scientificName": sc_name,
-        "organic_treatment": organic,
-        "chemical_treatment": chemical,
-        "prevention": prevention,
-        "stage1_source": "Plant.id Health Assessment API",
-        "stage2_source": "Google Gemini AI"
-    }
-
-    save_scan_history({
-        "scan_id": f"scan_{uuid.uuid4().hex[:6]}",
-        "scan_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "crop_name": crop_name,
-        "plant_part_detected": plant_part,
-        "disease_name": disease_name,
-        "confidence_pct": conf_pct,
-        "health_status": report.health_status,
-        "immediate_treatment": [organic, chemical]
-    })
+    if res.get("is_clear"):
+        save_scan_history({
+            "scan_id": f"scan_{uuid.uuid4().hex[:6]}",
+            "scan_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "crop_name": res.get("crop_name"),
+            "disease_name": res.get("disease_name"),
+            "confidence_pct": res.get("confidence_pct"),
+            "severity": res.get("severity")
+        })
 
     return res
 

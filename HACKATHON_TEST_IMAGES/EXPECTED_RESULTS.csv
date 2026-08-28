@@ -1,0 +1,123 @@
+filename,crop,disease,relative_path
+tomato_early_blight_01.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_01.jpg
+tomato_early_blight_02.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_02.jpg
+tomato_early_blight_03.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_03.jpg
+tomato_early_blight_04.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_04.jpg
+tomato_early_blight_05.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_05.jpg
+tomato_early_blight_06.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_06.jpg
+tomato_early_blight_07.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_07.jpg
+tomato_early_blight_08.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_08.jpg
+tomato_early_blight_09.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_09.jpg
+tomato_early_blight_10.jpg,Tomato,Early Blight,Tomato\tomato_early_blight_10.jpg
+tomato_late_blight_01.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_01.jpg
+tomato_late_blight_02.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_02.jpg
+tomato_late_blight_03.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_03.jpg
+tomato_late_blight_04.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_04.jpg
+tomato_late_blight_05.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_05.jpg
+tomato_late_blight_06.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_06.jpg
+tomato_late_blight_07.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_07.jpg
+tomato_late_blight_08.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_08.jpg
+tomato_late_blight_09.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_09.jpg
+tomato_late_blight_10.jpg,Tomato,Late Blight,Tomato\tomato_late_blight_10.jpg
+tomato_septoria_leaf_spot_01.jpg,Tomato,Septoria Leaf Spot,Tomato\tomato_septoria_leaf_spot_01.jpg
+tomato_septoria_leaf_spot_02.jpg,Tomato,Septoria Leaf Spot,Tomato\tomato_septoria_leaf_spot_02.jpg
+tomato_septoria_leaf_spot_03.jpg,Tomato,Septoria Leaf Spot,Tomato\tomato_septoria_leaf_spot_03.jpg
+tomato_septoria_leaf_spot_04.jpg,Tomato,Septoria Leaf Spot,Tomato\tomato_septoria_leaf_spot_04.jpg
+tomato_septoria_leaf_spot_05.jpg,Tomato,Septoria Leaf Spot,Tomato\tomato_septoria_leaf_spot_05.jpg
+tomato_septoria_leaf_spot_06.jpg,Tomato,Septoria Leaf Spot,Tomato\tomato_septoria_leaf_spot_06.jpg
+tomato_septoria_leaf_spot_07.jpg,Tomato,Septoria Leaf Spot,Tomato\tomato_septoria_leaf_spot_07.jpg
+wheat_septoria_01.jpg,Wheat,Septoria,Wheat\wheat_septoria_01.jpg
+wheat_septoria_02.jpg,Wheat,Septoria,Wheat\wheat_septoria_02.jpg
+wheat_septoria_03.jpg,Wheat,Septoria,Wheat\wheat_septoria_03.jpg
+wheat_septoria_04.jpg,Wheat,Septoria,Wheat\wheat_septoria_04.jpg
+wheat_septoria_05.jpg,Wheat,Septoria,Wheat\wheat_septoria_05.jpg
+wheat_septoria_06.jpg,Wheat,Septoria,Wheat\wheat_septoria_06.jpg
+wheat_stripe_rust_01.jpg,Wheat,Stripe Rust,Wheat\wheat_stripe_rust_01.jpg
+wheat_stripe_rust_02.jpg,Wheat,Stripe Rust,Wheat\wheat_stripe_rust_02.jpg
+wheat_stripe_rust_03.jpg,Wheat,Stripe Rust,Wheat\wheat_stripe_rust_03.jpg
+wheat_stripe_rust_04.jpg,Wheat,Stripe Rust,Wheat\wheat_stripe_rust_04.jpg
+wheat_leaf_rust_01.jpg,Wheat,Leaf Rust,Wheat\wheat_leaf_rust_01.jpg
+wheat_leaf_rust_02.jpg,Wheat,Leaf Rust,Wheat\wheat_leaf_rust_02.jpg
+wheat_leaf_rust_03.jpg,Wheat,Leaf Rust,Wheat\wheat_leaf_rust_03.jpg
+wheat_leaf_rust_04.jpg,Wheat,Leaf Rust,Wheat\wheat_leaf_rust_04.jpg
+rice_brown_spot_01.jpg,Rice,Brown Spot,Rice\rice_brown_spot_01.jpg
+rice_brown_spot_02.jpg,Rice,Brown Spot,Rice\rice_brown_spot_02.jpg
+rice_brown_spot_03.jpg,Rice,Brown Spot,Rice\rice_brown_spot_03.jpg
+rice_brown_spot_04.jpg,Rice,Brown Spot,Rice\rice_brown_spot_04.jpg
+rice_brown_spot_05.jpg,Rice,Brown Spot,Rice\rice_brown_spot_05.jpg
+rice_brown_spot_06.jpg,Rice,Brown Spot,Rice\rice_brown_spot_06.jpg
+rice_brown_spot_07.jpg,Rice,Brown Spot,Rice\rice_brown_spot_07.jpg
+rice_brown_spot_08.jpg,Rice,Brown Spot,Rice\rice_brown_spot_08.jpg
+rice_leaf_blast_01.jpg,Rice,Leaf Blast,Rice\rice_leaf_blast_01.jpg
+rice_leaf_blast_02.jpg,Rice,Leaf Blast,Rice\rice_leaf_blast_02.jpg
+rice_leaf_blast_03.jpg,Rice,Leaf Blast,Rice\rice_leaf_blast_03.jpg
+rice_bacterial_leaf_blight_01.jpg,Rice,Bacterial Leaf Blight,Rice\rice_bacterial_leaf_blight_01.jpg
+rice_bacterial_leaf_blight_02.jpg,Rice,Bacterial Leaf Blight,Rice\rice_bacterial_leaf_blight_02.jpg
+rice_bacterial_leaf_blight_03.jpg,Rice,Bacterial Leaf Blight,Rice\rice_bacterial_leaf_blight_03.jpg
+rice_bacterial_leaf_blight_04.jpg,Rice,Bacterial Leaf Blight,Rice\rice_bacterial_leaf_blight_04.jpg
+rice_bacterial_leaf_blight_05.jpg,Rice,Bacterial Leaf Blight,Rice\rice_bacterial_leaf_blight_05.jpg
+rice_bacterial_leaf_blight_06.jpg,Rice,Bacterial Leaf Blight,Rice\rice_bacterial_leaf_blight_06.jpg
+rice_bacterial_leaf_blight_07.jpg,Rice,Bacterial Leaf Blight,Rice\rice_bacterial_leaf_blight_07.jpg
+maize_common_rust_01.jpg,Maize,Common Rust,Maize\maize_common_rust_01.jpg
+maize_common_rust_02.jpg,Maize,Common Rust,Maize\maize_common_rust_02.jpg
+maize_common_rust_03.jpg,Maize,Common Rust,Maize\maize_common_rust_03.jpg
+maize_common_rust_04.jpg,Maize,Common Rust,Maize\maize_common_rust_04.jpg
+maize_gray_leaf_spot_01.jpg,Maize,Gray Leaf Spot,Maize\maize_gray_leaf_spot_01.jpg
+maize_gray_leaf_spot_02.jpg,Maize,Gray Leaf Spot,Maize\maize_gray_leaf_spot_02.jpg
+maize_gray_leaf_spot_03.jpg,Maize,Gray Leaf Spot,Maize\maize_gray_leaf_spot_03.jpg
+maize_gray_leaf_spot_04.jpg,Maize,Gray Leaf Spot,Maize\maize_gray_leaf_spot_04.jpg
+maize_gray_leaf_spot_05.jpg,Maize,Gray Leaf Spot,Maize\maize_gray_leaf_spot_05.jpg
+maize_gray_leaf_spot_06.jpg,Maize,Gray Leaf Spot,Maize\maize_gray_leaf_spot_06.jpg
+maize_gray_leaf_spot_07.jpg,Maize,Gray Leaf Spot,Maize\maize_gray_leaf_spot_07.jpg
+maize_gray_leaf_spot_08.jpg,Maize,Gray Leaf Spot,Maize\maize_gray_leaf_spot_08.jpg
+maize_blight_01.jpg,Maize,Blight,Maize\maize_blight_01.jpg
+maize_blight_02.jpg,Maize,Blight,Maize\maize_blight_02.jpg
+maize_blight_03.jpg,Maize,Blight,Maize\maize_blight_03.jpg
+maize_blight_04.jpg,Maize,Blight,Maize\maize_blight_04.jpg
+maize_blight_05.jpg,Maize,Blight,Maize\maize_blight_05.jpg
+maize_blight_06.jpg,Maize,Blight,Maize\maize_blight_06.jpg
+maize_blight_07.jpg,Maize,Blight,Maize\maize_blight_07.jpg
+maize_blight_08.jpg,Maize,Blight,Maize\maize_blight_08.jpg
+maize_blight_09.jpg,Maize,Blight,Maize\maize_blight_09.jpg
+maize_blight_10.jpg,Maize,Blight,Maize\maize_blight_10.jpg
+potato_early_blight_01.jpg,Potato,Early Blight,Potato\potato_early_blight_01.jpg
+potato_early_blight_02.jpg,Potato,Early Blight,Potato\potato_early_blight_02.jpg
+potato_early_blight_03.jpg,Potato,Early Blight,Potato\potato_early_blight_03.jpg
+potato_early_blight_04.jpg,Potato,Early Blight,Potato\potato_early_blight_04.jpg
+potato_early_blight_05.jpg,Potato,Early Blight,Potato\potato_early_blight_05.jpg
+potato_early_blight_06.jpg,Potato,Early Blight,Potato\potato_early_blight_06.jpg
+potato_early_blight_07.jpg,Potato,Early Blight,Potato\potato_early_blight_07.jpg
+potato_early_blight_08.jpg,Potato,Early Blight,Potato\potato_early_blight_08.jpg
+potato_early_blight_09.jpg,Potato,Early Blight,Potato\potato_early_blight_09.jpg
+potato_early_blight_10.jpg,Potato,Early Blight,Potato\potato_early_blight_10.jpg
+potato_late_blight_01.jpg,Potato,Late Blight,Potato\potato_late_blight_01.jpg
+potato_late_blight_02.jpg,Potato,Late Blight,Potato\potato_late_blight_02.jpg
+potato_late_blight_03.jpg,Potato,Late Blight,Potato\potato_late_blight_03.jpg
+potato_late_blight_04.jpg,Potato,Late Blight,Potato\potato_late_blight_04.jpg
+potato_late_blight_05.jpg,Potato,Late Blight,Potato\potato_late_blight_05.jpg
+potato_late_blight_06.jpg,Potato,Late Blight,Potato\potato_late_blight_06.jpg
+potato_late_blight_07.jpg,Potato,Late Blight,Potato\potato_late_blight_07.jpg
+potato_late_blight_08.jpg,Potato,Late Blight,Potato\potato_late_blight_08.jpg
+potato_late_blight_09.jpg,Potato,Late Blight,Potato\potato_late_blight_09.jpg
+potato_late_blight_10.jpg,Potato,Late Blight,Potato\potato_late_blight_10.jpg
+banana_healthy_01.jpg,Banana,Healthy,Banana\banana_healthy_01.jpg
+banana_sigatoka_01.jpg,Banana,Sigatoka,Banana\banana_sigatoka_01.jpg
+banana_sigatoka_02.jpg,Banana,Sigatoka,Banana\banana_sigatoka_02.jpg
+banana_sigatoka_03.jpg,Banana,Sigatoka,Banana\banana_sigatoka_03.jpg
+banana_sigatoka_04.jpg,Banana,Sigatoka,Banana\banana_sigatoka_04.jpg
+banana_sigatoka_05.jpg,Banana,Sigatoka,Banana\banana_sigatoka_05.jpg
+banana_sigatoka_06.jpg,Banana,Sigatoka,Banana\banana_sigatoka_06.jpg
+banana_sigatoka_07.jpg,Banana,Sigatoka,Banana\banana_sigatoka_07.jpg
+banana_sigatoka_08.jpg,Banana,Sigatoka,Banana\banana_sigatoka_08.jpg
+banana_sigatoka_09.jpg,Banana,Sigatoka,Banana\banana_sigatoka_09.jpg
+banana_sigatoka_10.jpg,Banana,Sigatoka,Banana\banana_sigatoka_10.jpg
+banana_panama_disease_01.jpg,Banana,Panama Disease,Banana\banana_panama_disease_01.jpg
+banana_panama_disease_02.jpg,Banana,Panama Disease,Banana\banana_panama_disease_02.jpg
+banana_panama_disease_03.jpg,Banana,Panama Disease,Banana\banana_panama_disease_03.jpg
+banana_panama_disease_04.jpg,Banana,Panama Disease,Banana\banana_panama_disease_04.jpg
+banana_panama_disease_05.jpg,Banana,Panama Disease,Banana\banana_panama_disease_05.jpg
+banana_panama_disease_06.jpg,Banana,Panama Disease,Banana\banana_panama_disease_06.jpg
+banana_panama_disease_07.jpg,Banana,Panama Disease,Banana\banana_panama_disease_07.jpg
+banana_panama_disease_08.jpg,Banana,Panama Disease,Banana\banana_panama_disease_08.jpg
+banana_panama_disease_09.jpg,Banana,Panama Disease,Banana\banana_panama_disease_09.jpg
+banana_panama_disease_10.jpg,Banana,Panama Disease,Banana\banana_panama_disease_10.jpg

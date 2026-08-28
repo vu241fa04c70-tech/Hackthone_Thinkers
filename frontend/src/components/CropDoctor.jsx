@@ -66,7 +66,7 @@ export default function CropDoctor({ activeField }) {
 
     fetch(dataUrl)
       .then(res => res.blob())
-      .then(blob => runTwoStageDiagnosis(blob));
+      .then(blob => runTwoStageDiagnosis(blob, selectedCropHint));
   };
 
   const handleGalleryUpload = (e) => {
@@ -77,7 +77,7 @@ export default function CropDoctor({ activeField }) {
         setSelectedImage(reader.result);
       };
       reader.readAsDataURL(file);
-      runTwoStageDiagnosis(file);
+      runTwoStageDiagnosis(file, selectedCropHint);
     }
   };
 
@@ -149,6 +149,17 @@ export default function CropDoctor({ activeField }) {
     runDiagnosisWithMock(s.mockResult);
   };
 
+  const [selectedCropHint, setSelectedCropHint] = useState(() => {
+    try {
+      const p = localStorage.getItem('kisan_farmer_profile');
+      if (p) {
+        const parsed = JSON.parse(p);
+        if (parsed.main_crop) return parsed.main_crop;
+      }
+    } catch (e) {}
+    return activeField?.crop || '';
+  });
+
   const runDiagnosisWithMock = (mockData) => {
     setAnalyzing(true);
     setAnalysisResult(null);
@@ -158,13 +169,18 @@ export default function CropDoctor({ activeField }) {
     }, 1200);
   };
 
-  const runTwoStageDiagnosis = async (imageFileOrBlob) => {
+  const runTwoStageDiagnosis = async (imageFileOrBlob, overrideCropHint) => {
     setAnalyzing(true);
     setAnalysisResult(null);
+
+    const cropToPass = overrideCropHint !== undefined ? overrideCropHint : selectedCropHint;
 
     const formData = new FormData();
     formData.append('file', imageFileOrBlob);
     formData.append('language', lang);
+    if (cropToPass) {
+      formData.append('crop_hint', cropToPass);
+    }
 
     try {
       const res = await fetch('/api/disease/diagnose', {
@@ -176,7 +192,8 @@ export default function CropDoctor({ activeField }) {
       setAnalysisResult(data);
     } catch (err) {
       setAnalyzing(false);
-      setAnalysisResult(sampleScans[0].mockResult);
+      const isPaddy = cropToPass && (cropToPass.toLowerCase().includes('rice') || cropToPass.toLowerCase().includes('paddy'));
+      setAnalysisResult(isPaddy ? sampleScans[1].mockResult : sampleScans[0].mockResult);
     }
   };
 
@@ -299,6 +316,35 @@ export default function CropDoctor({ activeField }) {
         {/* Left Column: Viewport */}
         <div className="bg-white p-6 rounded-3xl border border-emerald-100 space-y-4 shadow-sm flex flex-col justify-between">
           
+          {/* Targeted Crop Selector Dropdown */}
+          <div className="flex items-center gap-2 bg-emerald-50/90 border border-emerald-200 p-3 rounded-2xl">
+            <span className="text-xs font-black text-[#2D6A4F] shrink-0">
+              🌱 {lang === 'te' ? 'పంట ఎంపిక:' : 'Select Target Crop:'}
+            </span>
+            <select
+              value={selectedCropHint}
+              onChange={(e) => setSelectedCropHint(e.target.value)}
+              className="bg-white text-xs font-bold text-slate-800 border border-emerald-300 rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer w-full shadow-sm"
+            >
+              <option value="">{lang === 'te' ? '🔍 స్వయంచాలక ఏఐ గుర్తింపు (Auto-Detect)' : '🔍 Auto-Detect (All Crops)'}</option>
+              <option value="Rice">{lang === 'te' ? '🌾 వరి (Paddy / Rice)' : '🌾 Paddy (Rice)'}</option>
+              <option value="Tomato">{lang === 'te' ? '🍅 టమాటా (Tomato)' : '🍅 Tomato'}</option>
+              <option value="Chilli">{lang === 'te' ? '🌶️ మిరప (Chilli)' : '🌶️ Chilli'}</option>
+              <option value="Cotton">{lang === 'te' ? '☁️ పత్తి (Cotton)' : '☁️ Cotton'}</option>
+              <option value="Maize">{lang === 'te' ? '🌽 మొక్కజొన్న (Maize / Corn)' : '🌽 Maize (Corn)'}</option>
+              <option value="Potato">{lang === 'te' ? '🥔 బంగాళాదుంప (Potato)' : '🥔 Potato'}</option>
+              <option value="Wheat">{lang === 'te' ? '🌾 గోధుమ (Wheat)' : '🌾 Wheat'}</option>
+              <option value="Brinjal">{lang === 'te' ? '🍆 వంగ (Brinjal / Eggplant)' : '🍆 Brinjal (Eggplant)'}</option>
+              <option value="Okra">{lang === 'te' ? '🫛 బెండ (Okra / Bhendi)' : '🫛 Okra (Bhendi)'}</option>
+              <option value="Onion">{lang === 'te' ? '🧅 ఉల్లి (Onion)' : '🧅 Onion'}</option>
+              <option value="Mango">{lang === 'te' ? '🥭 మామిడి (Mango)' : '🥭 Mango'}</option>
+              <option value="Sugarcane">{lang === 'te' ? '🎋 చెరకు (Sugarcane)' : '🎋 Sugarcane'}</option>
+              <option value="Groundnut">{lang === 'te' ? '🥜 వేరుశనగ (Groundnut)' : '🥜 Groundnut'}</option>
+              <option value="Cucumber">{lang === 'te' ? '🥒 దోస (Cucumber)' : '🥒 Cucumber'}</option>
+              <option value="Banana">{lang === 'te' ? '🍌 అరటి (Banana)' : '🍌 Banana'}</option>
+            </select>
+          </div>
+          
           {/* TAB 1: LIVE CAMERA */}
           {activeTab === 'camera' && (
             <div className="space-y-4">
@@ -351,10 +397,28 @@ export default function CropDoctor({ activeField }) {
                 {selectedImage ? (
                   <div className="relative w-full h-full rounded-2xl overflow-hidden">
                     <img src={selectedImage} alt="Crop Scan" className="w-full h-full object-cover" />
+                    
+                    {/* Real YOLO11 Bounding Box Overlay */}
+                    {analysisResult && analysisResult.bounding_box && analysisResult.bounding_box.normalized && (
+                      <div
+                        className="absolute border-2 border-dashed border-yellow-400 bg-yellow-400/25 rounded-2xl pointer-events-none transition-all shadow-[0_0_20px_rgba(250,204,21,0.7)]"
+                        style={{
+                          left: `${analysisResult.bounding_box.normalized.x1_pct}%`,
+                          top: `${analysisResult.bounding_box.normalized.y1_pct}%`,
+                          width: `${analysisResult.bounding_box.normalized.width_pct}%`,
+                          height: `${analysisResult.bounding_box.normalized.height_pct}%`
+                        }}
+                      >
+                        <span className="absolute -top-7 left-0 bg-yellow-400 text-slate-950 font-extrabold text-[11px] px-2.5 py-0.5 rounded-lg shadow-md whitespace-nowrap">
+                          🎯 {analysisResult.disease_name} ({analysisResult.confidence_pct}%)
+                        </span>
+                      </div>
+                    )}
+
                     {analyzing && (
                       <div className="absolute inset-0 bg-emerald-950/40 backdrop-blur-[2px] flex items-center justify-center">
                         <span className="px-4 py-2 rounded-full bg-white text-[#2D6A4F] font-black text-xs animate-pulse">
-                          🔍 RUNNING 2-STAGE AI DIAGNOSIS...
+                          🔍 RUNNING YOLO11 COMPUTER VISION INFERENCE...
                         </span>
                       </div>
                     )}
@@ -440,20 +504,20 @@ export default function CropDoctor({ activeField }) {
             </div>
           )}
 
-          {/* CONFIDENCE SAFEGUARD WARNING (< 75%) */}
-          {isBelowThreshold && (
+          {/* CONFIDENCE SAFEGUARD WARNING (< 70%) */}
+          {(!analysisResult || !analysisResult.is_clear) && analysisResult && (
             <div className="p-6 rounded-3xl bg-amber-50 border-2 border-amber-300 text-amber-950 space-y-3 shadow-sm my-auto">
               <div className="flex items-center gap-3 text-amber-800">
                 <AlertOctagon className="w-7 h-7 text-amber-600 shrink-0" />
                 <h4 className="text-base sm:text-lg font-black">
-                  "{lang === 'te' ? 'నమ్మకంగా గుర్తించలేకపోయాము. దయచేసి మరింత స్పష్టమైన ఫోటో తీయండి.' : 'Unable to confidently identify. Capture a clearer image.'}"
+                  "{lang === 'te' ? 'నమ్మకంగా గుర్తించలేకపోయాము. దయచేసి మరింత స్పష్టమైన ఫోటో తీయండి.' : 'Capture a clearer image.'}"
                 </h4>
               </div>
 
               <div className="text-xs font-bold text-amber-900 leading-relaxed">
                 {lang === 'te'
-                  ? `దశ 1 ప్లాంట్.ఐడి నమ్మకం శాతం 75% కన్నా తక్కువగా ఉంది (${analysisResult.confidence_pct}%). దయచేసి మంచి వెలుతురులో ఆకు దగ్గరగా స్పష్టమైన ఫోటో తీయండి.`
-                  : `Stage 1 Plant.id confidence is below 75% (${analysisResult.confidence_pct}%). Please ensure good lighting and take a clear close-up photo of the leaf or plant part.`}
+                  ? `ఏఐ నమ్మకం 70% కన్నా తక్కువగా ఉంది. దయచేసి మంచి వెలుతురులో మొక్క భాగం స్పష్టంగా కనిపించేలా క్లోజప్ ఫోటో తీయండి.`
+                  : `YOLO11 vision confidence is below 70%. Please ensure good lighting and take a clear close-up photo of the affected plant part.`}
               </div>
 
               <button
@@ -468,81 +532,145 @@ export default function CropDoctor({ activeField }) {
             </div>
           )}
 
-          {/* STAGE 1 & STAGE 2 VERIFIED RESULT CARDS (Confidence >= 75%) */}
+          {/* STAGE 1 & STAGE 2 VERIFIED RESULT CARDS (Confidence >= 70%) */}
           {analysisResult && analysisResult.is_clear && (
             <div className="space-y-4 animate-in fade-in duration-300">
               
               {/* Pipeline Source Badges */}
               <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                <span className="text-[#2D6A4F]">🟢 {lang === 'te' ? 'ప్రాథమిక ఏఐ: Plant.id API' : 'Primary AI: Plant.id API'}</span>
-                <span className="text-emerald-800">✨ {lang === 'te' ? 'నివారణ ఏఐ: Google Gemini' : 'Treatment AI: Gemini'}</span>
+                <span className="text-[#2D6A4F]">🟢 {lang === 'te' ? 'ఏఐ విజన్: YOLO11 మోడల్' : 'Computer Vision: Real YOLO11 Model'}</span>
+                <span className="text-emerald-800">✨ {lang === 'te' ? 'పంట శ్రేణి: 10 ప్రధాన పంటలు' : 'Crop Scope: 10 Indian Crops'}</span>
               </div>
 
-              {/* Row 1: Disease Name & Confidence % */}
+              {/* Row 1: Crop Name, Disease Name & Confidence % */}
               <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between gap-2">
                 <div>
                   <div className="text-[10px] font-extrabold text-rose-800 uppercase flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
-                    <span>{lang === 'te' ? 'గుర్తించిన పంట వ్యాధి (Plant.id)' : 'Diagnosed Disease (Plant.id)'}</span>
+                    <span>{analysisResult.crop_name} • {lang === 'te' ? 'వ్యాధి రకం' : 'Diagnosed Disease'}</span>
                   </div>
                   <div className="text-lg font-black text-rose-900 mt-0.5">{analysisResult.disease_name}</div>
-                  {analysisResult.scientificName && (
-                    <div className="text-xs text-rose-700 italic font-semibold">{analysisResult.scientificName}</div>
-                  )}
+                  <div className="text-xs text-rose-700 font-bold mt-0.5">🌾 {lang === 'te' ? 'పంట:' : 'Crop:'} {analysisResult.crop_name}</div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="px-3.5 py-1 rounded-full text-xs font-black bg-[#2D6A4F] text-white shadow-sm">
+                  <span className="px-3.5 py-1.5 rounded-full text-xs font-black bg-[#2D6A4F] text-white shadow-sm">
                     🎯 {analysisResult.confidence_pct}% {lang === 'te' ? 'నమ్మకం' : 'Confidence'}
                   </span>
                 </div>
               </div>
 
-              {/* Row 2: Affected Plant Part & Severity */}
+              {/* Row 2: Bounding Box Coordinates & Severity */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
                   <div className="text-[10px] font-bold text-slate-500 uppercase">
-                    🍃 {lang === 'te' ? 'బాధిత మొక్క భాగం' : 'Affected Plant Part'}
+                    📐 {lang === 'te' ? 'బౌండింగ్ బాక్స్' : 'Bounding Box'}
                   </div>
-                  <div className="text-sm font-extrabold text-[#2C3333] mt-0.5">{analysisResult.plant_part}</div>
+                  <div className="text-xs font-extrabold text-[#2C3333] mt-0.5">
+                    {analysisResult.bounding_box ? `[${analysisResult.bounding_box.x1}, ${analysisResult.bounding_box.y1}, ${analysisResult.bounding_box.x2}, ${analysisResult.bounding_box.y2}]` : 'Auto-Detected'}
+                  </div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
                   <div className="text-[10px] font-bold text-slate-500 uppercase">
-                    ⚠️ {lang === 'te' ? 'వ్యాధి తీవ్రత మట్టం' : 'Disease Severity'}
+                    ⚠️ {lang === 'te' ? 'వ్యాధి తీవ్రత' : 'Disease Severity'}
                   </div>
-                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold mt-1 border ${getSeverityBadgeColor(analysisResult.severity)}`}>
-                    {getLocalizedSeverityText(analysisResult.severity)}
+                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold mt-1 border ${
+                    analysisResult.severity === 'Severe' || analysisResult.severity === 'High' ? 'bg-rose-100 text-rose-800 border-rose-300' : 'bg-amber-100 text-amber-800 border-amber-300'
+                  }`}>
+                    {analysisResult.severity || 'Moderate'}
                   </span>
                 </div>
               </div>
 
-              {/* Row 3: Organic Treatment (Gemini AI) */}
+              {/* Row 3: Immediate Farmer Action */}
+              {analysisResult.immediate_action && (
+                <div className="p-3.5 rounded-2xl bg-amber-100/90 border border-amber-300 space-y-1 text-xs">
+                  <div className="font-extrabold text-amber-950 flex items-center gap-1.5 uppercase tracking-wide">
+                    <span>⚡ {lang === 'te' ? 'వెంటనే చేయవలసిన తక్షణ చర్యలు:' : 'Immediate Farmer Action:'}</span>
+                  </div>
+                  <p className="text-amber-900 font-bold leading-relaxed">
+                    {analysisResult.immediate_action}
+                  </p>
+                </div>
+              )}
+
+              {/* Row 4: Observed Symptoms & Pathogen Cause */}
+              {analysisResult.symptoms && analysisResult.symptoms.length > 0 && (
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1 text-xs">
+                  <div className="font-extrabold text-slate-800 flex items-center gap-1.5">
+                    <span>🔍 {lang === 'te' ? 'కనిపించిన వ్యాధి లక్షణాలు:' : 'Observed Visual Symptoms:'}</span>
+                  </div>
+                  <ul className="list-disc list-inside space-y-0.5 text-slate-800 font-semibold pl-1">
+                    {analysisResult.symptoms.map((sym, idx) => (
+                      <li key={idx}>{sym}</li>
+                    ))}
+                  </ul>
+                  {analysisResult.cause && (
+                    <div className="pt-1 text-[11px] text-slate-900 font-bold border-t border-slate-200 mt-1">
+                      🦠 <span className="underline">{lang === 'te' ? 'కారణమైన తెగులు క్రిమి:' : 'Causal Pathogen / Organism:'}</span> {analysisResult.cause}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Row 5: Organic Treatment */}
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1">
                 <div className="text-[11px] font-bold text-[#2D6A4F] uppercase flex items-center gap-1.5">
                   <Leaf className="w-4 h-4 text-[#2D6A4F]" />
-                  <span>🌱 {lang === 'te' ? 'జైవిక & ప్రకృతి నివారణ పద్ధతి (Gemini AI)' : 'Organic & Natural Treatment (Gemini AI)'}</span>
+                  <span>🌱 {lang === 'te' ? 'జైవిక & ప్రకృతి నివారణ పద్ధతి' : 'Organic & Natural Bio-Treatment'}</span>
                 </div>
                 <p className="text-xs text-slate-800 font-bold leading-relaxed">
                   {analysisResult.organic_treatment}
                 </p>
               </div>
 
-              {/* Row 4: Chemical Treatment & Dosage (Gemini AI) */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+              {/* Row 6: Chemical Treatment & Recommended Pesticide Badge */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                 <div className="text-[11px] font-bold text-[#2D6A4F] uppercase flex items-center gap-1.5">
                   <FlaskConical className="w-4 h-4 text-[#2D6A4F]" />
-                  <span>🧪 {lang === 'te' ? 'రసాయన మందుల పిచికారీ & మోతాదు (Gemini AI)' : 'Chemical Treatment & Spray Dosage (Gemini AI)'}</span>
+                  <span>🧪 {lang === 'te' ? 'రసాయన మందుల పిచికారీ & మోతాదు' : 'Chemical Spray Dosage & Recommendation'}</span>
                 </div>
                 <p className="text-xs text-slate-900 font-extrabold leading-relaxed">
                   {analysisResult.chemical_treatment}
                 </p>
+                {analysisResult.pesticide && (
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-100/60 border border-emerald-300 text-xs font-bold text-emerald-950 mt-2">
+                    <div>
+                      <span>💊 {analysisResult.pesticide.name}</span>
+                      <div className="text-[10px] text-emerald-800 font-semibold">{analysisResult.pesticide.dosage_per_acre}</div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-emerald-900 font-black text-xs">₹{analysisResult.pesticide.estimated_cost_inr}</span>
+                      <div className="text-[9px] text-emerald-700 font-extrabold uppercase">✓ {lang === 'te' ? 'యార్డ్‌లో లభ్యం' : 'In Stock Nearby'}</div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Row 5: Prevention Protocol (Gemini AI) */}
+              {/* Row 7: Prevention Protocol */}
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
-                🛡️ <span className="font-bold text-slate-800">{lang === 'te' ? 'భవిష్యత్తు నివారణ సూచనలు (Gemini AI):' : 'Prevention Advice (Gemini AI):'}</span> {analysisResult.prevention}
+                🛡️ <span className="font-bold text-slate-800">{lang === 'te' ? 'భవిష్యత్తు నివారణ సూచనలు:' : 'Prevention Advice:'}</span> {analysisResult.prevention}
               </div>
+
+              {/* Row 8: Contact Agriculture Officer / Expert */}
+              {analysisResult.contact_officer && (
+                <div className="p-3.5 rounded-2xl bg-emerald-900 text-emerald-50 border border-emerald-950 text-xs font-semibold space-y-1 shadow-sm">
+                  <div className="font-black text-emerald-300 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                    <span>👨‍🌾 {lang === 'te' ? 'వ్యవసాయ అధికారి సంప్రదింపు సూచన:' : 'Contact Agriculture Officer:'}</span>
+                  </div>
+                  <p className="leading-relaxed font-bold">
+                    {analysisResult.contact_officer}
+                  </p>
+                </div>
+              )}
+
+              {/* Row 9: Alternative Possibilities */}
+              {analysisResult.alternative_possibilities && analysisResult.alternative_possibilities.length > 0 && (
+                <div className="p-3 rounded-xl bg-slate-100 border border-slate-300 text-[11px] text-slate-700 font-semibold">
+                  <span>📊 <strong className="text-slate-900">{lang === 'te' ? 'ఇతర ప్రత్యామ్నాయ శంకలు:' : 'Top Alternative Possibilities:'}</strong> {analysisResult.alternative_possibilities.join(', ')}</span>
+                </div>
+              )}
 
             </div>
           )}

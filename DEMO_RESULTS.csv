@@ -1,0 +1,81 @@
+filename,actual_crop,actual_disease,predicted_crop,predicted_disease,crop_confidence,disease_confidence,crop_correct,disease_correct
+tomato_early_blight_01.jpg,Tomato,Early Blight,Banana,Panama Disease,78.4%,59.7%,False,False
+tomato_early_blight_02.jpg,Tomato,Early Blight,Potato,Early Blight,99.5%,100.0%,False,False
+tomato_early_blight_03.jpg,Tomato,Early Blight,Tomato,Early Blight,100.0%,100.0%,True,True
+tomato_early_blight_04.jpg,Tomato,Early Blight,Banana,Panama Disease,99.9%,82.5%,False,False
+tomato_early_blight_05.jpg,Tomato,Early Blight,Banana,Panama Disease,72.8%,100.0%,False,False
+tomato_late_blight_01.jpg,Tomato,Late Blight,Banana,Panama Disease,95.7%,100.0%,False,False
+tomato_late_blight_02.jpg,Tomato,Late Blight,Banana,Panama Disease,100.0%,51.9%,False,False
+tomato_late_blight_03.jpg,Tomato,Late Blight,Banana,Sigatoka,93.0%,52.6%,False,False
+tomato_late_blight_04.jpg,Tomato,Late Blight,Banana,Panama Disease,99.8%,99.3%,False,False
+tomato_late_blight_05.jpg,Tomato,Late Blight,Banana,Panama Disease,100.0%,100.0%,False,False
+tomato_septoria_leaf_spot_01.jpg,Tomato,Septoria Leaf Spot,Potato,Early Blight,45.1%,100.0%,False,False
+tomato_septoria_leaf_spot_02.jpg,Tomato,Septoria Leaf Spot,Banana,Panama Disease,78.4%,99.0%,False,False
+tomato_septoria_leaf_spot_03.jpg,Tomato,Septoria Leaf Spot,Potato,Late Blight,50.5%,100.0%,False,False
+tomato_septoria_leaf_spot_04.jpg,Tomato,Septoria Leaf Spot,Banana,Sigatoka,98.9%,62.8%,False,False
+tomato_septoria_leaf_spot_05.jpg,Tomato,Septoria Leaf Spot,Banana,Sigatoka,69.3%,99.7%,False,False
+wheat_septoria_01.jpg,Wheat,Septoria,Wheat,Septoria,65.3%,99.5%,True,True
+wheat_septoria_02.jpg,Wheat,Septoria,Banana,Panama Disease,82.5%,100.0%,False,False
+wheat_septoria_03.jpg,Wheat,Septoria,Wheat,Septoria,98.5%,99.3%,True,True
+wheat_septoria_04.jpg,Wheat,Septoria,Banana,Panama Disease,99.9%,100.0%,False,False
+wheat_stripe_rust_01.jpg,Wheat,Stripe Rust,Banana,Panama Disease,92.0%,81.4%,False,False
+wheat_stripe_rust_02.jpg,Wheat,Stripe Rust,Banana,Panama Disease,80.0%,100.0%,False,False
+wheat_stripe_rust_03.jpg,Wheat,Stripe Rust,Banana,Panama Disease,80.4%,100.0%,False,False
+wheat_stripe_rust_04.jpg,Wheat,Stripe Rust,Banana,Panama Disease,95.3%,80.0%,False,False
+wheat_stripe_rust_05.jpg,Wheat,Stripe Rust,Wheat,Septoria,67.5%,67.2%,True,False
+wheat_leaf_rust_01.jpg,Wheat,Leaf Rust,Banana,Panama Disease,99.4%,99.9%,False,False
+wheat_leaf_rust_02.jpg,Wheat,Leaf Rust,Banana,Sigatoka,48.0%,93.6%,False,False
+wheat_leaf_rust_03.jpg,Wheat,Leaf Rust,Banana,Panama Disease,99.0%,100.0%,False,False
+wheat_leaf_rust_04.jpg,Wheat,Leaf Rust,Rice,Leaf Blast,62.6%,56.6%,False,False
+wheat_leaf_rust_05.jpg,Wheat,Leaf Rust,Wheat,Leaf Rust,50.3%,58.6%,True,True
+rice_brown_spot_01.jpg,Rice,Brown Spot,Rice,Brown Spot,50.6%,100.0%,True,True
+rice_brown_spot_02.jpg,Rice,Brown Spot,Banana,Panama Disease,59.5%,100.0%,False,False
+rice_brown_spot_03.jpg,Rice,Brown Spot,Rice,Brown Spot,99.4%,100.0%,True,True
+rice_brown_spot_04.jpg,Rice,Brown Spot,Rice,Brown Spot,68.5%,100.0%,True,True
+rice_brown_spot_05.jpg,Rice,Brown Spot,Rice,Brown Spot,95.4%,99.7%,True,True
+rice_leaf_blast_01.jpg,Rice,Leaf Blast,Banana,Sigatoka,100.0%,100.0%,False,False
+rice_leaf_blast_02.jpg,Rice,Leaf Blast,Rice,Brown Spot,62.6%,99.7%,True,False
+rice_leaf_blast_03.jpg,Rice,Leaf Blast,Banana,Panama Disease,99.5%,100.0%,False,False
+rice_leaf_blast_04.jpg,Rice,Leaf Blast,Banana,Sigatoka,100.0%,100.0%,False,False
+rice_bacterial_leaf_blight_01.jpg,Rice,Bacterial Leaf Blight,Banana,Panama Disease,97.8%,100.0%,False,False
+rice_bacterial_leaf_blight_02.jpg,Rice,Bacterial Leaf Blight,Banana,Sigatoka,99.7%,95.7%,False,False
+rice_bacterial_leaf_blight_03.jpg,Rice,Bacterial Leaf Blight,Rice,Bacterial Leaf Blight,99.6%,100.0%,True,True
+rice_bacterial_leaf_blight_04.jpg,Rice,Bacterial Leaf Blight,Banana,Healthy,97.9%,85.0%,False,False
+rice_bacterial_leaf_blight_05.jpg,Rice,Bacterial Leaf Blight,Banana,Healthy,93.7%,84.0%,False,False
+maize_common_rust_01.jpg,Maize,Common Rust,Maize,Common Rust,98.9%,82.5%,True,True
+maize_common_rust_02.jpg,Maize,Common Rust,Banana,Healthy,66.3%,77.2%,False,False
+maize_common_rust_03.jpg,Maize,Common Rust,Maize,Common Rust,92.9%,80.3%,True,True
+maize_common_rust_04.jpg,Maize,Common Rust,Maize,Common Rust,100.0%,85.6%,True,True
+maize_common_rust_05.jpg,Maize,Common Rust,Maize,Common Rust,99.8%,49.3%,True,True
+maize_gray_leaf_spot_01.jpg,Maize,Gray Leaf Spot,Maize,Gray Leaf Spot,100.0%,69.1%,True,True
+maize_gray_leaf_spot_02.jpg,Maize,Gray Leaf Spot,Maize,Gray Leaf Spot,100.0%,87.5%,True,True
+maize_gray_leaf_spot_03.jpg,Maize,Gray Leaf Spot,Maize,Gray Leaf Spot,100.0%,90.2%,True,True
+maize_gray_leaf_spot_04.jpg,Maize,Gray Leaf Spot,Maize,Gray Leaf Spot,100.0%,88.1%,True,True
+maize_gray_leaf_spot_05.jpg,Maize,Gray Leaf Spot,Maize,Gray Leaf Spot,100.0%,88.8%,True,True
+maize_blight_01.jpg,Maize,Blight,Maize,Blight,100.0%,92.0%,True,True
+maize_blight_02.jpg,Maize,Blight,Maize,Blight,100.0%,99.0%,True,True
+maize_blight_03.jpg,Maize,Blight,Maize,Blight,95.2%,81.5%,True,True
+maize_blight_04.jpg,Maize,Blight,Maize,Blight,100.0%,99.8%,True,True
+maize_blight_05.jpg,Maize,Blight,Maize,Blight,99.6%,97.2%,True,True
+potato_early_blight_01.jpg,Potato,Early Blight,Potato,Early Blight,88.4%,100.0%,True,True
+potato_early_blight_02.jpg,Potato,Early Blight,Potato,Early Blight,99.8%,100.0%,True,True
+potato_early_blight_03.jpg,Potato,Early Blight,Potato,Early Blight,79.2%,100.0%,True,True
+potato_early_blight_04.jpg,Potato,Early Blight,Banana,Panama Disease,86.2%,100.0%,False,False
+potato_early_blight_05.jpg,Potato,Early Blight,Banana,Panama Disease,96.8%,94.5%,False,False
+potato_late_blight_01.jpg,Potato,Late Blight,Potato,Late Blight,100.0%,100.0%,True,True
+potato_late_blight_02.jpg,Potato,Late Blight,Potato,Late Blight,100.0%,100.0%,True,True
+potato_late_blight_03.jpg,Potato,Late Blight,Potato,Late Blight,100.0%,100.0%,True,True
+potato_late_blight_04.jpg,Potato,Late Blight,Potato,Late Blight,100.0%,100.0%,True,True
+potato_late_blight_05.jpg,Potato,Late Blight,Potato,Late Blight,100.0%,100.0%,True,True
+banana_healthy_01.jpg,Banana,Healthy,Banana,Healthy,100.0%,83.9%,True,True
+banana_healthy_02.jpg,Banana,Healthy,Banana,Healthy,100.0%,72.9%,True,True
+banana_sigatoka_01.jpg,Banana,Sigatoka,Banana,Healthy,100.0%,72.1%,True,False
+banana_sigatoka_02.jpg,Banana,Sigatoka,Banana,Panama Disease,100.0%,82.7%,True,False
+banana_sigatoka_03.jpg,Banana,Sigatoka,Banana,Sigatoka,100.0%,100.0%,True,True
+banana_sigatoka_04.jpg,Banana,Sigatoka,Banana,Sigatoka,99.7%,99.6%,True,True
+banana_sigatoka_05.jpg,Banana,Sigatoka,Banana,Panama Disease,100.0%,99.5%,True,False
+banana_panama_disease_01.jpg,Banana,Panama Disease,Banana,Panama Disease,100.0%,100.0%,True,True
+banana_panama_disease_02.jpg,Banana,Panama Disease,Banana,Panama Disease,100.0%,100.0%,True,True
+banana_panama_disease_03.jpg,Banana,Panama Disease,Banana,Panama Disease,100.0%,100.0%,True,True
+banana_panama_disease_04.jpg,Banana,Panama Disease,Banana,Panama Disease,100.0%,100.0%,True,True
+banana_panama_disease_05.jpg,Banana,Panama Disease,Banana,Panama Disease,100.0%,100.0%,True,True

@@ -1,0 +1,38 @@
+{
+  "crop_to_idx": {
+    "Rice": 0,
+    "Wheat": 1,
+    "Maize": 2,
+    "Tomato": 3,
+    "Potato": 4,
+    "Chilli": 5,
+    "Cotton": 6,
+    "Mango": 7,
+    "Banana": 8,
+    "Citrus": 9
+  },
+  "idx_to_crop": {
+    "0": "Rice",
+    "1": "Wheat",
+    "2": "Maize",
+    "3": "Tomato",
+    "4": "Potato",
+    "5": "Chilli",
+    "6": "Cotton",
+    "7": "Mango",
+    "8": "Banana",
+    "9": "Citrus"
+  },
+  "target_crops": [
+    "Rice",
+    "Wheat",
+    "Maize",
+    "Tomato",
+    "Potato",
+    "Chilli",
+    "Cotton",
+    "Mango",
+    "Banana",
+    "Citrus"
+  ]
+}

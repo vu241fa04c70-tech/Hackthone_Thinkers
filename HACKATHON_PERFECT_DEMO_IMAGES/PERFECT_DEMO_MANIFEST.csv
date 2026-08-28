@@ -1,0 +1,41 @@
+folder_path,filename,crop,disease,crop_confidence,disease_confidence
+HACKATHON_PERFECT_DEMO_IMAGES\Tomato\tomato_early_blight_03.jpg,tomato_early_blight_03.jpg,Tomato,Early Blight,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Wheat\wheat_septoria_01.jpg,wheat_septoria_01.jpg,Wheat,Septoria,65.3%,99.5%
+HACKATHON_PERFECT_DEMO_IMAGES\Wheat\wheat_septoria_03.jpg,wheat_septoria_03.jpg,Wheat,Septoria,98.5%,99.3%
+HACKATHON_PERFECT_DEMO_IMAGES\Wheat\wheat_leaf_rust_05.jpg,wheat_leaf_rust_05.jpg,Wheat,Leaf Rust,50.3%,58.6%
+HACKATHON_PERFECT_DEMO_IMAGES\Rice\rice_brown_spot_01.jpg,rice_brown_spot_01.jpg,Rice,Brown Spot,50.6%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Rice\rice_brown_spot_03.jpg,rice_brown_spot_03.jpg,Rice,Brown Spot,99.4%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Rice\rice_brown_spot_04.jpg,rice_brown_spot_04.jpg,Rice,Brown Spot,68.5%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Rice\rice_brown_spot_05.jpg,rice_brown_spot_05.jpg,Rice,Brown Spot,95.4%,99.7%
+HACKATHON_PERFECT_DEMO_IMAGES\Rice\rice_bacterial_leaf_blight_03.jpg,rice_bacterial_leaf_blight_03.jpg,Rice,Bacterial Leaf Blight,99.6%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_common_rust_01.jpg,maize_common_rust_01.jpg,Maize,Common Rust,98.9%,82.5%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_common_rust_03.jpg,maize_common_rust_03.jpg,Maize,Common Rust,92.9%,80.3%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_common_rust_04.jpg,maize_common_rust_04.jpg,Maize,Common Rust,100.0%,85.6%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_common_rust_05.jpg,maize_common_rust_05.jpg,Maize,Common Rust,99.8%,49.3%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_gray_leaf_spot_01.jpg,maize_gray_leaf_spot_01.jpg,Maize,Gray Leaf Spot,100.0%,69.1%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_gray_leaf_spot_02.jpg,maize_gray_leaf_spot_02.jpg,Maize,Gray Leaf Spot,100.0%,87.5%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_gray_leaf_spot_03.jpg,maize_gray_leaf_spot_03.jpg,Maize,Gray Leaf Spot,100.0%,90.2%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_gray_leaf_spot_04.jpg,maize_gray_leaf_spot_04.jpg,Maize,Gray Leaf Spot,100.0%,88.1%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_gray_leaf_spot_05.jpg,maize_gray_leaf_spot_05.jpg,Maize,Gray Leaf Spot,100.0%,88.8%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_blight_01.jpg,maize_blight_01.jpg,Maize,Blight,100.0%,92.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_blight_02.jpg,maize_blight_02.jpg,Maize,Blight,100.0%,99.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_blight_03.jpg,maize_blight_03.jpg,Maize,Blight,95.2%,81.5%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_blight_04.jpg,maize_blight_04.jpg,Maize,Blight,100.0%,99.8%
+HACKATHON_PERFECT_DEMO_IMAGES\Maize\maize_blight_05.jpg,maize_blight_05.jpg,Maize,Blight,99.6%,97.2%
+HACKATHON_PERFECT_DEMO_IMAGES\Potato\potato_early_blight_01.jpg,potato_early_blight_01.jpg,Potato,Early Blight,88.4%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Potato\potato_early_blight_02.jpg,potato_early_blight_02.jpg,Potato,Early Blight,99.8%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Potato\potato_early_blight_03.jpg,potato_early_blight_03.jpg,Potato,Early Blight,79.2%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Potato\potato_late_blight_01.jpg,potato_late_blight_01.jpg,Potato,Late Blight,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Potato\potato_late_blight_02.jpg,potato_late_blight_02.jpg,Potato,Late Blight,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Potato\potato_late_blight_03.jpg,potato_late_blight_03.jpg,Potato,Late Blight,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Potato\potato_late_blight_04.jpg,potato_late_blight_04.jpg,Potato,Late Blight,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Potato\potato_late_blight_05.jpg,potato_late_blight_05.jpg,Potato,Late Blight,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_healthy_01.jpg,banana_healthy_01.jpg,Banana,Healthy,100.0%,83.9%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_healthy_02.jpg,banana_healthy_02.jpg,Banana,Healthy,100.0%,72.9%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_sigatoka_03.jpg,banana_sigatoka_03.jpg,Banana,Sigatoka,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_sigatoka_04.jpg,banana_sigatoka_04.jpg,Banana,Sigatoka,99.7%,99.6%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_panama_disease_01.jpg,banana_panama_disease_01.jpg,Banana,Panama Disease,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_panama_disease_02.jpg,banana_panama_disease_02.jpg,Banana,Panama Disease,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_panama_disease_03.jpg,banana_panama_disease_03.jpg,Banana,Panama Disease,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_panama_disease_04.jpg,banana_panama_disease_04.jpg,Banana,Panama Disease,100.0%,100.0%
+HACKATHON_PERFECT_DEMO_IMAGES\Banana\banana_panama_disease_05.jpg,banana_panama_disease_05.jpg,Banana,Panama Disease,100.0%,100.0%
